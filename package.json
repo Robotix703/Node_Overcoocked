@@ -1,12 +1,8 @@
 {
   "dependencies": {
-    "@azure/msal-node": "^1.4.0",
-    "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "ovh": "^2.0.3",
-    "todoist": "^0.5.1",
-    "uuid": "^8.3.2",
-    "yargs": "^17.3.1"
+    "todoist": "^0.5.1"
   }
 }
