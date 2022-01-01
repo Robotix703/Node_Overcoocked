@@ -1,21 +1,16 @@
-/*
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
 require('dotenv').config();
 const express = require("express");
 const msal = require('@azure/msal-node');
+const Azure = require('./main');
 
 const SERVER_PORT = process.env.PORT || 3000;
-const REDIRECT_URI = "http://localhost:3000/redirect";
+const REDIRECT_URI = process.env.HOST + ":" + SERVER_PORT + "/redirect";
 
-// Before running the sample, you will need to replace the values in the config, 
-// including the clientSecret
 const config = {
     auth: {
-        clientId: "58878e16-2e16-4bc3-81b2-10e1398b6a9a",
+        clientId: process.env.CLIENT_ID,
         authority: "https://login.microsoftonline.com/common",
-        clientSecret: "_DZ7Q~fo_dJI4TJ4g5v4DtCicGQ9ITho2Y~V-"
+        clientSecret: process.env.CLIENT_SECRET
     },
     system: {
         loggerOptions: {
@@ -31,12 +26,11 @@ const config = {
 // Create msal application object
 const pca = new msal.ConfidentialClientApplication(config);
 
-// Create Express App and Routes
 const app = express();
 
 app.get('/', (req, res) => {
     const authCodeUrlParameters = {
-        scopes: ["user.read"],
+        scopes: ["user.read", "Tasks.ReadWrite"],
         redirectUri: REDIRECT_URI,
     };
 
@@ -54,7 +48,7 @@ app.get('/redirect', (req, res) => {
     };
 
     pca.acquireTokenByCode(tokenRequest).then((response) => {
-        console.log("\nResponse: \n:", response);
+        Azure.GetTasks(response.accessToken);
         res.sendStatus(200);
     }).catch((error) => {
         console.log(error);
