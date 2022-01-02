@@ -3,7 +3,8 @@ const Instruction = require('./../models/instruction');
 exports.writeInstruction = (req, res) => {
   const instruction = new Instruction({
     text: req.body.text,
-    ingredients: req.body.ingredients
+    ingredients: req.body.ingredients,
+    quantity: req.body.quantity
   });
 
   instruction.save()
@@ -49,7 +50,8 @@ exports.updateInstruction = (req, res) => {
   let instruction = new Instruction({
     _id: req.params.id,
     text: req.body.text,
-    ingredients: [req.body.instructions]
+    ingredients: [req.body.instructions],
+    quantity: [req.body.quantity]
   });
 
   Instruction.updateOne({ _id: req.params.id }, instruction)
