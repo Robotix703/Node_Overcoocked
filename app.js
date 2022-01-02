@@ -22,6 +22,6 @@ app.use((req, res, next) => {
 });
 
 //Use routes
-app.use("/ingredient", ingredientRoutes);
+app.use("/api/ingredient", ingredientRoutes);
 
 module.exports = app;

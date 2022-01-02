@@ -8,6 +8,7 @@ const IngredientControllers = require("../controllers/ingredient");
 const router = express.Router();
 
 //GET
+router.get("/", IngredientControllers.readIngredients);
 
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);
