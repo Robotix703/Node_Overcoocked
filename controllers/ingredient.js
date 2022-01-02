@@ -7,7 +7,8 @@ exports.writeIngredient = (req, res) => {
 
   const ingredient = new Ingredient({
     name: req.body.name,
-    imagePath: url + "/images/" + req.file.filename
+    imagePath: url + "/images/" + req.file.filename,
+    consumable: req.body.consumable ?? true
   });
 
   ingredient.save()
@@ -60,7 +61,8 @@ exports.editIngredient = (req, res) => {
   let ingredient = new Ingredient({
     _id: req.params.id,
     name: req.body.name,
-    imagePath: imagePath
+    imagePath: imagePath,
+    consumable: consumable ?? true
   });
 
   Ingredient.updateOne({ _id: req.params.id }, ingredient)
