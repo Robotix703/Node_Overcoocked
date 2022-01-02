@@ -44,3 +44,41 @@ exports.readInstructions = (req, res) => {
       })
     });
 }
+
+exports.updateInstruction = (req, res) => {
+  let instruction = new Instruction({
+    _id: req.params.id,
+    text: req.body.text,
+    ingredients: [req.body.instructions]
+  });
+
+  Instruction.updateOne({ _id: req.params.id }, instruction)
+    .then(result => {
+      if (result.modifiedCount > 0) {
+        res.status(200).json(instruction);
+      } else {
+        res.status(401).json({ message: "Pas de modification" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+
+exports.deleteInstruction = (req, res) => {
+  Instruction.deleteOne({ _id: req.params.id })
+    .then((result) => {
+      if (result.n > 0) {
+        res.status(200).json(result);
+      } else {
+        res.status(401).json(result);
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}

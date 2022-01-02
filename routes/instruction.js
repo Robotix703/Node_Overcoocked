@@ -12,4 +12,10 @@ router.get("/", InstructionControllers.readInstructions);
 //POST
 router.post("/", InstructionControllers.writeInstruction);
 
+//PUT
+router.put("/:id", checkAuth, InstructionControllers.updateInstruction);
+
+//DELETE
+router.delete("/:id", checkAuth, InstructionControllers.deleteInstruction);
+
 module.exports = router;
