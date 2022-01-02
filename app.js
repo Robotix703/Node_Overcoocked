@@ -5,6 +5,7 @@ const path = require('path');
 
 //Routes
 const ingredientRoutes = require("./routes/ingredients");
+const instructionRoutes = require("./routes/instruction");
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use((req, res, next) => {
 
 //Use routes
 app.use("/api/ingredient", ingredientRoutes);
+app.use("/api/instruction", instructionRoutes);
 
 module.exports = app;
