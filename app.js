@@ -4,6 +4,7 @@ const BDD = require('./BDD');
 const path = require('path');
 
 //Routes
+const userRoutes = require("./routes/user");
 const ingredientRoutes = require("./routes/ingredients");
 const instructionRoutes = require("./routes/instruction");
 
@@ -23,6 +24,7 @@ app.use((req, res, next) => {
 });
 
 //Use routes
+app.use("/api/user", userRoutes);
 app.use("/api/ingredient", ingredientRoutes);
 app.use("/api/instruction", instructionRoutes);
 
