@@ -13,4 +13,10 @@ router.get("/", IngredientControllers.readIngredients);
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);
 
+//PUT
+router.put("/:id", IngredientControllers.editIngredient);
+
+//DELETE
+router.delete("/:id", checkAuth, IngredientControllers.deleteIngredient);
+
 module.exports = router;

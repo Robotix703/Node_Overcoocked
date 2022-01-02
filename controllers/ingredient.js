@@ -48,3 +48,48 @@ exports.readIngredients = (req, res) => {
       })
     });
 }
+
+exports.editIngredient = (req, res) => {
+  let imagePath = req.body.imagePath;
+
+  if (req.file) {
+    const url = protocol + '://' + req.get("host");
+    imagePath = url + "/images/" + req.file.filename
+  }
+
+  let ingredient = new Ingredient({
+    _id: req.params.id,
+    name: req.body.name,
+    imagePath: imagePath
+  });
+
+  Ingredient.updateOne({ _id: req.params.id }, ingredient)
+    .then(result => {
+      if (result.n > 0) {
+        res.status(200).json(ingredient);
+      } else {
+        res.status(401).json({ message: "Pas d'autorisation" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+
+exports.deleteIngredient = (req, res) => {
+  Ingredient.deleteOne({ _id: req.params.id })
+    .then((result) => {
+      if (result.n > 0) {
+        res.status(200).json(result);
+      } else {
+        res.status(401).json(result);
+      }
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
