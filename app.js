@@ -4,6 +4,7 @@ const BDD = require('./BDD');
 const path = require('path');
 
 //Routes
+const ingredientRoutes = require("./routes/ingredients");
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use((req, res, next) => {
 });
 
 //Use routes
+app.use("/ingredient", ingredientRoutes);
 
 module.exports = app;
