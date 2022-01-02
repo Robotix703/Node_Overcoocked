@@ -7,7 +7,7 @@ exports.writeIngredient = (req, res) => {
 
   const ingredient = new Ingredient({
     name: req.body.name,
-    imagePath: url + "/images/" + req.file.filename,
+    imagePath: url + "/images/ingredients/" + req.file.filename,
     consumable: req.body.consumable ?? true
   });
 
@@ -83,7 +83,7 @@ exports.editIngredient = (req, res) => {
 exports.deleteIngredient = (req, res) => {
   Ingredient.deleteOne({ _id: req.params.id })
     .then((result) => {
-      if (result.n > 0) {
+      if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);

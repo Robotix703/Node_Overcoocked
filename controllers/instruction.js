@@ -72,7 +72,7 @@ exports.updateInstruction = (req, res) => {
 exports.deleteInstruction = (req, res) => {
   Instruction.deleteOne({ _id: req.params.id })
     .then((result) => {
-      if (result.n > 0) {
+      if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);
