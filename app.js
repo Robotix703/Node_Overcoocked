@@ -8,6 +8,7 @@ const userRoutes = require("./routes/user");
 const ingredientRoutes = require("./routes/ingredients");
 const instructionRoutes = require("./routes/instruction");
 const recipeRoutes = require("./routes/recipe");
+const pantryRoutes = require("./routes/pantry");
 
 const app = express();
 
@@ -29,5 +30,6 @@ app.use("/api/user", userRoutes);
 app.use("/api/ingredient", ingredientRoutes);
 app.use("/api/instruction", instructionRoutes);
 app.use("/api/recipe", recipeRoutes);
+app.use("/api/pantry", pantryRoutes);
 
 module.exports = app;
