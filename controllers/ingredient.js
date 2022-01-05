@@ -2,13 +2,14 @@ const Ingredient = require('./../models/ingredient');
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
+//POST
 exports.writeIngredient = (req, res) => {
   const url = protocol + '://' + req.get("host");
 
   const ingredient = new Ingredient({
     name: req.body.name,
     imagePath: url + "/images/ingredients/" + req.file.filename,
-    consumable: req.body.consumable ?? true
+    consumable: req.body.consumable ? req.body.consumable : true
   });
 
   ingredient.save()
@@ -22,6 +23,7 @@ exports.writeIngredient = (req, res) => {
     });
 }
 
+//GET
 exports.readIngredients = (req, res) => {
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
@@ -50,6 +52,26 @@ exports.readIngredients = (req, res) => {
     });
 }
 
+exports.consumableID = (req, res) => {
+  let ingredientQuery = Ingredient.find({consumable: true});
+  let fetchedingredients;
+
+  ingredientQuery
+    .then(documents => {
+      fetchedingredients = [...documents];
+      return documents.length;
+    })
+    .then(count => {
+      res.status(200).json({ IngredientsID: fetchedingredients.map(e => e._id), count: count });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+
+//PUT
 exports.editIngredient = (req, res) => {
   let imagePath = req.body.imagePath;
 
@@ -80,6 +102,7 @@ exports.editIngredient = (req, res) => {
     });
 }
 
+//DELETE
 exports.deleteIngredient = (req, res) => {
   Ingredient.deleteOne({ _id: req.params.id })
     .then((result) => {
