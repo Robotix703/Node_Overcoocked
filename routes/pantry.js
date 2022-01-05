@@ -8,6 +8,7 @@ const router = express.Router();
 
 //GET
 router.get("/", PantryControllers.readPantries);
+router.get("/quantityLeft", PantryControllers.quantityLeft);
 
 //POST
 router.post("/", PantryControllers.writePantry);

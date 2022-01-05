@@ -1,5 +1,6 @@
 const Pantry = require('./../models/pantry');
 
+//POST
 exports.writePantry = (req, res) => {
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
@@ -18,6 +19,7 @@ exports.writePantry = (req, res) => {
     });
 }
 
+//GET
 exports.readPantries = (req, res) => {
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
@@ -45,7 +47,30 @@ exports.readPantries = (req, res) => {
       })
     });
 }
+exports.quantityLeft = (req, res) => {
+  const ingredientID = req.query.ingredientID;
 
+  let pantryQuery = Pantry.find({ingredientID: ingredientID});
+  let fetchedPantries;
+
+  pantryQuery
+    .then(documents => {
+      fetchedPantries = [...documents];
+      let sum = 0;
+      fetchedPantries.forEach((e) => {
+        sum += e.quantity;
+      })
+      res.status(200).json({quantityLeft: sum});
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+
+
+//PUT
 exports.updatePantry = (req, res) => {
   let pantry = new Pantry({
     _id: req.params.id,
@@ -69,6 +94,7 @@ exports.updatePantry = (req, res) => {
     });
 }
 
+//DELETE
 exports.deletePantry = (req, res) => {
   Pantry.deleteOne({ _id: req.params.id })
     .then((result) => {
