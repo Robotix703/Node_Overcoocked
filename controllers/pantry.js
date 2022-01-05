@@ -68,7 +68,28 @@ exports.quantityLeft = (req, res) => {
       })
     });
 }
+exports.getNearestExpirationDate = (req, res) => {
+  const ingredientID = req.query.ingredientID;
 
+  let pantryQuery = Pantry.find({ingredientID: ingredientID});
+  let fetchedPantries;
+
+  pantryQuery
+    .then(documents => {
+      fetchedPantries = [...documents];
+      let nearestExpirationDate = new Date();
+      nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);
+      fetchedPantries.forEach((e) => {
+        if(e.expirationDate < nearestExpirationDate) nearestExpirationDate = e.expirationDate;
+      })
+      res.status(200).json({nearestExpirationDate: nearestExpirationDate});
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
 
 //PUT
 exports.updatePantry = (req, res) => {
