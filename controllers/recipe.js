@@ -2,6 +2,7 @@ const Recipe = require('./../models/recipe');
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
+//POST
 exports.writeRecipe = (req, res) => {
   const url = protocol + '://' + req.get("host");
 
@@ -23,6 +24,7 @@ exports.writeRecipe = (req, res) => {
     });
 }
 
+//GET
 exports.readRecipes = (req, res) => {
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
@@ -51,6 +53,7 @@ exports.readRecipes = (req, res) => {
     });
 }
 
+//PUT
 exports.updateRecipe = (req, res) => {
   let recipe = new Recipe({
     _id: req.params.id,
@@ -75,6 +78,7 @@ exports.updateRecipe = (req, res) => {
     });
 }
 
+//DELETE
 exports.deleteRecipe = (req, res) => {
   Recipe.deleteOne({ _id: req.params.id })
     .then((result) => {

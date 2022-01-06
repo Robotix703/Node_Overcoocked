@@ -1,9 +1,10 @@
 const Instruction = require('./../models/instruction');
 
+//POST
 exports.writeInstruction = (req, res) => {
   const instruction = new Instruction({
     text: req.body.text,
-    ingredients: req.body.ingredients,
+    ingredientsID: req.body.ingredients,
     quantity: req.body.quantity
   });
 
@@ -18,6 +19,7 @@ exports.writeInstruction = (req, res) => {
     });
 }
 
+//GET
 exports.readInstructions = (req, res) => {
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
@@ -46,11 +48,12 @@ exports.readInstructions = (req, res) => {
     });
 }
 
+//PUT
 exports.updateInstruction = (req, res) => {
   let instruction = new Instruction({
     _id: req.params.id,
     text: req.body.text,
-    ingredients: [req.body.instructions],
+    ingredientsID: [req.body.instructions],
     quantity: [req.body.quantity]
   });
 
@@ -69,6 +72,7 @@ exports.updateInstruction = (req, res) => {
     });
 }
 
+//DELETE
 exports.deleteInstruction = (req, res) => {
   Instruction.deleteOne({ _id: req.params.id })
     .then((result) => {
