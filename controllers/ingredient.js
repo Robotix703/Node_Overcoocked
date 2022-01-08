@@ -51,9 +51,8 @@ exports.readIngredients = (req, res) => {
       })
     });
 }
-
 exports.consumableID = (req, res) => {
-  let ingredientQuery = Ingredient.find({consumable: true});
+  let ingredientQuery = Ingredient.find({ consumable: true });
   let fetchedingredients;
 
   ingredientQuery
@@ -63,6 +62,25 @@ exports.consumableID = (req, res) => {
     })
     .then(count => {
       res.status(200).json({ IngredientsID: fetchedingredients.map(e => e._id), count: count });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+exports.searchByName = (req, res) => {
+  let ingredientQuery = Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } });
+
+  let fetchedIngredients;
+
+  ingredientQuery
+    .then(documents => {
+      fetchedIngredients = documents;
+      return Ingredient.count();
+    })
+    .then(count => {
+      res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
     })
     .catch(error => {
       res.status(500).json({

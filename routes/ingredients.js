@@ -10,6 +10,7 @@ const router = express.Router();
 //GET
 router.get("/", IngredientControllers.readIngredients);
 router.get("/consumableID", IngredientControllers.consumableID);
+router.get("/name", IngredientControllers.searchByName)
 
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);
