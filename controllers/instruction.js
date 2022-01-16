@@ -5,6 +5,7 @@ const Instruction = require('./../models/instruction');
 exports.writeInstruction = (req, res) => {
   const instruction = new Instruction({
     text: req.body.text,
+    recipeID: req.body.recipeID,
     ingredientsID: req.body.ingredients,
     quantity: req.body.quantity
   });
@@ -23,12 +24,14 @@ exports.writeInstructionByIngredientName = async (req, res) => {
   const text = req.body.text;
   const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
   const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
+  const recipeID = req.body.recipeID;
 
   let ingredientsID = await getIngredientsIDByName(ingredientsName);
 
   if(ingredientsID[0]){
     const instruction = new Instruction({
       text: text,
+      recipeID: recipeID,
       ingredientsID: ingredientsID,
       quantity: ingredientsQuantity
     })
@@ -83,6 +86,7 @@ exports.updateInstruction = (req, res) => {
   let instruction = new Instruction({
     _id: req.params.id,
     text: req.body.text,
+    recipeID: req.body.recipeID,
     ingredientsID: [req.body.instructions],
     quantity: [req.body.quantity]
   });

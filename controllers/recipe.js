@@ -8,7 +8,6 @@ exports.writeRecipe = (req, res) => {
 
   const recipe = new Recipe({
     title: req.body.title,
-    instructionsID: req.body.instructionsID,
     numberOfLunch: req.body.numberOfLunch,
     imagePath: url + "/images/recipes/" + req.file.filename
   });
@@ -58,7 +57,6 @@ exports.updateRecipe = (req, res) => {
   let recipe = new Recipe({
     _id: req.params.id,
     title: req.body.title,
-    instructionsID: req.body.instructionsID,
     numberOfLunch: req.body.numberOfLunch,
     imagePath: req.body.imagePath
   });
