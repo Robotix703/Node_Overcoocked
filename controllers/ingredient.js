@@ -8,7 +8,7 @@ exports.writeIngredient = (req, res) => {
 
   const ingredient = new Ingredient({
     name: req.body.name,
-    imagePath: url + "/images/ingredients/" + req.file.filename,
+    imagePath: url + "/images/" + req.file.filename,
     consumable: req.body.consumable ? req.body.consumable : true
   });
 

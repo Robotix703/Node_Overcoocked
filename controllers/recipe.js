@@ -9,7 +9,7 @@ exports.writeRecipe = (req, res) => {
   const recipe = new Recipe({
     title: req.body.title,
     numberOfLunch: req.body.numberOfLunch,
-    imagePath: url + "/images/recipes/" + req.file.filename
+    imagePath: url + "/images/" + req.file.filename
   });
 
   recipe.save()
@@ -43,7 +43,7 @@ exports.readRecipes = (req, res) => {
       return Recipe.count();
     })
     .then(count => {
-      res.status(200).json({ recipes: fetchedRecipes, recipeCount: count });
+      res.status(200).json({ recipes: fetchedRecipes, count: count });
     })
     .catch(error => {
       res.status(500).json({
