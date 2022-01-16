@@ -11,6 +11,7 @@ router.get("/", InstructionControllers.readInstructions);
 
 //POST
 router.post("/", InstructionControllers.writeInstruction);
+router.post("/byIngredientName", InstructionControllers.writeInstructionByIngredientName);
 
 //PUT
 router.put("/:id", checkAuth, InstructionControllers.updateInstruction);

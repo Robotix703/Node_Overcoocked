@@ -1,3 +1,4 @@
+const { getIngredientsIDByName } = require('../compute/getIngredientsIDByName');
 const Instruction = require('./../models/instruction');
 
 //POST
@@ -17,6 +18,35 @@ exports.writeInstruction = (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.writeInstructionByIngredientName = async (req, res) => {
+  const text = req.body.text;
+  const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
+  const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
+
+  let ingredientsID = await getIngredientsIDByName(ingredientsName);
+
+  if(ingredientsID[0]){
+    const instruction = new Instruction({
+      text: text,
+      ingredientsID: ingredientsID,
+      quantity: ingredientsQuantity
+    })
+  
+    instruction.save()
+      .then(result => {
+        res.status(201).json({ id: result._id, instruction });
+      })
+      .catch(error => {
+        res.status(500).json({
+          errorMessage: error
+        })
+      });
+  }else{
+    res.status(500).json({
+      errorMessage: "No valid ingredient"
+    })
+  }
 }
 
 //GET
