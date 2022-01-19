@@ -8,6 +8,7 @@ const router = express.Router();
 
 //GET
 router.get("/", InstructionControllers.readInstructions);
+router.get("/byRecipeID", InstructionControllers.getByRecipeID);
 
 //POST
 router.post("/", InstructionControllers.writeInstruction);

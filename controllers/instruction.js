@@ -28,14 +28,14 @@ exports.writeInstructionByIngredientName = async (req, res) => {
 
   let ingredientsID = await getIngredientsIDByName(ingredientsName);
 
-  if(ingredientsID[0]){
+  if (ingredientsID[0]) {
     const instruction = new Instruction({
       text: text,
       recipeID: recipeID,
       ingredientsID: ingredientsID,
       quantity: ingredientsQuantity
     })
-  
+
     instruction.save()
       .then(result => {
         res.status(201).json({ id: result._id, instruction });
@@ -45,7 +45,7 @@ exports.writeInstructionByIngredientName = async (req, res) => {
           errorMessage: error
         })
       });
-  }else{
+  } else {
     res.status(500).json({
       errorMessage: "No valid ingredient"
     })
@@ -73,6 +73,24 @@ exports.readInstructions = (req, res) => {
     })
     .then(count => {
       res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+exports.getByRecipeID = (req, res) => {
+  const recipeID = req.query.recipeID;
+  let fetchedInstructions;
+
+  Instruction.find({ 'recipeID': recipeID })
+    .then(documents => {
+      fetchedInstructions = [...documents];
+      return documents.length;
+    })
+    .then(count => {
+      res.status(200).json({ Instructions: fetchedInstructions, count: count });
     })
     .catch(error => {
       res.status(500).json({
