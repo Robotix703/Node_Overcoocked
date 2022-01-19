@@ -87,12 +87,15 @@ exports.getIngredientsName = async function (recipeID) {
             for (instruction of instructions) {
                 let ingredientsID = await getIngredientIDFromInstruction(instruction._id);
                 let ingredientsName = await getIngredientsNameFromID(ingredientsID.map(e => e.ingredientID));
+                let composition = [];
+                for(let i = 0 ; i < ingredientsName.length ; i++){
+                    composition.push({name: ingredientsName[i], quantity: instruction.quantity[i]});
+                }
                 newInstruction.push({
                     _id: instruction._id,
                     text: instruction.text,
                     recipeID: instruction.recipeID,
-                    quantity: instruction.quantity,
-                    ingredientsName: ingredientsName
+                    composition: composition
                 });
             }
             return newInstruction;
