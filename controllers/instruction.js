@@ -1,5 +1,6 @@
 const { getIngredientsIDByName } = require('../compute/getIngredientsIDByName');
 const Instruction = require('./../models/instruction');
+const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
 
 //POST
 exports.writeInstruction = (req, res) => {
@@ -82,16 +83,10 @@ exports.readInstructions = (req, res) => {
 }
 exports.getByRecipeID = (req, res) => {
   const recipeID = req.query.recipeID;
-  let fetchedInstructions;
 
-  Instruction.find({ 'recipeID': recipeID })
-    .then(documents => {
-      fetchedInstructions = [...documents];
-      return documents.length;
-    })
-    .then(count => {
-      res.status(200).json({ Instructions: fetchedInstructions, count: count });
-    })
+  recipeIngredientsNeeded.getIngredientsName(recipeID).then(instructions => {
+    res.status(200).json({ Instructions: instructions });
+  })
     .catch(error => {
       res.status(500).json({
         errorMessage: error
