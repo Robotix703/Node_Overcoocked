@@ -1,11 +1,17 @@
 const Meal = require('./../models/meal');
+const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
+const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
 
 //POST
-exports.writeMeal = (req, res) => {
+exports.writeMeal = async function(req, res){
   const meal = new Meal({
     recipeID: req.body.recipeID,
     numberOfLunchPlanned: req.body.numberOfLunchPlanned
   });
+
+  let ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
+
+  registerIngredientOnTodo.registerIngredient(ingredientsNeeded);
 
   meal.save()
     .then(result => {

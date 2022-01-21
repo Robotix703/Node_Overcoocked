@@ -59,13 +59,21 @@ getIngredientsNameFromID = async function (ingredientsID) {
 
 
 exports.getIngredientList = async function (recipeID, numberOfLunch) {
-    return Recipe.findById(recipeID)
-        .then(async function (recipe) {
+    return Instruction.find({ 'recipeID': recipeID })
+        .then(async function (instructions) {
             let ingredientsNeeded = [];
+            for (instruction of instructions) {
 
-            let fetchedRecipe = recipe;
-            for (instructionID of fetchedRecipe.instructionsID) {
-                let newIngredients = await getIngredientIDFromInstruction(instructionID);
+                let newIngredients = [];
+                for(let i = 0 ; i < instruction.ingredientsID.length ; i++)
+                {
+                    let ingredientsName = await getIngredientsNameFromID([instruction.ingredientsID[i]]);
+                    newIngredients.push({
+                        ingredientID: instruction.ingredientsID[i],
+                        ingredientName: ingredientsName[0],
+                        quantity: instruction.quantity[i]
+                    })
+                }
 
                 if (!newIngredients.reason) {
                     adaptQuantity(newIngredients, numberOfLunch);
@@ -88,8 +96,8 @@ exports.getIngredientsName = async function (recipeID) {
                 let ingredientsID = await getIngredientIDFromInstruction(instruction._id);
                 let ingredientsName = await getIngredientsNameFromID(ingredientsID.map(e => e.ingredientID));
                 let composition = [];
-                for(let i = 0 ; i < ingredientsName.length ; i++){
-                    composition.push({name: ingredientsName[i], quantity: instruction.quantity[i]});
+                for (let i = 0; i < ingredientsName.length; i++) {
+                    composition.push({ name: ingredientsName[i], quantity: instruction.quantity[i] });
                 }
                 newInstruction.push({
                     _id: instruction._id,
