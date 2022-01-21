@@ -22,7 +22,7 @@ async function addItemsInProjectByName(name, items){
         project_id: projectID
     }
 
-    await todoist.items.add(itemsToAdd)
+    return await todoist.items.add(itemsToAdd)
 }
 
 module.exports = {
