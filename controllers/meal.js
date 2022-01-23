@@ -1,6 +1,7 @@
 const Meal = require('./../models/meal');
 const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
+const checkIfMealIsReady = require("../compute/checkIfMealIsReady");
 
 //POST
 exports.writeMeal = async function(req, res){
@@ -51,6 +52,18 @@ exports.readMeals = (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.checkIfReady = async (req, res) => {
+  const mealID = req.query.mealID;
+
+  checkIfMealIsReady.checkIfMealIsReady(mealID).then((ready) => {
+    res.status(200).json(ready);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 
 //PUT
