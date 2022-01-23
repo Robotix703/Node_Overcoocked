@@ -10,6 +10,7 @@ const getIngredientsIDByName = require("./compute/getIngredientsIDByName");
 const checkTodoList = require("./worker/checkTodoList");
 const checkIfMealIsReady = require("./compute/checkIfMealIsReady");
 const updatePantry = require("./compute/updatePantryWhenMealIsDone");
+const tasksHandler = require("./worker/handleScheduleTask");
 
 //let tel = process.env.INDFR + process.env.TEL;
 //SMS.SendSMS([tel], "Hello World !!");
@@ -44,8 +45,12 @@ setTimeout(async () => {
 }, 1000)
 */
 
-let job = Scheduler.createJob(function(){console.log("COUCOU")}, "42 * * * * *");
+tasksHandler.addperiodicTask(
+    function(){console.log("COUCOU")},
+    "42 * * * * *",
+    "COUCOU"
+)
 
-console.log(job);
+tasksHandler.triggerTask("COUCOU");
 
-Scheduler.cancelJob(job);
+tasksHandler.stopTask("COUCOU");
