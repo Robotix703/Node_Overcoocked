@@ -1,7 +1,12 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-const BDD = require('./BDD');
 const path = require('path');
+
+const BDD = require('./BDD');
+const iniWorkers = require("./initialization");
+
+//Init modules
+iniWorkers.init();
 
 //Routes
 const userRoutes = require("./routes/user");

@@ -1,4 +1,5 @@
 const checkIfMealIsReady = require("../compute/checkIfMealIsReady");
+const smsSender = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){
     let mealsState = await checkIfMealIsReady.checkMealList();
@@ -25,5 +26,5 @@ exports.dailyCheck = async function(){
 
     messageToSend += await checkPlannedMeals();
 
-    console.log(messageToSend)
+    smsSender.sendSMS(messageToSend);
 }
