@@ -2,6 +2,8 @@ const BDD = require('./BDD');
 
 const SMS = require("./modules/sms/sms");
 const Todoist = require("./modules/Todoist/main");
+const Scheduler = require("./modules/scheduler/main");
+
 const pantryInventory = require("./compute/pantryInventory");
 const recipeIngredientsNeeded = require("./compute/recipeIngredientsNeeded");
 const getIngredientsIDByName = require("./compute/getIngredientsIDByName");
@@ -36,8 +38,14 @@ setTimeout(async () => {
     let ready = await checkIfMealIsReady.checkIfMealIsReady("61ed217e106492788fc5b105");
     console.log(ready);
 }, 1000)
-*/
 
 setTimeout(async () => {
     await updatePantry.updatePantryWhenMealsIsDone("61ed217e106492788fc5b105", 100);
 }, 1000)
+*/
+
+let job = Scheduler.createJob(function(){console.log("COUCOU")}, "42 * * * * *");
+
+console.log(job);
+
+Scheduler.cancelJob(job);
