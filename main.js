@@ -11,6 +11,7 @@ const checkTodoList = require("./worker/checkTodoList");
 const checkIfMealIsReady = require("./compute/checkIfMealIsReady");
 const updatePantry = require("./compute/updatePantryWhenMealIsDone");
 const tasksHandler = require("./worker/handleScheduleTask");
+const init = require("./initialization");
 
 //let tel = process.env.INDFR + process.env.TEL;
 //SMS.SendSMS([tel], "Hello World !!");
@@ -43,14 +44,16 @@ setTimeout(async () => {
 setTimeout(async () => {
     await updatePantry.updatePantryWhenMealsIsDone("61ed217e106492788fc5b105", 100);
 }, 1000)
-*/
 
 tasksHandler.addperiodicTask(
     function(){console.log("COUCOU")},
-    "42 * * * * *",
+    "10 * * * * *",
     "COUCOU"
 )
-
 tasksHandler.triggerTask("COUCOU");
-
 tasksHandler.stopTask("COUCOU");
+*/
+
+setTimeout(async () => {
+    init.init();
+}, 1000)

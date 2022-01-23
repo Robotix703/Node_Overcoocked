@@ -10,7 +10,6 @@ exports.addperiodicTask = function(task, cronSettings, taskName){
         job: job,
         task: task
     });
-    console.log(activeTasks)
 }
 
 exports.stopTask = function(taskName){
@@ -19,7 +18,6 @@ exports.stopTask = function(taskName){
     if(activeTask){
         Scheduler.cancelJob(activeTask.job);
         activeTasks = activeTasks.filter(e => e.name != taskName);
-        console.log(activeTasks)
         return true;
     }
     else{
