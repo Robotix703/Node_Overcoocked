@@ -33,7 +33,6 @@ async function checkDeleteItem(todoItems, mongoItems) {
         let itemFound = (todoItems.find(e => e.id == item.todoID) != undefined);
 
         if (!itemFound) {
-            console.log(item.todoID);
             //Add to pantry
             await addIngredientToPantry(item.text);
 
