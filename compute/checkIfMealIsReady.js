@@ -1,18 +1,11 @@
 const pantryInventory = require("./pantryInventory");
 const recipeIngredientsNeeded = require("./recipeIngredientsNeeded");
-
-const Meal = require("../models/meal");
+const baseMeal = require("./base/meal");
 
 let g_pantryInventory = [];
 
 exports.initPantryInventory = async function(){
     g_pantryInventory = await pantryInventory.getInventory();
-}
-
-async function getRecipeID(mealID){
-    return Meal.findById(mealID).then((documents) =>{
-        return documents;
-    });
 }
 
 function checkDisponibility(ingredientID, quantity){
@@ -26,9 +19,9 @@ function checkDisponibility(ingredientID, quantity){
 }
 
 exports.checkIfMealIsReady = async function(mealID){
-    let meal = await getRecipeID(mealID);
+    const meal = await baseMeal.getMealByID(mealID);
 
-    let ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+    const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
 
     for(ingredient of ingredientsNeeded){
         if(!checkDisponibility(ingredient.ingredientID, ingredient.quantity)){

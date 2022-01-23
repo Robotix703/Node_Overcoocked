@@ -7,6 +7,7 @@ const recipeIngredientsNeeded = require("./compute/recipeIngredientsNeeded");
 const getIngredientsIDByName = require("./compute/getIngredientsIDByName");
 const checkTodoList = require("./worker/checkTodoList");
 const checkIfMealIsReady = require("./compute/checkIfMealIsReady");
+const updatePantry = require("./compute/updatePantryWhenMealIsDone");
 
 //let tel = process.env.INDFR + process.env.TEL;
 //SMS.SendSMS([tel], "Hello World !!");
@@ -30,9 +31,13 @@ setTimeout(async () => {
     //checkTodoList.checkTodoList();
     await checkTodoList.addIngredientToPantry("Pates - 400");
 }, 1000)
-*/
 
 setTimeout(async () => {
     let ready = await checkIfMealIsReady.checkIfMealIsReady("61ed217e106492788fc5b105");
     console.log(ready);
+}, 1000)
+*/
+
+setTimeout(async () => {
+    await updatePantry.updatePantryWhenMealsIsDone("61ed217e106492788fc5b105", 100);
 }, 1000)
