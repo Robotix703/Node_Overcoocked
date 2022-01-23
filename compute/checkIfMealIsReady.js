@@ -43,7 +43,7 @@ exports.checkMealList = async function(){
 
         mealState.push({
             title: recipe.title,
-            state: mealReady? "prête" : "pas prête"
+            ready: mealReady
         })
     }
     return mealState;

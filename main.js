@@ -13,6 +13,7 @@ const updatePantry = require("./compute/updatePantryWhenMealIsDone");
 const tasksHandler = require("./worker/handleScheduleTask");
 const init = require("./initialization");
 const sendSMS = require("./worker/sendSMSToEverybody");
+const dailyCheck = require("./worker/dailyCheck");
 
 //let tel = process.env.INDFR + process.env.TEL;
 //SMS.SendSMS([tel], "Hello World !!");
@@ -57,9 +58,13 @@ tasksHandler.stopTask("COUCOU");
 setTimeout(async () => {
     init.init();
 }, 1000)
-*/
 
 setTimeout(async () => {
     let state = await checkIfMealIsReady.checkMealList();
     console.log(state);
+}, 1000)
+*/
+
+setTimeout(async () => {
+    await dailyCheck.dailyCheck();
 }, 1000)
