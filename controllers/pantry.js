@@ -2,10 +2,15 @@ const Pantry = require('./../models/pantry');
 
 //POST
 exports.writePantry = (req, res) => {
+  const dateSplit = req.body.expirationDate.split("/");
+  const year = dateSplit[2];
+  const month = dateSplit[1];
+  const day = dateSplit[0];
+
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: req.body.expirationDate
+    expirationDate: Date(year, month, day)
   });
 
   pantry.save()
