@@ -60,7 +60,6 @@ setTimeout(async () => {
 */
 
 setTimeout(async () => {
-    await sendSMS.fetchPhoneNumber();
-
-    await sendSMS.sendSMS();
+    let state = await checkIfMealIsReady.checkMealList();
+    console.log(state);
 }, 1000)

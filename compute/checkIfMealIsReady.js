@@ -1,6 +1,8 @@
 const pantryInventory = require("./pantryInventory");
 const recipeIngredientsNeeded = require("./recipeIngredientsNeeded");
+
 const baseMeal = require("./base/meal");
+const baseRecipe = require("./base/recipe");
 
 let g_pantryInventory = [];
 
@@ -29,4 +31,20 @@ exports.checkIfMealIsReady = async function(mealID){
         }
     }
     return true;
+}
+
+exports.checkMealList = async function(){
+    let allMeals = await baseMeal.getAllMeals();
+
+    let mealState = [];
+    for(oneMeal of allMeals){
+        let recipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
+        let mealReady = await this.checkIfMealIsReady(oneMeal._id);
+
+        mealState.push({
+            title: recipe.title,
+            state: mealReady? "prête" : "pas prête"
+        })
+    }
+    return mealState;
 }
