@@ -2,8 +2,13 @@ require('dotenv').config();
 
 const checkTodoList = require("./worker/checkTodoList");
 const handleScheduleTask = require("./worker/handleScheduleTask");
+const smsSender = require("./worker/sendSMSToEverybody");
 
 const todoSurvey = "todoSurvey";
+
+function initSMS(){
+    smsSender.fetchPhoneNumber();
+}
 
 function createIntervalCronSettings(interval){
     return "*/" + interval + " * * * *"
@@ -20,5 +25,6 @@ function initTodoSurvey(){
 }
 
 exports.init = function(){
+    initSMS();
     initTodoSurvey();
 }

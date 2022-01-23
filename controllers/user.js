@@ -1,12 +1,12 @@
+require('dotenv').config();
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-require('dotenv').config();
 
 const User = require("../models/user");
 
 exports.createUser = (req, res) => {
-
-  if(req.body.invitationCode !== process.env.INVITECODE){
+  if (req.body.invitationCode !== process.env.INVITECODE) {
     res.status(500).json({
       message: "Wrong invitation code"
     });
@@ -16,7 +16,8 @@ exports.createUser = (req, res) => {
   bcrypt.hash(req.body.password, 10).then(hash => {
     const user = new User({
       email: req.body.email,
-      password: hash
+      password: hash,
+      phoneNumber: req.body.phoneNumber
     });
 
     user.save()
@@ -45,7 +46,6 @@ exports.userLogin = (req, res) => {
           message: "Mauvaise Email"
         });
       }
-
       return bcrypt.compare(req.body.password, user.password)
     })
     .then(result => {
@@ -66,7 +66,7 @@ exports.userLogin = (req, res) => {
 
       res.status(200).json({
         token: token,
-        expiresIn: 12*60*60,
+        expiresIn: parseInt(process.env.TOKENLIFETIME) * 60 * 60,
         userId: fetchUser._id
       });
     })

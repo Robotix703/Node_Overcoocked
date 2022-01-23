@@ -12,6 +12,7 @@ const checkIfMealIsReady = require("./compute/checkIfMealIsReady");
 const updatePantry = require("./compute/updatePantryWhenMealIsDone");
 const tasksHandler = require("./worker/handleScheduleTask");
 const init = require("./initialization");
+const sendSMS = require("./worker/sendSMSToEverybody");
 
 //let tel = process.env.INDFR + process.env.TEL;
 //SMS.SendSMS([tel], "Hello World !!");
@@ -52,8 +53,14 @@ tasksHandler.addperiodicTask(
 )
 tasksHandler.triggerTask("COUCOU");
 tasksHandler.stopTask("COUCOU");
-*/
 
 setTimeout(async () => {
     init.init();
+}, 1000)
+*/
+
+setTimeout(async () => {
+    await sendSMS.fetchPhoneNumber();
+
+    await sendSMS.sendSMS();
 }, 1000)
