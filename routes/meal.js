@@ -9,6 +9,7 @@ const router = express.Router();
 //GET
 router.get("/", MealControllers.readMeals);
 router.get("/checkIfReady", MealControllers.checkIfReady);
+router.get("/displayable", MealControllers.displayable);
 
 //POST
 router.post("/", MealControllers.writeMeal);
