@@ -5,8 +5,18 @@ const path = require('path');
 const BDD = require('./BDD');
 const iniWorkers = require("./initialization");
 
-//Init modules
-iniWorkers.init();
+//BDD
+BDD.connectToDataBase()
+.then(() => {
+    console.log("BDD - Connectée");
+
+    //Init modules
+    iniWorkers.init();
+})
+.catch((error) => {
+    console.log("BDD - Erreur de connexion");
+    console.error(error);
+});
 
 //Routes
 const userRoutes = require("./routes/user");

@@ -1,12 +1,13 @@
 const baseUser = require("../compute/base/user");
 const smsSender = require("../modules/sms/sms");
+const Frindicator = "0033";
 
 let g_phoneNumbers = [];
 
 function processPhoneNumber(phoneNumbers){
     phoneNumbers.forEach((phoneNumber) => {
         g_phoneNumbers.push(
-            process.env.INDFR + phoneNumber.slice(1)
+            Frindicator + phoneNumber.slice(1)
         );
     });
 }

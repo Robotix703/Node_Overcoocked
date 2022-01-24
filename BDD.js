@@ -14,12 +14,9 @@ if (process.env.NODE_ENV === "production") {
     pwd = process.env.DB_DEV_PASS;
 }
 
-mongoose.connect(
-    "mongodb://" + user + ":" + pwd + "@" + host + "/" + name
-    , { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => {
-    console.log("BDD - Connectée");
-}).catch((error) => {
-    console.log("BDD - Erreur de connexion");
-    console.log(error);
-});
+exports.connectToDataBase = async function(){
+    return mongoose.connect(
+        "mongodb://" + user + ":" + pwd + "@" + host + "/" + name, 
+        { useNewUrlParser: true, useUnifiedTopology: true }
+    )
+}
