@@ -13,6 +13,7 @@ router.get("/displayable", MealControllers.displayable);
 
 //POST
 router.post("/", MealControllers.writeMeal);
+router.post("/consume", MealControllers.consumeMeal);
 
 //PUT
 router.put("/:id", checkAuth, MealControllers.updateMeal);

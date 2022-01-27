@@ -1,8 +1,10 @@
 const Meal = require('./../models/meal');
 
+const baseMeal = require("../compute/base/meal");
 const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
 const checkIfMealIsReady = require("../compute/checkIfMealIsReady");
 const displayMeals = require("../compute/displayMeals");
+const updatePantryWhenMealsIsDone = require("../compute/updatePantryWhenMealIsDone");
 
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
 
@@ -26,6 +28,25 @@ exports.writeMeal = async function(req, res){
         errorMessage: error
       })
     });
+}
+exports.consumeMeal = async function(req, res){
+
+  if(req.body.mealID) 
+  {
+    await updatePantryWhenMealsIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
+
+    let result = await baseMeal.deleteMeal(req.body.mealID);
+
+    if(result.deletedCount > 0){
+      res.status(200).send("OK");
+      return;
+    }else{
+      res.status(500).send("Wrong ID");
+      return;
+    }
+  }
+
+  res.status(400).send("No ID");
 }
 
 //GET
