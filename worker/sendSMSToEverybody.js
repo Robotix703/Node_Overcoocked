@@ -19,6 +19,8 @@ exports.fetchPhoneNumber = async function(){
 }
 
 exports.sendSMS = function(message){
-    //smsSender.SendSMS(g_phoneNumbers, message);
+    if(process.env.NODE_ENV === "production"){
+        smsSender.SendSMS(g_phoneNumbers, message);
+    }
     console.log("SMS : " + message);
 }
