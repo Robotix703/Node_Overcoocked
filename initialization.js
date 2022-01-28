@@ -17,7 +17,7 @@ function createIntervalCronSettings(interval){
 }
 
 function createDailyCronSettings(hour){
-    return "* " + hour + " * * *";
+    return "0 " + hour + " * * *";
 }
 
 function initTodoSurvey(){
