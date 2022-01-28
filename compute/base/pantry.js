@@ -11,3 +11,7 @@ exports.deletePantryByID = async function(pantryID){
 exports.updatePantry = async function(pantry){    
     return Pantry.updateOne({ _id: pantry._id }, pantry)
 }
+
+exports.getAllPantries = async function(){
+    return Pantry.find();
+}

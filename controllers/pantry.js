@@ -1,4 +1,5 @@
-const Pantry = require('./../models/pantry');
+const Pantry = require('../models/pantry');
+const pantryInventory = require("../compute/pantryInventory");
 
 //POST
 exports.writePantry = (req, res) => {
@@ -94,6 +95,11 @@ exports.getNearestExpirationDate = (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.getFullPantryInventory = async (req, res) => {
+  let fullInventory = await pantryInventory.getFullInventory();
+
+  res.status(200).json(fullInventory);
 }
 
 //PUT

@@ -10,6 +10,7 @@ const router = express.Router();
 router.get("/", PantryControllers.readPantries);
 router.get("/quantityLeft", PantryControllers.quantityLeft);
 router.get("/getNearestExpirationDate", PantryControllers.getNearestExpirationDate);
+router.get("/fullPantryInventory", PantryControllers.getFullPantryInventory);
 
 //POST
 router.post("/", PantryControllers.writePantry);

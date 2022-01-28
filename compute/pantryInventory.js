@@ -1,6 +1,9 @@
 const Ingredient = require('../models/ingredient');
 const Pantry = require('../models/pantry');
 
+const basePantry = require("./base/pantry");
+const baseIngredient = require("./base/ingredient");
+
 getConsumableID = async function(){
     let ingredientQuery = Ingredient.find({consumable: true});
     let fetchedingredients;
@@ -54,4 +57,29 @@ exports.getInventory = async function(){
     }
 
     return listAllConsumableLeft;
+}
+
+exports.getFullInventory = async function(){
+    let allPantry = await basePantry.getAllPantries();
+
+    let prettyPantries = [];
+
+    for(pantry of allPantry){
+        let ingredient = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
+
+        if(ingredient){
+            //Add pantry
+            ingredient.pantries.push(pantry);
+        }else{
+            //Create element
+            let inrgedientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
+            prettyPantries.push({
+                ingredientID: pantry.ingredientID,
+                ingredientName: inrgedientName,
+                pantries: [pantry]
+            })
+        }
+    }
+
+    return prettyPantries;
 }

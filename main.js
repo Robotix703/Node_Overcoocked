@@ -8,9 +8,13 @@ BDD.connectToDataBase()
     console.error(error);
 });
 
-const displayMeal = require("./compute/displayMeals");
+const pantryInventory = require("./compute/pantryInventory.js");
 
 setTimeout(async () => {
-    let result = await displayMeal.displayMealWithRecipeAndState();
+    let result = await pantryInventory.getFullInventory();
     console.log(result);
+    for(element of result){
+        console.log(element.ingredientName);
+        console.log(element.pantries);
+    }
 }, 1000)
