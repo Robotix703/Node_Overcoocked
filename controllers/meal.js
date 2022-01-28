@@ -38,15 +38,13 @@ exports.consumeMeal = async function(req, res){
     let result = await baseMeal.deleteMeal(req.body.mealID);
 
     if(result.deletedCount > 0){
-      res.status(200).send("OK");
+      res.status(200).json({status: "ok"});
       return;
     }else{
       res.status(500).send("Wrong ID");
       return;
     }
   }
-
-  res.status(400).send("No ID");
 }
 
 //GET
