@@ -14,6 +14,7 @@ router.get("/fullPantryInventory", PantryControllers.getFullPantryInventory);
 
 //POST
 router.post("/", PantryControllers.writePantry);
+router.post("/createByIngredientName", PantryControllers.writePantryByIngredientName);
 
 //PUT
 router.put("/:id", checkAuth, PantryControllers.updatePantry);

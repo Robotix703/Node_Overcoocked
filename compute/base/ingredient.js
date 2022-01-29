@@ -9,3 +9,9 @@ exports.getIngredientNameByID = async function(ingredientID){
 exports.getIngredientByID = async function(ingredientID){
     return Ingredient.findById(ingredientID);
 }
+
+exports.getIngredientByName = async function(ingredientName){
+    return Ingredient.find({name: ingredientName}).then((result) => {
+        return result[0];
+    });
+}
