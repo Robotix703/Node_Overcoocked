@@ -15,3 +15,7 @@ exports.updatePantry = async function(pantry){
 exports.getAllPantries = async function(){
     return Pantry.find();
 }
+
+exports.getPantryByID = async function(pantryID){
+    return Pantry.findById(pantryID);
+}

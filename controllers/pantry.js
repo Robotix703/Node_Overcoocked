@@ -1,6 +1,7 @@
 const Pantry = require('../models/pantry');
 const pantryInventory = require("../compute/pantryInventory");
 const baseIngredient = require("../compute/base/ingredient");
+const basePantry = require("../compute/base/pantry");
 
 //POST
 exports.writePantry = (req, res) => {
@@ -120,6 +121,18 @@ exports.getFullPantryInventory = async (req, res) => {
   let fullInventory = await pantryInventory.getFullInventory();
 
   res.status(200).json(fullInventory);
+}
+exports.getPantryByID = async (req, res) => {
+  let pantry = await basePantry.getPantryByID(req.query.pantryID);
+  let ingredientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
+
+  res.status(200).json({
+    _id: pantry._id,
+    ingredientID: pantry.ingredientID,
+    quantity: pantry.quantity,
+    expirationDate: pantry.expirationDate || null,
+    ingredientName: ingredientName
+  });
 }
 
 //PUT

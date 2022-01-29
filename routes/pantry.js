@@ -11,6 +11,7 @@ router.get("/", PantryControllers.readPantries);
 router.get("/quantityLeft", PantryControllers.quantityLeft);
 router.get("/getNearestExpirationDate", PantryControllers.getNearestExpirationDate);
 router.get("/fullPantryInventory", PantryControllers.getFullPantryInventory);
+router.get("/byID", PantryControllers.getPantryByID);
 
 //POST
 router.post("/", PantryControllers.writePantry);
