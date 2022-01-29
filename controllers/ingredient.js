@@ -1,4 +1,5 @@
-const Ingredient = require('./../models/ingredient');
+const Ingredient = require('../models/ingredient');
+const baseIngredient = require("../compute/base/ingredient");
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
@@ -87,6 +88,11 @@ exports.searchByName = (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.getIngredientByID = async (req, res) => {
+  let ingredient = await baseIngredient.getIngredientByID(req.query.ingredientID);
+
+  res.status(200).json(ingredient);
 }
 
 //PUT

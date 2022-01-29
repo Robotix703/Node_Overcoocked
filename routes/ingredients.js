@@ -11,6 +11,7 @@ const router = express.Router();
 router.get("/", IngredientControllers.readIngredients);
 router.get("/consumableID", IngredientControllers.consumableID);
 router.get("/name", IngredientControllers.searchByName)
+router.get("/byID", IngredientControllers.getIngredientByID);
 
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);
