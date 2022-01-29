@@ -5,3 +5,7 @@ exports.getIngredientNameByID = async function(ingredientID){
         return result.name;
     })
 }
+
+exports.getIngredientByID = async function(ingredientID){
+    return Ingredient.findById(ingredientID);
+}

@@ -72,10 +72,11 @@ exports.getFullInventory = async function(){
             ingredient.pantries.push(pantry);
         }else{
             //Create element
-            let inrgedientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
+            let ingredientInfo = await baseIngredient.getIngredientByID(pantry.ingredientID);
             prettyPantries.push({
                 ingredientID: pantry.ingredientID,
-                ingredientName: inrgedientName,
+                ingredientName: ingredientInfo.name,
+                ingredientImagePath: ingredientInfo.imagePath,
                 pantries: [pantry]
             })
         }
