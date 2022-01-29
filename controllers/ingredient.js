@@ -94,6 +94,11 @@ exports.getIngredientByID = async (req, res) => {
 
   res.status(200).json(ingredient);
 }
+exports.getAllIngredientsName = async (req, res) => {
+  let ingredientsName = await baseIngredient.getAllIngredientsName();
+
+  res.status(200).json(ingredientsName);
+}
 
 //PUT
 exports.editIngredient = (req, res) => {

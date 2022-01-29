@@ -12,6 +12,7 @@ router.get("/", IngredientControllers.readIngredients);
 router.get("/consumableID", IngredientControllers.consumableID);
 router.get("/name", IngredientControllers.searchByName)
 router.get("/byID", IngredientControllers.getIngredientByID);
+router.get("/allNames", IngredientControllers.getAllIngredientsName);
 
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);

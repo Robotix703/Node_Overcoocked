@@ -15,3 +15,9 @@ exports.getIngredientByName = async function(ingredientName){
         return result[0];
     });
 }
+
+exports.getAllIngredientsName = async function(){
+    return Ingredient.find().then((result) => {
+        return result.map(e => e.name);
+    })
+}
