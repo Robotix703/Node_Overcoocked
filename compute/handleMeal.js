@@ -11,8 +11,7 @@ exports.initPantryInventory = async function(){
 }
 
 function checkDisponibility(ingredientID, quantity){
-    const ingredientFound = g_pantryInventory.find(e => e.ingredientID == ingredientID);
-
+    const ingredientFound = g_pantryInventory.find(e => e.ingredientID.toString() == ingredientID.toString());
     if(ingredientFound) return quantity < ingredientFound.quantityLeft;
     
     return false;
@@ -24,7 +23,7 @@ exports.checkIfMealIsReady = async function(mealID){
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
 
     for(ingredient of ingredientsNeeded){
-        if(!checkDisponibility(ingredient.ingredientID, ingredient.quantity)) return false;
+        if(!checkDisponibility(ingredient.ingredient._id, ingredient.quantity)) return false;
     }
     return true;
 }

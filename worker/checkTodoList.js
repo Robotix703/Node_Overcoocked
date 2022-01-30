@@ -6,17 +6,29 @@ const baseIngredient = require("../compute/base/ingredient");
 const TodoItem = require("../models/todoItem");
 const Pantry = require("../models/pantry");
 
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
 async function addIngredientToPantry (itemText) {
     const textSplit = itemText.split(" - ");
     const ingredientName = textSplit[0];
-    const quantity = textSplit[1];
+    const quantity = textSplit[1].split(" ")[0];
 
-    const ingredientID = await baseIngredient.getIngredientByName(ingredientName);
+    const ingredient = await baseIngredient.getIngredientByName(ingredientName);
+    
+    let expirationDate = new Date();
+    if(ingredient.shelfLife != -1){
+        expirationDate = expirationDate.addDays(ingredient.shelfLife);
+    }
 
     const pantry = new Pantry({
-        ingredientID: ingredientID,
-        quantity: quantity
-    })
+        ingredientID: ingredient._id,
+        quantity: quantity,
+        expirationDate: expirationDate || null
+    });
 
     return pantry.save();
 }

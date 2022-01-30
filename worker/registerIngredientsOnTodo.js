@@ -3,7 +3,7 @@ const Todoist = require("../modules/Todoist/main");
 const TodoItem = require("../models/todoItem");
 
 function formatIngredient(ingredient) {
-  return ingredient.ingredientName + " - " + ingredient.quantity + " " + ingredient.unitOfMeasure;
+  return ingredient.ingredient.name + " - " + ingredient.quantity + " " + ingredient.ingredient.unitOfMeasure;
 }
 
 async function registerItem(itemID, itemText) {
