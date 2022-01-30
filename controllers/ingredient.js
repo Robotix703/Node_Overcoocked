@@ -10,7 +10,10 @@ exports.writeIngredient = (req, res) => {
   const ingredient = new Ingredient({
     name: req.body.name,
     imagePath: url + "/images/" + req.file.filename,
-    consumable: req.body.consumable ? req.body.consumable : true
+    consumable: req.body.consumable,
+    category: req.body.category,
+    unitOfMeasure: req.body.unitOfMeasure,
+    shelfLife: req.body.shelfLife ? req.body.shelfLife : -1
   });
 
   ingredient.save()
@@ -116,7 +119,10 @@ exports.editIngredient = (req, res) => {
     _id: req.params.id,
     name: req.body.name,
     imagePath: imagePath,
-    consumable: consumable ?? true
+    consumable: consumable,
+    category: req.body.category,
+    unitOfMeasure: req.body.unitOfMeasure,
+    shelfLife: req.body.shelfLife ?? -1
   });
 
   Ingredient.updateOne({ _id: req.params.id }, ingredient)
