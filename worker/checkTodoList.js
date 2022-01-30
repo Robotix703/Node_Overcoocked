@@ -1,6 +1,7 @@
 require('dotenv').config();
 const Todoist = require("../modules/Todoist/main");
-const getIngredientsIDByName = require("../compute/getIngredientsIDByName");
+
+const baseIngredient = require("../compute/base/ingredient");
 
 const TodoItem = require("../models/todoItem");
 const Pantry = require("../models/pantry");
@@ -10,7 +11,7 @@ async function addIngredientToPantry (itemText) {
     const ingredientName = textSplit[0];
     const quantity = textSplit[1];
 
-    let ingredientID = await (await getIngredientsIDByName.getIngredientsIDByName([ingredientName]))[0];
+    let ingredientID = await baseIngredient.getIngredientByName(ingredientName);
 
     const pantry = new Pantry({
         ingredientID: ingredientID,

@@ -1,6 +1,6 @@
 const baseMeal = require("./base/meal");
 const basePantry = require("./base/pantry");
-const recipeIngredientsNeeded = require("./recipeIngredientsNeeded");
+const recipeIngredientsNeeded = require("./handleRecipe");
 
 function comparePantriesByQuantity(x, y){
     if(x.quantity > y.quantity) return 1;

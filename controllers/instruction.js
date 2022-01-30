@@ -1,6 +1,7 @@
-const { getIngredientsIDByName } = require('../compute/getIngredientsIDByName');
 const Instruction = require('./../models/instruction');
-const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
+
+const recipeIngredientsNeeded = require("../compute/handleRecipe");
+const baseIngredient = require("../compute/base/ingredient");
 
 //POST
 exports.writeInstruction = (req, res) => {
@@ -27,7 +28,7 @@ exports.writeInstructionByIngredientName = async (req, res) => {
   const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
   const recipeID = req.body.recipeID;
 
-  let ingredientsID = await getIngredientsIDByName(ingredientsName);
+  let ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
 
   if (ingredientsID[0]) {
     const instruction = new Instruction({

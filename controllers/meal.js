@@ -1,9 +1,8 @@
 const Meal = require('./../models/meal');
 
 const baseMeal = require("../compute/base/meal");
-const recipeIngredientsNeeded = require("../compute/recipeIngredientsNeeded");
-const checkIfMealIsReady = require("../compute/checkIfMealIsReady");
-const displayMeals = require("../compute/displayMeals");
+const recipeIngredientsNeeded = require("../compute/handleRecipe");
+const checkIfMealIsReady = require("../compute/handleMeal");
 const updatePantryWhenMealsIsDone = require("../compute/updatePantryWhenMealIsDone");
 
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
@@ -88,7 +87,7 @@ exports.checkIfReady = async (req, res) => {
   });
 }
 exports.displayable = async (req, res) => {
-  let mealsData = await displayMeals.displayMealWithRecipeAndState();
+  let mealsData = await checkIfMealIsReady.displayMealWithRecipeAndState();
 
   res.status(200).json(mealsData);
 }

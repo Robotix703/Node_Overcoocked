@@ -21,3 +21,23 @@ exports.getAllIngredientsName = async function(){
         return result.map(e => e.name);
     })
 }
+
+exports.getIngredientsIDByName = async function(ingredientsName){
+    let ingredientsID = [];
+
+    for(ingredientName of ingredientsName){
+        const ingredient = await this.getIngredientByName(ingredientName);
+        ingredientsID.push(ingredient);
+    }
+    return ingredientsID;
+}
+
+exports.getIngredientsNameFromIDs = async function (ingredientIDs) {
+    let ingredientsName = [];
+
+    for (ingredientID of ingredientIDs) {
+        const ingredientName = await this.getIngredientNameByID(ingredientID);
+        ingredientsName.push(ingredientName);
+    }
+    return ingredientsName;
+}
