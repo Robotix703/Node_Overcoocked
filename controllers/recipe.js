@@ -1,4 +1,5 @@
 const Recipe = require('./../models/recipe');
+const baseRecipe = require("../compute/base/recipe");
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
@@ -50,6 +51,16 @@ exports.readRecipes = (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.getRecipeByID = async (req, res) => {
+  baseRecipe.getRecipeByID(req.query.recipeID).then((result) => {
+    res.status(200).json(result);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 
 //PUT

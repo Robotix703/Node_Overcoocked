@@ -9,6 +9,7 @@ const router = express.Router();
 
 //GET
 router.get("/", RecipeControllers.readRecipes);
+router.get("/byID", RecipeControllers.getRecipeByID);
 
 //POST
 router.post("/", extractFile, RecipeControllers.writeRecipe);
