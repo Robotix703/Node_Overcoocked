@@ -46,6 +46,7 @@ exports.readMeals = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const mealQuery = Meal.find();
+  let fetchedMeals = [];
 
   if (pageSize && currentPage) {
     mealQuery
@@ -55,7 +56,11 @@ exports.readMeals = (req, res) => {
 
   mealQuery
     .then(documents => {
-      res.status(200).json({ meals: documents, count: Meal.count() });
+      fetchedMeals = documents;
+      return Meal.count();
+    })
+    .then(count => {
+      res.status(200).json({ meals: fetchedMeals, count: count });
     })
     .catch(error => {
       res.status(500).json({

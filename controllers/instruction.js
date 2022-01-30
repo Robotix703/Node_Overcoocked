@@ -60,6 +60,7 @@ exports.readInstructions = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const instructionQuery = Instruction.find();
+  let fetchedInstructions = [];
 
   if (pageSize && currentPage) {
     instructionQuery
@@ -69,7 +70,11 @@ exports.readInstructions = (req, res) => {
 
   instructionQuery
     .then(documents => {
-      res.status(200).json({ instructions: documents, instructionCount: Instruction.count() });
+      fetchedInstructions = documents;
+      return Instruction.count();
+    })
+    .then(count => {
+      res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
     })
     .catch(error => {
       res.status(500).json({

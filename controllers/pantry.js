@@ -52,6 +52,7 @@ exports.readPantries = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const pantryQuery = Pantry.find();
+  let fetchedPantries = [];
 
   if (pageSize && currentPage) {
     pantryQuery
@@ -61,7 +62,11 @@ exports.readPantries = (req, res) => {
 
   pantryQuery
     .then(documents => {
-      res.status(200).json({ pantries: documents, pantryCount: Pantry.count() });
+      fetchedPantries = documents;
+      return Pantry.count();
+    })
+    .then(count => {
+      res.status(200).json({ pantries: fetchedPantries, pantryCount: count });
     })
     .catch(error => {
       res.status(500).json({

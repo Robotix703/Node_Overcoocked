@@ -30,6 +30,7 @@ exports.readIngredients = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const ingredientQuery = Ingredient.find();
+  let fetchedIngredients = [];
 
   if (pageSize && currentPage) {
     ingredientQuery
@@ -39,7 +40,11 @@ exports.readIngredients = (req, res) => {
 
   ingredientQuery
     .then(documents => {
-      res.status(200).json({ ingredients: documents, ingredientCount: Ingredient.count() });
+      fetchedIngredients = documents;
+      return Ingredient.count();
+    })
+    .then(count => {
+      res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
     })
     .catch(error => {
       res.status(500).json({
@@ -59,9 +64,15 @@ exports.consumableID = (req, res) => {
     });
 }
 exports.searchByName = (req, res) => {
+  let fetchedIngredients = [];
+  
   Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } })
     .then(documents => {
-      res.status(200).json({ ingredients: documents, ingredientCount: Ingredient.count() });
+      fetchedIngredients = documents;
+      return Ingredient.count();
+    })
+    .then(count => {
+      res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
     })
     .catch(error => {
       res.status(500).json({
