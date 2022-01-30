@@ -3,7 +3,7 @@ const Scheduler = require("../modules/scheduler/main");
 let activeTasks = [];
 
 exports.addperiodicTask = function(task, cronSettings, taskName){
-    let job = Scheduler.createJob(task, cronSettings);
+    const job = Scheduler.createJob(task, cronSettings);
 
     activeTasks.push({
         name: taskName,
@@ -13,26 +13,22 @@ exports.addperiodicTask = function(task, cronSettings, taskName){
 }
 
 exports.stopTask = function(taskName){
-    let activeTask = activeTasks.find(e => e.name == taskName);
+    const activeTask = activeTasks.find(e => e.name == taskName);
 
     if(activeTask){
         Scheduler.cancelJob(activeTask.job);
         activeTasks = activeTasks.filter(e => e.name != taskName);
         return true;
     }
-    else{
-        return false;
-    }
+    return false;
 }
 
 exports.triggerTask = function(taskName){
-    let activeTask = activeTasks.find(e => e.name == taskName);
+    const activeTask = activeTasks.find(e => e.name == taskName);
 
     if(activeTask){
         activeTask.task();
         return true;
     }
-    else{
-        return false;
-    }
+    return false;
 }

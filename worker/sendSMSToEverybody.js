@@ -13,8 +13,7 @@ function processPhoneNumber(phoneNumbers){
 }
 
 exports.fetchPhoneNumber = async function(){
-    let phoneNumbers = await baseUser.getAllUserPhoneNumber();
-
+    const phoneNumbers = await baseUser.getAllUserPhoneNumber();
     processPhoneNumber(phoneNumbers);
 }
 

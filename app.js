@@ -10,7 +10,6 @@ BDD.connectToDataBase()
 .then(() => {
     console.log("BDD - Connectée");
 
-    //Init modules
     iniWorkers.init();
 })
 .catch((error) => {

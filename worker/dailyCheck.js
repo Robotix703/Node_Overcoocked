@@ -2,10 +2,9 @@ const checkIfMealIsReady = require("../compute/handleMeal");
 const smsSender = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){
-    let mealsState = await checkIfMealIsReady.checkMealList();
+    const mealsState = await checkIfMealIsReady.checkMealList();
 
     let notReadyMeals = [];
-
     for(mealState of mealsState){
         if(!mealState.ready) notReadyMeals.push(mealState);
     }
@@ -23,7 +22,6 @@ async function checkPlannedMeals(){
 
 exports.dailyCheck = async function(){
     let messageToSend = "";
-
     messageToSend += await checkPlannedMeals();
 
     smsSender.sendSMS(messageToSend);

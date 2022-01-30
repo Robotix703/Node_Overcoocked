@@ -7,11 +7,11 @@ const TodoItem = require("../models/todoItem");
 const Pantry = require("../models/pantry");
 
 async function addIngredientToPantry (itemText) {
-    let textSplit = itemText.split(" - ");
+    const textSplit = itemText.split(" - ");
     const ingredientName = textSplit[0];
     const quantity = textSplit[1];
 
-    let ingredientID = await baseIngredient.getIngredientByName(ingredientName);
+    const ingredientID = await baseIngredient.getIngredientByName(ingredientName);
 
     const pantry = new Pantry({
         ingredientID: ingredientID,
@@ -31,7 +31,7 @@ async function getItemOnMongo() {
 
 async function checkDeleteItem(todoItems, mongoItems) {
     for (item of mongoItems) {
-        let itemFound = (todoItems.find(e => e.id == item.todoID) != undefined);
+        const itemFound = (todoItems.find(e => e.id == item.todoID) != undefined);
 
         if (!itemFound) {
             //Add to pantry
@@ -44,8 +44,8 @@ async function checkDeleteItem(todoItems, mongoItems) {
 }
 
 exports.checkTodoList = async function () {
-    let todoItems = await Todoist.getItemsInProjectByName(process.env.TODOPROJECT);
-    let mongoItems = await getItemOnMongo();
+    const todoItems = await Todoist.getItemsInProjectByName(process.env.TODOPROJECT);
+    const mongoItems = await getItemOnMongo();
 
     await checkDeleteItem(todoItems, mongoItems);
 }
