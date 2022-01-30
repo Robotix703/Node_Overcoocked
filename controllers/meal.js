@@ -1,21 +1,20 @@
 const Meal = require('./../models/meal');
 
 const baseMeal = require("../compute/base/meal");
-const recipeIngredientsNeeded = require("../compute/handleRecipe");
-const checkIfMealIsReady = require("../compute/handleMeal");
+const handleRecipe = require("../compute/handleRecipe");
+const handleMeal = require("../compute/handleMeal");
 const updatePantryWhenMealsIsDone = require("../compute/updatePantryWhenMealIsDone");
 
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
 
 //POST
-exports.writeMeal = async function(req, res){
+exports.writeMeal = async function (req, res) {
   const meal = new Meal({
     recipeID: req.body.recipeID,
     numberOfLunchPlanned: req.body.numberOfLunchPlanned
   });
 
-  let ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
-
+  const ingredientsNeeded = await handleRecipe.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
   registerIngredientOnTodo.registerIngredient(ingredientsNeeded);
 
   meal.save()
@@ -28,20 +27,15 @@ exports.writeMeal = async function(req, res){
       })
     });
 }
-exports.consumeMeal = async function(req, res){
-
-  if(req.body.mealID) 
-  {
+exports.consumeMeal = async function (req, res) {
+  if (req.body.mealID) {
     await updatePantryWhenMealsIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
+    const result = await baseMeal.deleteMeal(req.body.mealID);
 
-    let result = await baseMeal.deleteMeal(req.body.mealID);
-
-    if(result.deletedCount > 0){
-      res.status(200).json({status: "ok"});
-      return;
-    }else{
+    if (result.deletedCount > 0) {
+      res.status(200).json({ status: "ok" });
+    } else {
       res.status(500).send("Wrong ID");
-      return;
     }
   }
 }
@@ -52,7 +46,6 @@ exports.readMeals = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const mealQuery = Meal.find();
-  let fetchedMeals;
 
   if (pageSize && currentPage) {
     mealQuery
@@ -62,11 +55,7 @@ exports.readMeals = (req, res) => {
 
   mealQuery
     .then(documents => {
-      fetchedMeals = documents;
-      return Meal.count();
-    })
-    .then(count => {
-      res.status(200).json({ meals: fetchedMeals, count: count });
+      res.status(200).json({ meals: documents, count: Meal.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -75,26 +64,30 @@ exports.readMeals = (req, res) => {
     });
 }
 exports.checkIfReady = async (req, res) => {
-  const mealID = req.query.mealID;
-
-  checkIfMealIsReady.checkIfMealIsReady(mealID).then((ready) => {
+  handleMeal.checkIfMealIsReady(req.query.mealID).then((ready) => {
     res.status(200).json(ready);
   })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
-    })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.displayable = async (req, res) => {
-  let mealsData = await checkIfMealIsReady.displayMealWithRecipeAndState();
-
-  res.status(200).json(mealsData);
+  handleMeal.displayMealWithRecipeAndState()
+    .then((mealsData) => {
+      res.status(200).json(mealsData);
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 
 //PUT
 exports.updateMeal = (req, res) => {
-  let meal = new Meal({
+  const meal = new Meal({
     _id: req.params.id,
     recipeID: req.body.recipeID,
     numberOfLunchPlanned: req.body.numberOfLunchPlanned

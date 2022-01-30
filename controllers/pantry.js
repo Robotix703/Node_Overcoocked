@@ -27,7 +27,7 @@ exports.writePantry = (req, res) => {
     });
 }
 exports.writePantryByIngredientName = async (req, res) => {
-  let ingredientID = await baseIngredient.getIngredientByName(req.body.ingredientName);
+  const ingredientID = await baseIngredient.getIngredientByName(req.body.ingredientName);
 
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
@@ -52,7 +52,6 @@ exports.readPantries = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const pantryQuery = Pantry.find();
-  let fetchedPantries;
 
   if (pageSize && currentPage) {
     pantryQuery
@@ -62,11 +61,7 @@ exports.readPantries = (req, res) => {
 
   pantryQuery
     .then(documents => {
-      fetchedPantries = documents;
-      return Pantry.count();
-    })
-    .then(count => {
-      res.status(200).json({ pantries: fetchedPantries, pantryCount: count });
+      res.status(200).json({ pantries: documents, pantryCount: Pantry.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -77,12 +72,9 @@ exports.readPantries = (req, res) => {
 exports.quantityLeft = (req, res) => {
   const ingredientID = req.query.ingredientID;
 
-  let pantryQuery = Pantry.find({ingredientID: ingredientID});
-  let fetchedPantries;
-
-  pantryQuery
+  Pantry.find({ingredientID: ingredientID})
     .then(documents => {
-      fetchedPantries = [...documents];
+      const fetchedPantries = [...documents];
       let sum = 0;
       fetchedPantries.forEach((e) => {
         sum += e.quantity;
@@ -98,12 +90,9 @@ exports.quantityLeft = (req, res) => {
 exports.getNearestExpirationDate = (req, res) => {
   const ingredientID = req.query.ingredientID;
 
-  let pantryQuery = Pantry.find({ingredientID: ingredientID});
-  let fetchedPantries;
-
-  pantryQuery
+  Pantry.find({ingredientID: ingredientID})
     .then(documents => {
-      fetchedPantries = [...documents];
+      const fetchedPantries = [...documents];
       let nearestExpirationDate = new Date();
       nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);
       fetchedPantries.forEach((e) => {
@@ -118,13 +107,19 @@ exports.getNearestExpirationDate = (req, res) => {
     });
 }
 exports.getFullPantryInventory = async (req, res) => {
-  let fullInventory = await pantryInventory.getFullInventory();
-
-  res.status(200).json(fullInventory);
+  pantryInventory.getFullInventory()
+  .then((fullInventory) => {
+    res.status(200).json(fullInventory);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 exports.getPantryByID = async (req, res) => {
-  let pantry = await basePantry.getPantryByID(req.query.pantryID);
-  let ingredientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
+  const pantry = await basePantry.getPantryByID(req.query.pantryID);
+  const ingredientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
 
   res.status(200).json({
     _id: pantry._id,
@@ -137,7 +132,7 @@ exports.getPantryByID = async (req, res) => {
 
 //PUT
 exports.updatePantry = (req, res) => {
-  let pantry = new Pantry({
+  const pantry = new Pantry({
     _id: req.params.id,
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,

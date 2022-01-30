@@ -29,7 +29,6 @@ exports.readRecipes = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const recipeQuery = Recipe.find();
-  let fetchedRecipes;
 
   if (pageSize && currentPage) {
     recipeQuery
@@ -39,11 +38,7 @@ exports.readRecipes = (req, res) => {
 
   recipeQuery
     .then(documents => {
-      fetchedRecipes = documents;
-      return Recipe.count();
-    })
-    .then(count => {
-      res.status(200).json({ recipes: fetchedRecipes, count: count });
+      res.status(200).json({ recipes: documents, count: Recipe.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -54,7 +49,7 @@ exports.readRecipes = (req, res) => {
 
 //PUT
 exports.updateRecipe = (req, res) => {
-  let recipe = new Recipe({
+  const recipe = new Recipe({
     _id: req.params.id,
     title: req.body.title,
     numberOfLunch: req.body.numberOfLunch,

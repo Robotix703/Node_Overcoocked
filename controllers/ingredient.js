@@ -30,7 +30,6 @@ exports.readIngredients = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const ingredientQuery = Ingredient.find();
-  let fetchedIngredients;
 
   if (pageSize && currentPage) {
     ingredientQuery
@@ -40,11 +39,7 @@ exports.readIngredients = (req, res) => {
 
   ingredientQuery
     .then(documents => {
-      fetchedIngredients = documents;
-      return Ingredient.count();
-    })
-    .then(count => {
-      res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
+      res.status(200).json({ ingredients: documents, ingredientCount: Ingredient.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -53,16 +48,9 @@ exports.readIngredients = (req, res) => {
     });
 }
 exports.consumableID = (req, res) => {
-  let ingredientQuery = Ingredient.find({ consumable: true });
-  let fetchedingredients;
-
-  ingredientQuery
+  Ingredient.find({ consumable: true })
     .then(documents => {
-      fetchedingredients = [...documents];
-      return documents.length;
-    })
-    .then(count => {
-      res.status(200).json({ IngredientsID: fetchedingredients.map(e => e._id), count: count });
+      res.status(200).json({ IngredientsID: documents.map(e => e._id), count: documents.length });
     })
     .catch(error => {
       res.status(500).json({
@@ -71,17 +59,9 @@ exports.consumableID = (req, res) => {
     });
 }
 exports.searchByName = (req, res) => {
-  let ingredientQuery = Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } });
-
-  let fetchedIngredients;
-
-  ingredientQuery
+  Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } })
     .then(documents => {
-      fetchedIngredients = documents;
-      return Ingredient.count();
-    })
-    .then(count => {
-      res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
+      res.status(200).json({ ingredients: documents, ingredientCount: Ingredient.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -90,14 +70,26 @@ exports.searchByName = (req, res) => {
     });
 }
 exports.getIngredientByID = async (req, res) => {
-  let ingredient = await baseIngredient.getIngredientByID(req.query.ingredientID);
-
-  res.status(200).json(ingredient);
+  baseIngredient.getIngredientByID(req.query.ingredientID)
+  .then((ingredient) => {
+    res.status(200).json(ingredient);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 exports.getAllIngredientsName = async (req, res) => {
-  let ingredientsName = await baseIngredient.getAllIngredientsName();
-
-  res.status(200).json(ingredientsName);
+  baseIngredient.getAllIngredientsName()
+  .then((ingredientsName) => {
+    res.status(200).json(ingredientsName);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 
 //PUT

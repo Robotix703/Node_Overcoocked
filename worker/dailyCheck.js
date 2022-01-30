@@ -1,4 +1,4 @@
-const checkIfMealIsReady = require("../compute/checkIfMealIsReady");
+const checkIfMealIsReady = require("../compute/handleMeal");
 const smsSender = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){

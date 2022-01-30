@@ -47,7 +47,7 @@ exports.checkMealList = async function(){
 
 exports.displayMealWithRecipeAndState = async function(){
     const allMeals = await baseMeal.getAllMeals();
-    await checkIfMealIsReady.initPantryInventory();
+    await this.initPantryInventory();
 
     let mealData = [];
 

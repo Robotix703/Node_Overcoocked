@@ -1,4 +1,4 @@
-const Instruction = require('./../models/instruction');
+const Instruction = require('../../models/instruction');
 
 exports.getInstructionByID = async function(instructionID){
     return Instruction.findById(instructionID);

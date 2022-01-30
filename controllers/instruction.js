@@ -1,6 +1,6 @@
 const Instruction = require('./../models/instruction');
 
-const recipeIngredientsNeeded = require("../compute/handleRecipe");
+const handleRecipe = require("../compute/handleRecipe");
 const baseIngredient = require("../compute/base/ingredient");
 
 //POST
@@ -28,7 +28,7 @@ exports.writeInstructionByIngredientName = async (req, res) => {
   const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
   const recipeID = req.body.recipeID;
 
-  let ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
+  const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
 
   if (ingredientsID[0]) {
     const instruction = new Instruction({
@@ -50,7 +50,7 @@ exports.writeInstructionByIngredientName = async (req, res) => {
   } else {
     res.status(500).json({
       errorMessage: "No valid ingredient"
-    })
+    });
   }
 }
 
@@ -60,7 +60,6 @@ exports.readInstructions = (req, res) => {
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const instructionQuery = Instruction.find();
-  let fetchedInstructions;
 
   if (pageSize && currentPage) {
     instructionQuery
@@ -70,11 +69,7 @@ exports.readInstructions = (req, res) => {
 
   instructionQuery
     .then(documents => {
-      fetchedInstructions = documents;
-      return Instruction.count();
-    })
-    .then(count => {
-      res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
+      res.status(200).json({ instructions: documents, instructionCount: Instruction.count() });
     })
     .catch(error => {
       res.status(500).json({
@@ -83,11 +78,10 @@ exports.readInstructions = (req, res) => {
     });
 }
 exports.getByRecipeID = (req, res) => {
-  const recipeID = req.query.recipeID;
-
-  recipeIngredientsNeeded.getIngredientsName(recipeID).then(instructions => {
-    res.status(200).json({ Instructions: instructions });
-  })
+  handleRecipe.getIngredientsName(req.query.recipeID)
+    .then(instructions => {
+      res.status(200).json({ Instructions: instructions });
+    })
     .catch(error => {
       res.status(500).json({
         errorMessage: error
@@ -97,7 +91,7 @@ exports.getByRecipeID = (req, res) => {
 
 //PUT
 exports.updateInstruction = (req, res) => {
-  let instruction = new Instruction({
+  const instruction = new Instruction({
     _id: req.params.id,
     text: req.body.text,
     recipeID: req.body.recipeID,
