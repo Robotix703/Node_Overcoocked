@@ -10,7 +10,10 @@ exports.writeRecipe = (req, res) => {
   const recipe = new Recipe({
     title: req.body.title,
     numberOfLunch: req.body.numberOfLunch,
-    imagePath: url + "/images/" + req.file.filename
+    imagePath: url + "/images/" + req.file.filename,
+    category: req.body.category,
+    duration: req.body.duration,
+    score: req.body.score ?? undefined
   });
 
   recipe.save()
@@ -69,7 +72,10 @@ exports.updateRecipe = (req, res) => {
     _id: req.params.id,
     title: req.body.title,
     numberOfLunch: req.body.numberOfLunch,
-    imagePath: req.body.imagePath
+    imagePath: req.body.imagePath,
+    category: req.body.category,
+    duration: req.body.duration,
+    score: req.body.score ?? undefined
   });
 
   Recipe.updateOne({ _id: req.params.id }, recipe)
