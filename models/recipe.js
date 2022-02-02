@@ -6,7 +6,8 @@ const recipeSchema = mongoose.Schema({
   imagePath: { type: String, required: true},
   category: { type: String, required: true },
   duration: { type: Number, required: true },
-  score: { type: Number }
+  score: { type: Number },
+  lastCooked: { type: Date }
 });
 
 module.exports = mongoose.model('Recipe', recipeSchema);

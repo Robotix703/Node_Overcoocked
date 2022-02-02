@@ -13,7 +13,8 @@ exports.writeRecipe = (req, res) => {
     imagePath: url + "/images/" + req.file.filename,
     category: req.body.category,
     duration: req.body.duration,
-    score: req.body.score ?? undefined
+    score: req.body.score ?? undefined,
+    lastCooked: req.body.lastCooked ? Date(req.body.lastCooked) : undefined
   });
 
   recipe.save()
@@ -75,7 +76,8 @@ exports.updateRecipe = (req, res) => {
     imagePath: req.body.imagePath,
     category: req.body.category,
     duration: req.body.duration,
-    score: req.body.score ?? undefined
+    score: req.body.score ?? undefined,
+    lastCooked: req.body.lastCooked ? Date(req.body.lastCooked) : undefined
   });
 
   Recipe.updateOne({ _id: req.params.id }, recipe)
