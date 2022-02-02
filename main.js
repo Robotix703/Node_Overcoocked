@@ -8,13 +8,9 @@ BDD.connectToDataBase()
     console.error(error);
 });
 
-const pantryInventory = require("./compute/pantryInventory.js");
+const baseRecipe = require("./compute/base/recipe.js");
 
 setTimeout(async () => {
-    let result = await pantryInventory.getFullInventory();
+    let result = await baseRecipe.updateLastCooked("61f2f959c79e3c830e6d3a56", "2022-01-29T16:58:42.000Z");
     console.log(result);
-    for(element of result){
-        console.log(element.ingredientName);
-        console.log(element.pantries);
-    }
 }, 1000)

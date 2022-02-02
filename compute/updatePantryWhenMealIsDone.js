@@ -1,5 +1,6 @@
 const baseMeal = require("./base/meal");
 const basePantry = require("./base/pantry");
+const baseRecipe = require("../compute/base/recipe");
 const recipeIngredientsNeeded = require("./handleRecipe");
 
 function comparePantriesByQuantity(x, y){
@@ -51,6 +52,8 @@ async function consumeIngredientFromPantry(ingredientID, quantity){
 
 exports.updatePantryWhenMealsIsDone = async function(mealID){
     const meal = await baseMeal.getMealByID(mealID);
+
+    baseRecipe.updateLastCooked(meal.recipeID, Date.now());
 
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
     for(ingredient of ingredientsNeeded){
