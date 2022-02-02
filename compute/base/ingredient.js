@@ -27,7 +27,7 @@ exports.getIngredientsIDByName = async function(ingredientsName){
 
     for(ingredientName of ingredientsName){
         const ingredient = await this.getIngredientByName(ingredientName);
-        ingredientsID.push(ingredient);
+        ingredientsID.push(ingredient._id);
     }
     return ingredientsID;
 }

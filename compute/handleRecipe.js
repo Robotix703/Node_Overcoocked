@@ -29,6 +29,12 @@ adaptQuantity = function (ingredientList, numberOfLunch) {
     });
 }
 
+sortInstructions = function(x, y){
+    if (x.order < y.order) return -1;
+    if (x.order > y.order) return 1;
+    return 0;
+}
+
 exports.getIngredientList = async function (recipeID, numberOfLunch) {
     const instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
 
@@ -52,8 +58,9 @@ exports.getIngredientList = async function (recipeID, numberOfLunch) {
     return ingredientsNeeded;
 }
 
-exports.getIngredientsName = async function (recipeID) {
-    const instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
+exports.getInstructionsByRecipeID = async function (recipeID) {
+    let instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
+    instructions.sort(sortInstructions);
 
     let newInstruction = [];
     for (instruction of instructions) {
@@ -69,7 +76,9 @@ exports.getIngredientsName = async function (recipeID) {
             _id: instruction._id,
             text: instruction.text,
             recipeID: instruction.recipeID,
-            composition: composition
+            composition: composition,
+            order: instruction.order,
+            cookingTime: instruction.cookingTime
         });
     }
     return newInstruction;

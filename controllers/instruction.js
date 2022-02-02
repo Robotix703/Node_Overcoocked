@@ -2,6 +2,7 @@ const Instruction = require('./../models/instruction');
 
 const handleRecipe = require("../compute/handleRecipe");
 const baseIngredient = require("../compute/base/ingredient");
+const handleInstructions = require("../compute/handleInstructions");
 
 //POST
 exports.writeInstruction = (req, res) => {
@@ -9,7 +10,9 @@ exports.writeInstruction = (req, res) => {
     text: req.body.text,
     recipeID: req.body.recipeID,
     ingredientsID: req.body.ingredients,
-    quantity: req.body.quantity
+    quantity: req.body.quantity,
+    order: req.body.order,
+    cookingTime: req.body.cookingTime ?? undefined
   });
 
   instruction.save()
@@ -23,19 +26,19 @@ exports.writeInstruction = (req, res) => {
     });
 }
 exports.writeInstructionByIngredientName = async (req, res) => {
-  const text = req.body.text;
   const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
   const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
-  const recipeID = req.body.recipeID;
 
   const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
 
   if (ingredientsID[0]) {
     const instruction = new Instruction({
-      text: text,
-      recipeID: recipeID,
+      text: req.body.text,
+      recipeID: req.body.recipeID,
       ingredientsID: ingredientsID,
-      quantity: ingredientsQuantity
+      quantity: ingredientsQuantity,
+      order: req.body.order,
+      cookingTime: req.body.cookingTime ?? undefined
     })
 
     instruction.save()
@@ -83,7 +86,7 @@ exports.readInstructions = (req, res) => {
     });
 }
 exports.getByRecipeID = (req, res) => {
-  handleRecipe.getIngredientsName(req.query.recipeID)
+  handleRecipe.getInstructionsByRecipeID(req.query.recipeID)
     .then(instructions => {
       res.status(200).json({ Instructions: instructions });
     })
@@ -93,6 +96,10 @@ exports.getByRecipeID = (req, res) => {
       })
     });
 }
+exports.getInstructionCountForRecipe = async (req, res) => {
+  let count = await handleInstructions.getInstructionCountForRecipe(req.query.recipeID);
+  res.status(200).json(count);
+}
 
 //PUT
 exports.updateInstruction = (req, res) => {
@@ -101,7 +108,9 @@ exports.updateInstruction = (req, res) => {
     text: req.body.text,
     recipeID: req.body.recipeID,
     ingredientsID: [req.body.instructions],
-    quantity: [req.body.quantity]
+    quantity: [req.body.quantity],
+    order: req.body.order,
+    cookingTime: req.body.cookingTime ?? undefined
   });
 
   Instruction.updateOne({ _id: req.params.id }, instruction)
