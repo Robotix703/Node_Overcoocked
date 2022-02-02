@@ -6,7 +6,8 @@ const ingredientSchema = mongoose.Schema({
   consumable: { type: Boolean, required: true },
   category: { type: String, required: true },
   unitOfMeasure: { type: String, required: true },
-  shelfLife: { type: Number }
+  shelfLife: { type: Number },
+  freezable: { type: Boolean, required: true }
 });
 
 module.exports = mongoose.model('Ingredient', ingredientSchema);

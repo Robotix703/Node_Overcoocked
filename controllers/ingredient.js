@@ -13,7 +13,8 @@ exports.writeIngredient = (req, res) => {
     consumable: req.body.consumable,
     category: req.body.category,
     unitOfMeasure: req.body.unitOfMeasure,
-    shelfLife: req.body.shelfLife ? req.body.shelfLife : -1
+    shelfLife: req.body.shelfLife ? req.body.shelfLife : -1,
+    freezable: req.body.freezable
   });
 
   ingredient.save()
@@ -122,7 +123,8 @@ exports.editIngredient = (req, res) => {
     consumable: consumable,
     category: req.body.category,
     unitOfMeasure: req.body.unitOfMeasure,
-    shelfLife: req.body.shelfLife ?? -1
+    shelfLife: req.body.shelfLife ?? -1,
+    freezable: req.body.freezable
   });
 
   Ingredient.updateOne({ _id: req.params.id }, ingredient)
