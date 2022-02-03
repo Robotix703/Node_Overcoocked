@@ -22,10 +22,39 @@ async function addItemsInProjectByName(name, items){
         project_id: projectID
     }
 
-    return await todoist.items.add(itemsToAdd)
+    return await todoist.items.add(itemsToAdd);
+}
+
+async function updateItemInProjectByName(name, itemID, content){
+    await todoist.sync(["all"]);
+
+    const projectID = todoist.projects.get().filter(e => e.name == name)[0].id;
+
+    let itemsToUpdate = {
+        id: itemID,
+        content: content,
+        project_id: projectID
+    }
+
+    return await todoist.items.update(itemsToUpdate);
+}
+
+async function deleteItemInProjectByName(name, itemID){
+    await todoist.sync(["all"]);
+
+    const projectID = todoist.projects.get().filter(e => e.name == name)[0].id;
+
+    let itemsToDelete = {
+        id: itemID,
+        project_id: projectID
+    }
+
+    return await todoist.items.delete(itemsToDelete);
 }
 
 module.exports = {
     getItemsInProjectByName,
-    addItemsInProjectByName
+    addItemsInProjectByName,
+    updateItemInProjectByName,
+    deleteItemInProjectByName
 }
