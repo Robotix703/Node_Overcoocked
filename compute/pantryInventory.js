@@ -59,7 +59,7 @@ exports.getFullInventory = async function(){
     let prettyPantries = [];
 
     for(pantry of allPantry){
-        const ingredient = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
+        let ingredient = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
 
         if(ingredient){
             //Add pantry
@@ -71,6 +71,7 @@ exports.getFullInventory = async function(){
                 ingredientID: pantry.ingredientID,
                 ingredientName: ingredientInfo.name,
                 ingredientImagePath: ingredientInfo.imagePath,
+                ingredientFreezable: ingredientInfo.freezable,
                 pantries: [pantry]
             })
         }

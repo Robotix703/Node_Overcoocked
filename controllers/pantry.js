@@ -2,6 +2,7 @@ const Pantry = require('../models/pantry');
 const pantryInventory = require("../compute/pantryInventory");
 const baseIngredient = require("../compute/base/ingredient");
 const basePantry = require("../compute/base/pantry");
+const handlePantry = require("../compute/handlePantry");
 
 //POST
 exports.writePantry = (req, res) => {
@@ -13,7 +14,8 @@ exports.writePantry = (req, res) => {
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: Date(year, month, day)
+    expirationDate: Date(year, month, day),
+    frozen: req.body.frozen
   });
 
   pantry.save()
@@ -32,7 +34,8 @@ exports.writePantryByIngredientName = async (req, res) => {
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
     quantity: req.body.quantity,
-    expirationDate: Date(req.body.expirationDate)
+    expirationDate: Date(req.body.expirationDate),
+    frozen: req.body.frozen
   });
 
   pantry.save()
@@ -44,6 +47,10 @@ exports.writePantryByIngredientName = async (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.freezePantry = async (req, res) => {
+  await handlePantry.freezePantry(req.body.pantryID);
+  res.status(201).json({result: "OK"});
 }
 
 //GET
@@ -141,7 +148,8 @@ exports.updatePantry = (req, res) => {
     _id: req.params.id,
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: req.body.expirationDate
+    expirationDate: req.body.expirationDate,
+    frozen: req.body.frozen
   });
 
   Pantry.updateOne({ _id: req.params.id }, pantry)
