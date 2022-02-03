@@ -6,10 +6,11 @@ function formatIngredient(ingredient) {
   return ingredient.ingredient.name + " - " + ingredient.quantity + " " + ingredient.ingredient.unitOfMeasure;
 }
 
-async function registerItem(itemID, itemText) {
+async function registerItem(itemID, itemText, name) {
   const todoItem = new TodoItem({
     todoID: itemID,
-    text: itemText
+    text: itemText,
+    ingredientName: name
   });
 
   todoItem.save()
@@ -26,6 +27,6 @@ exports.registerIngredient = async function (ingredientList) {
   for (ingredient of ingredientList) {
     const ingredientText = formatIngredient(ingredient);
     const todoItem = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
-    await registerItem(todoItem.id, ingredientText);
+    await registerItem(todoItem.id, ingredientText, ingredient.ingredient.name);
   }
 }
