@@ -4,6 +4,8 @@ const baseIngredient = require("../compute/base/ingredient");
 const basePantry = require("../compute/base/pantry");
 const handlePantry = require("../compute/handlePantry");
 
+const checkTodoList = require("../worker/checkTodoList");
+
 //POST
 exports.writePantry = (req, res) => {
   const dateSplit = req.body.expirationDate.split("/");
@@ -50,6 +52,10 @@ exports.writePantryByIngredientName = async (req, res) => {
 }
 exports.freezePantry = async (req, res) => {
   await handlePantry.freezePantry(req.body.pantryID);
+  res.status(201).json({result: "OK"});
+}
+exports.refreshTodoist = async (req, res) => {
+  await checkTodoList.checkTodoList();
   res.status(201).json({result: "OK"});
 }
 

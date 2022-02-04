@@ -17,6 +17,7 @@ router.get("/byID", PantryControllers.getPantryByID);
 router.post("/", PantryControllers.writePantry);
 router.post("/createByIngredientName", PantryControllers.writePantryByIngredientName);
 router.post("/freeze", PantryControllers.freezePantry);
+router.post("/refreshTodoist", PantryControllers.refreshTodoist);
 
 //PUT
 router.put("/:id", checkAuth, PantryControllers.updatePantry);
