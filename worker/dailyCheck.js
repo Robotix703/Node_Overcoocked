@@ -1,4 +1,6 @@
 const checkIfMealIsReady = require("../compute/handleMeal");
+const handlePantry = require("../compute/handlePantry");
+
 const smsSender = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){
@@ -20,9 +22,20 @@ async function checkPlannedMeals(){
     }
 }
 
+async function checkPantry(){
+    let almostExpired = await handlePantry.checkPantryExpiration();
+    let message = "Les ingrédients suivants vont périmer : ";
+
+    for(element of almostExpired){
+        message += element.ingredientName + "(" + element.quantity + ")(" + element.expirationDate + ")";
+    }
+    return message;
+}
+
 exports.dailyCheck = async function(){
     let messageToSend = "";
     messageToSend += await checkPlannedMeals();
+    messageToSend += await checkPantry();
 
     smsSender.sendSMS(messageToSend);
 }

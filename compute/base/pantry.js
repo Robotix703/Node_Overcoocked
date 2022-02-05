@@ -19,3 +19,7 @@ exports.getAllPantries = async function(){
 exports.getPantryByID = async function(pantryID){
     return Pantry.findById(pantryID);
 }
+
+exports.getAllPantryWithExpirationDate = async function(){
+    return Pantry.find({expirationDate: {$exists: true}});
+}
