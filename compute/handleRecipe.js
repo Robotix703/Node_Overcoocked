@@ -1,5 +1,6 @@
 const baseIngredient = require("./base/ingredient");
 const baseInstruction = require("./base/instruction");
+const baseRecipe = require("./base/recipe");
 
 getIngredientIDFromInstruction = async function (instructionID) {
     const instruction = await baseInstruction.getInstructionByID(instructionID);
@@ -23,9 +24,9 @@ concatList = function (originalList, additionList) {
     })
 }
 
-adaptQuantity = function (ingredientList, numberOfLunch) {
+adaptQuantity = function (ingredientList, numberOfLunch, numberOfLunchRecipe) {
     ingredientList.forEach((ingredient) => {
-        ingredient.quantity *= numberOfLunch;
+        ingredient.quantity *= (numberOfLunch / numberOfLunchRecipe);
     });
 }
 
@@ -37,6 +38,7 @@ sortInstructions = function(x, y){
 
 exports.getIngredientList = async function (recipeID, numberOfLunch) {
     const instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
+    const recipe = await baseRecipe.getRecipeByID(recipeID);
 
     let ingredientsNeeded = [];
     for (instruction of instructions) {
@@ -51,7 +53,7 @@ exports.getIngredientList = async function (recipeID, numberOfLunch) {
         }
 
         if (!newIngredients.reason) {
-            adaptQuantity(newIngredients, numberOfLunch);
+            adaptQuantity(newIngredients, numberOfLunch, recipe.numberOfLunch);
             concatList(ingredientsNeeded, newIngredients);
         }
     }

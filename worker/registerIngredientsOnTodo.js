@@ -1,30 +1,14 @@
 require('dotenv').config();
 const Todoist = require("../modules/Todoist/main");
-const TodoItem = require("../models/todoItem");
-const handleTodoItem = require("../compute/handleTodoItem")
+
+const handleTodoItem = require("../compute/handleTodoItem");
+const handleIngredient = require("../compute/handleIngredient");
 
 function formatIngredient(ingredient) {
   return ingredient.ingredient.name + " - " + ingredient.quantity + " " + ingredient.ingredient.unitOfMeasure;
 }
 
-async function registerItem(itemID, itemText, name) {
-  const todoItem = new TodoItem({
-    todoID: itemID,
-    text: itemText,
-    ingredientName: name
-  });
-
-  todoItem.save()
-    .then(result => {
-      return true;
-    })
-    .catch(error => {
-      console.error(error);
-      return false;
-    });
-}
-
-async function updateTodoItem(existingIngredient, newIngredient){
+async function updateTodoItem(existingIngredient, newIngredient, consumable){
   const textSplit = existingIngredient[0].text.split(" - ");
   const quantity = textSplit[1].split(" ")[0];
 
@@ -32,23 +16,24 @@ async function updateTodoItem(existingIngredient, newIngredient){
   const ingredientText = formatIngredient(ingredient);
 
   await Todoist.updateItemInProjectByName(process.env.TODOPROJECT, existingIngredient[0].todoID, ingredientText);
-  await handleTodoItem.updateTodoItem(existingIngredient[0]._id, existingIngredient[0].todoID, ingredientText, newIngredient.ingredient.name);
+  if(consumable) await handleTodoItem.updateTodoItem(existingIngredient[0]._id, existingIngredient[0].todoID, ingredientText, newIngredient.ingredient.name);
 }
 
-async function addTodoItem(ingredient){
+async function addTodoItem(ingredient, consumable){
   const ingredientText = formatIngredient(ingredient);
   const todoItem = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
-  await registerItem(todoItem.id, ingredientText, ingredient.ingredient.name);
+  if(consumable) await handleTodoItem.registerTodoItem(todoItem.id, ingredientText, ingredient.ingredient.name);
 }
 
 exports.registerIngredient = async function (ingredientList) {
   for (ingredient of ingredientList) {
     let existingIngredient = await handleTodoItem.checkIfIngredientIsAlreadyInTodo(ingredient.ingredient.name);
+    let consumable = await handleIngredient.getConsumable(ingredient.ingredient._id);
 
-    if(existingIngredient){
-      await updateTodoItem(existingIngredient, ingredient);
+    if(existingIngredient.length > 0){
+      await updateTodoItem(existingIngredient, ingredient, consumable);
     }else{
-      await addTodoItem(ingredient);
+      await addTodoItem(ingredient, consumable);
     }
   }
 }
