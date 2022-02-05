@@ -19,17 +19,20 @@ function checkDisponibility(ingredientID, quantity){
 
 exports.checkIfMealIsReady = async function(mealID){
     const meal = await baseMeal.getMealByID(mealID);
-
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
 
     for(ingredient of ingredientsNeeded){
-        if(!checkDisponibility(ingredient.ingredient._id, ingredient.quantity)) return false;
+        if(ingredient.ingredient.consumable)
+        {
+            if(!checkDisponibility(ingredient.ingredient._id, ingredient.quantity)) return false;
+        }
     }
     return true;
 }
 
 exports.checkMealList = async function(){
     const allMeals = await baseMeal.getAllMeals();
+    await this.initPantryInventory();
 
     let mealState = [];
     for(oneMeal of allMeals){

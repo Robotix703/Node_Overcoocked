@@ -34,7 +34,7 @@ exports.checkPantryExpiration = async function(){
             almostExpired.push({
                 ingredientName: ingredientName,
                 quantity: pantry.quantity,
-                expirationDate: pantry.expirationDate
+                expirationDate: pantry.expirationDate.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })
             })
         }
     }

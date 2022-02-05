@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const Pantry = require('../models/pantry');
 const pantryInventory = require("../compute/pantryInventory");
 const baseIngredient = require("../compute/base/ingredient");
@@ -8,15 +10,10 @@ const checkTodoList = require("../worker/checkTodoList");
 
 //POST
 exports.writePantry = (req, res) => {
-  const dateSplit = req.body.expirationDate.split("/");
-  const year = dateSplit[2];
-  const month = dateSplit[1];
-  const day = dateSplit[0];
-
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: Date(year, month, day),
+    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
     frozen: req.body.frozen
   });
 
@@ -36,8 +33,8 @@ exports.writePantryByIngredientName = async (req, res) => {
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
     quantity: req.body.quantity,
-    expirationDate: Date(req.body.expirationDate),
-    frozen: req.body.frozen
+    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
+    frozen: req.body.frozen ?? false
   });
 
   pantry.save()
@@ -154,7 +151,7 @@ exports.updatePantry = (req, res) => {
     _id: req.params.id,
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: req.body.expirationDate,
+    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
     frozen: req.body.frozen
   });
 

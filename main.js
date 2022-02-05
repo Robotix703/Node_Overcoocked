@@ -14,9 +14,9 @@ const Todoist = require("./modules/Todoist/main");
 Todoist.deleteItemInProjectByName(process.env.TODOPROJECT, "5559538308");
 */
 
-const baseTodoItem = require("./compute/base/todoItem");
+const handlePantry = require("./compute/handlePantry");
 
 setTimeout(async () => {
-    let result = await baseTodoItem.getTodoItemByIngredientName("Pates");
+    let result = await handlePantry.checkPantryExpiration();
     console.log(result);
 }, 1000)

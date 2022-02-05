@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 const Recipe = require('./../models/recipe');
 const baseRecipe = require("../compute/base/recipe");
 
@@ -14,7 +16,7 @@ exports.writeRecipe = (req, res) => {
     category: req.body.category,
     duration: req.body.duration,
     score: req.body.score ?? undefined,
-    lastCooked: req.body.lastCooked ? Date(req.body.lastCooked) : undefined
+    lastCooked: undefined
   });
 
   recipe.save()
@@ -77,7 +79,7 @@ exports.updateRecipe = (req, res) => {
     category: req.body.category,
     duration: req.body.duration,
     score: req.body.score ?? undefined,
-    lastCooked: req.body.lastCooked ? Date(req.body.lastCooked) : undefined
+    lastCooked: req.body.lastCooked ? moment(req.body.expirationDate, "DD/MM/YYYY") : undefined
   });
 
   Recipe.updateOne({ _id: req.params.id }, recipe)

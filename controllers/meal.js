@@ -4,6 +4,7 @@ const baseMeal = require("../compute/base/meal");
 const handleRecipe = require("../compute/handleRecipe");
 const handleMeal = require("../compute/handleMeal");
 const updatePantryWhenMealsIsDone = require("../compute/updatePantryWhenMealIsDone");
+const checkIfMealIsReady = require("../compute/handleMeal");
 
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
 
@@ -69,9 +70,11 @@ exports.readMeals = (req, res) => {
     });
 }
 exports.checkIfReady = async (req, res) => {
-  handleMeal.checkIfMealIsReady(req.query.mealID).then((ready) => {
-    res.status(200).json(ready);
-  })
+  await checkIfMealIsReady.initPantryInventory();
+  handleMeal.checkIfMealIsReady(req.query.mealID)
+    .then((ready) => {
+      res.status(200).json(ready);
+    })
     .catch(error => {
       res.status(500).json({
         errorMessage: error

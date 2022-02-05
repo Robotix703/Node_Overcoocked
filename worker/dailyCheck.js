@@ -1,10 +1,11 @@
-const checkIfMealIsReady = require("../compute/handleMeal");
+const handleMeal = require("../compute/handleMeal");
 const handlePantry = require("../compute/handlePantry");
 
 const smsSender = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){
-    const mealsState = await checkIfMealIsReady.checkMealList();
+    await handleMeal.initPantryInventory();
+    const mealsState = await handleMeal.checkMealList();
 
     let notReadyMeals = [];
     for(mealState of mealsState){
