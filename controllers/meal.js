@@ -16,7 +16,7 @@ exports.writeMeal = async function (req, res) {
   });
 
   const ingredientsNeeded = await handleRecipe.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
-  registerIngredientOnTodo.registerIngredient(ingredientsNeeded);
+  registerIngredientOnTodo.registerIngredients(ingredientsNeeded);
 
   meal.save()
     .then(result => {

@@ -24,6 +24,7 @@ const instructionRoutes = require("./routes/instruction");
 const recipeRoutes = require("./routes/recipe");
 const pantryRoutes = require("./routes/pantry");
 const mealRoutes = require("./routes/meal");
+const todoItemRoutes = require("./routes/todoItem");
 
 const app = express();
 
@@ -47,5 +48,6 @@ app.use("/api/instruction", instructionRoutes);
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/pantry", pantryRoutes);
 app.use("/api/meal", mealRoutes);
+app.use("/api/todoItem", todoItemRoutes);
 
 module.exports = app;
