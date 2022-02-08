@@ -106,6 +106,17 @@ exports.getAllIngredientsName = async (req, res) => {
     })
   });
 }
+exports.filteredIngredients = async (req, res) => {
+  baseIngredient.getFilteredIngredient(req.query.category)
+  .then((result) => {
+    res.status(200).json(result);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
+}
 
 //PUT
 exports.editIngredient = (req, res) => {
