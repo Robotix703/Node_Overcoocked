@@ -68,6 +68,28 @@ exports.getRecipeByID = async (req, res) => {
     })
   });
 }
+exports.getFilteredRecipe = async (req, res) => {
+  baseRecipe.filterRecipe(req.query.category)
+  .then((result) => {
+    res.status(200).json(result);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
+}
+exports.getRecipeByName = async (req, res) => {
+  baseRecipe.searchByName(req.query.name)
+  .then((result) => {
+    res.status(200).json(result);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
+}
 
 //PUT
 exports.updateRecipe = (req, res) => {
