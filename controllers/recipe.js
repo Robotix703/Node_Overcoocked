@@ -50,7 +50,7 @@ exports.readRecipes = (req, res) => {
       return Recipe.count();
     })
     .then(count => {
-      res.status(200).json({ recipes: fetchedRecipes, count: count});
+      res.status(200).json({ recipes: fetchedRecipes, count: count });
     })
     .catch(error => {
       res.status(500).json({
@@ -62,33 +62,41 @@ exports.getRecipeByID = async (req, res) => {
   baseRecipe.getRecipeByID(req.query.recipeID).then((result) => {
     res.status(200).json(result);
   })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
-    })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.getFilteredRecipe = async (req, res) => {
-  baseRecipe.filterRecipe(req.query.category)
-  .then((result) => {
-    res.status(200).json(result);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+  baseRecipe.filterRecipe(req.query.category, req.query.name, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
+    .then(documents => {
+      fetchedRecipes = documents;
+      return Recipe.count();
     })
-  });
+    .then(count => {
+      res.status(200).json({ recipes: fetchedRecipes, count: count });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.getRecipeByName = async (req, res) => {
   baseRecipe.searchByName(req.query.name)
-  .then((result) => {
-    res.status(200).json(result);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then(documents => {
+      fetchedRecipes = documents;
+      return Recipe.count();
     })
-  });
+    .then(count => {
+      res.status(200).json({ recipes: fetchedRecipes, count: count });
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 
 //PUT
