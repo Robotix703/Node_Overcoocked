@@ -141,7 +141,8 @@ exports.getPantryByID = async (req, res) => {
     ingredientID: pantry.ingredientID,
     quantity: pantry.quantity,
     expirationDate: pantry.expirationDate || null,
-    ingredientName: ingredientName
+    ingredientName: ingredientName,
+    frozen: pantry.frozen
   });
 }
 
