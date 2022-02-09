@@ -17,7 +17,7 @@ router.get("/byName", RecipeControllers.getRecipeByName);
 router.post("/", extractFile, RecipeControllers.writeRecipe);
 
 //PUT
-router.put("/:id", checkAuth, RecipeControllers.updateRecipe);
+router.put("/:id", RecipeControllers.updateRecipe);
 
 //DELETE
 router.delete("/:id", checkAuth, RecipeControllers.deleteRecipe);

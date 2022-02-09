@@ -101,21 +101,19 @@ exports.getRecipeByName = async (req, res) => {
 
 //PUT
 exports.updateRecipe = (req, res) => {
-  const recipe = new Recipe({
-    _id: req.params.id,
-    title: req.body.title,
-    numberOfLunch: req.body.numberOfLunch,
-    imagePath: req.body.imagePath,
-    category: req.body.category,
-    duration: req.body.duration,
-    score: req.body.score ?? undefined,
-    lastCooked: req.body.lastCooked ? moment(req.body.expirationDate, "DD/MM/YYYY") : undefined
-  });
-
-  Recipe.updateOne({ _id: req.params.id }, recipe)
+  baseRecipe.updateRecipe(
+    req.params.id,
+    req.body.title,
+    req.body.numberOfLunch,
+    req.body.imagePath,
+    req.body.category,
+    req.body.duration,
+    req.body.score ?? undefined,
+    req.body.lastCooked ? moment(req.body.expirationDate, "DD/MM/YYYY") : undefined
+  )
     .then(result => {
       if (result.modifiedCount > 0) {
-        res.status(200).json(recipe);
+        res.status(200).json({status: "OK"});
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }

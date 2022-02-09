@@ -25,3 +25,17 @@ exports.filterRecipe = async function (category, name, pageSize, currentPage) {
 exports.searchByName = async function (name) {
     return Recipe.find({ 'title': { "$regex": name, "$options": "i" } });
 }
+
+exports.updateRecipe = async function (_id, title, numberOfLunch, imagePath, category, duration, score, lastCooked){
+    let elementToUpdate = { _id: _id };
+
+    if(title) elementToUpdate.title = title;
+    if(numberOfLunch) elementToUpdate.numberOfLunch = numberOfLunch;
+    if(imagePath) elementToUpdate.imagePath = imagePath;
+    if(category) elementToUpdate.category = category;
+    if(duration) elementToUpdate.duration = duration;
+    if(score) elementToUpdate.score = score;
+    if(lastCooked) elementToUpdate.lastCooked = lastCooked;
+
+    return Recipe.updateOne({ _id: _id }, elementToUpdate);
+}
