@@ -14,9 +14,19 @@ const Todoist = require("./modules/Todoist/main");
 Todoist.deleteItemInProjectByName(process.env.TODOPROJECT, "5559538308");
 */
 
-const handlePantry = require("./compute/handlePantry");
+/*
+const handleMeal = require("./compute/handleMeal");
 
 setTimeout(async () => {
-    let result = await handlePantry.checkPantryExpiration();
-    console.log(result);
+    let result = await handleMeal.checkMealList();
+    console.log("Available", result[0].ingredientAvailable);
+    console.log("AlmostExpire", result[0].state.ingredientAlmostExpire);
+    console.log("Unavailable", result[0].state.ingredientUnavailable);
+}, 1000)
+*/
+
+const dailyCheck = require("./worker/dailyCheck");
+
+setTimeout(async () => {
+    await dailyCheck.dailyCheck();
 }, 1000)

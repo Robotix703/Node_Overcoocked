@@ -6,17 +6,29 @@ const smsSender = require("./sendSMSToEverybody");
 async function checkPlannedMeals(){
     await handleMeal.initPantryInventory();
     const mealsState = await handleMeal.checkMealList();
+    const mealTotal = await handleMeal.getMealNumber();
 
     let notReadyMeals = [];
+    let almostExpiredMeals = [];
     for(mealState of mealsState){
-        if(!mealState.ready) notReadyMeals.push(mealState);
+        if(mealState.state.ingredientUnavailable) notReadyMeals.push(mealState);
+        else if(mealState.state.ingredientAlmostExpire) almostExpiredMeals.push(mealState);
     }
 
     if(notReadyMeals.length > 0){
         let message = "";
         for(mealNotReady of notReadyMeals){
-            message += "Le repas " + mealNotReady.title + " n'est pas prêt";
+            message += "Le repas " + mealNotReady.title + " n'est pas prêt\n";
         }
+
+        for(mealAlmostExpire of almostExpiredMeals){
+            message += "Le repas " + mealAlmostExpire.title + " va bientôt périmer\n";
+        }
+
+        if(mealTotal == notReadyMeals.length){
+            message += "ATTENTION aucun repas n'est prêt\n";
+        }
+
         return message;
     }else{
         return "";
@@ -25,16 +37,21 @@ async function checkPlannedMeals(){
 
 async function checkPantry(){
     let almostExpired = await handlePantry.checkPantryExpiration();
-    let message = "Les ingrédients suivants vont périmer : ";
 
-    for(element of almostExpired){
-        message += element.ingredientName + "(" + element.quantity + ")(" + element.expirationDate + ")";
+    let message = "";
+    if(almostExpired.length > 0)
+    {
+        message = "\nLes ingrédients suivants vont périmer :\n";
+
+        for(element of almostExpired){
+            message += element.ingredientName + " (Qty: " + element.quantity + ")(Exp: " + element.expirationDate + ")\n";
+        }
     }
     return message;
 }
 
 exports.dailyCheck = async function(){
-    let messageToSend = "";
+    let messageToSend = "Information du jour\n\n";
     messageToSend += await checkPlannedMeals();
     messageToSend += await checkPantry();
 
