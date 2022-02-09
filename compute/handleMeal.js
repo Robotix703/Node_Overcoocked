@@ -23,6 +23,8 @@ function checkDisponibility(ingredientID, quantity){
             let dateNow = new Date();
             dateNow = dateNow.addDays(3);
 
+            if(!ingredientFound.expirationDate) return 0;
+            
             if(ingredientFound.expirationDate.getTime() < dateNow.getTime()){
                 return -1;
             }
