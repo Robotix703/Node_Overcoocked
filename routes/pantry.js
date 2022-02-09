@@ -20,7 +20,7 @@ router.post("/freeze", PantryControllers.freezePantry);
 router.post("/refreshTodoist", PantryControllers.refreshTodoist);
 
 //PUT
-router.put("/:id", checkAuth, PantryControllers.updatePantry);
+router.put("/:id", PantryControllers.updatePantry);
 
 //DELETE
 router.delete("/:id", checkAuth, PantryControllers.deletePantry);

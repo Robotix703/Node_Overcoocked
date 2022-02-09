@@ -13,7 +13,7 @@ exports.writePantry = (req, res) => {
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: req.body.expirationDate? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
+    expirationDate: req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
     frozen: req.body.frozen
   });
 
@@ -29,11 +29,10 @@ exports.writePantry = (req, res) => {
 }
 exports.writePantryByIngredientName = async (req, res) => {
   const ingredientID = await baseIngredient.getIngredientByName(req.body.ingredientName);
-
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
     quantity: req.body.quantity,
-    expirationDate: req.body.expirationDate? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
+    expirationDate: req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
     frozen: req.body.frozen ?? false
   });
 
@@ -49,11 +48,11 @@ exports.writePantryByIngredientName = async (req, res) => {
 }
 exports.freezePantry = async (req, res) => {
   await handlePantry.freezePantry(req.body.pantryID);
-  res.status(201).json({result: "OK"});
+  res.status(201).json({ result: "OK" });
 }
 exports.refreshTodoist = async (req, res) => {
   await checkTodoList.checkTodoList();
-  res.status(201).json({result: "OK"});
+  res.status(201).json({ result: "OK" });
 }
 
 //GET
@@ -87,14 +86,14 @@ exports.readPantries = (req, res) => {
 exports.quantityLeft = (req, res) => {
   const ingredientID = req.query.ingredientID;
 
-  Pantry.find({ingredientID: ingredientID})
+  Pantry.find({ ingredientID: ingredientID })
     .then(documents => {
       const fetchedPantries = [...documents];
       let sum = 0;
       fetchedPantries.forEach((e) => {
         sum += e.quantity;
       })
-      res.status(200).json({quantityLeft: sum});
+      res.status(200).json({ quantityLeft: sum });
     })
     .catch(error => {
       res.status(500).json({
@@ -105,15 +104,15 @@ exports.quantityLeft = (req, res) => {
 exports.getNearestExpirationDate = (req, res) => {
   const ingredientID = req.query.ingredientID;
 
-  Pantry.find({ingredientID: ingredientID})
+  Pantry.find({ ingredientID: ingredientID })
     .then(documents => {
       const fetchedPantries = [...documents];
       let nearestExpirationDate = new Date();
       nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);
       fetchedPantries.forEach((e) => {
-        if(e.expirationDate < nearestExpirationDate) nearestExpirationDate = e.expirationDate;
+        if (e.expirationDate < nearestExpirationDate) nearestExpirationDate = e.expirationDate;
       })
-      res.status(200).json({nearestExpirationDate: nearestExpirationDate});
+      res.status(200).json({ nearestExpirationDate: nearestExpirationDate });
     })
     .catch(error => {
       res.status(500).json({
@@ -123,14 +122,14 @@ exports.getNearestExpirationDate = (req, res) => {
 }
 exports.getFullPantryInventory = async (req, res) => {
   pantryInventory.getFullInventory()
-  .then((fullInventory) => {
-    res.status(200).json(fullInventory);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then((fullInventory) => {
+      res.status(200).json(fullInventory);
     })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.getPantryByID = async (req, res) => {
   const pantry = await basePantry.getPantryByID(req.query.pantryID);
@@ -147,19 +146,23 @@ exports.getPantryByID = async (req, res) => {
 }
 
 //PUT
-exports.updatePantry = (req, res) => {
-  const pantry = new Pantry({
-    _id: req.params.id,
-    ingredientID: req.body.ingredientID,
-    quantity: req.body.quantity,
-    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
-    frozen: req.body.frozen
-  });
+exports.updatePantry = async (req, res) => {
+  let ingredientID = "";
+  if(req.body.ingredientName){
+    let ingredient = await baseIngredient.getIngredientByName(req.body.ingredientName);
+    ingredientID = ingredient._id;
+  }
 
-  Pantry.updateOne({ _id: req.params.id }, pantry)
+  basePantry.updatePantry(
+    req.params.id,
+    ingredientID,
+    req.body.quantity,
+    req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
+    req.body.frozen
+  )
     .then(result => {
       if (result.modifiedCount > 0) {
-        res.status(200).json(recipe);
+        res.status(200).json({status: "OK"});
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }

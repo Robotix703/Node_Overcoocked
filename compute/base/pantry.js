@@ -23,3 +23,14 @@ exports.getPantryByID = async function(pantryID){
 exports.getAllPantryWithExpirationDate = async function(){
     return Pantry.find({expirationDate: {$exists: true}});
 }
+
+exports.updatePantry = async function(_id, ingredientID, quantity, expirationDate, frozen){
+    let elementToUpdate = { _id: _id };
+
+    if(ingredientID) elementToUpdate.ingredientID = ingredientID;
+    if(quantity) elementToUpdate.quantity = quantity;
+    if(expirationDate) elementToUpdate.expirationDate = expirationDate;
+    if(frozen) elementToUpdate.frozen = frozen;
+
+    return Pantry.updateOne({ _id: _id }, elementToUpdate);
+}
