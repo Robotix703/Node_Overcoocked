@@ -13,7 +13,7 @@ exports.writePantry = (req, res) => {
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
-    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
+    expirationDate: req.body.expirationDate? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
     frozen: req.body.frozen
   });
 
@@ -33,7 +33,7 @@ exports.writePantryByIngredientName = async (req, res) => {
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
     quantity: req.body.quantity,
-    expirationDate: moment(req.body.expirationDate, "DD/MM/YYYY"),
+    expirationDate: req.body.expirationDate? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
     frozen: req.body.frozen ?? false
   });
 
