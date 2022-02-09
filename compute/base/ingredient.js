@@ -48,3 +48,16 @@ exports.getFilteredIngredient = async function (category) {
 
     return Ingredient.find(filters);
 }
+
+exports.updateIngredient = async function(_id, name, consumable, category, unitOfMeasure, shelfLife, freezable){
+    let elementToUpdate = { _id: _id };
+
+    if(name) elementToUpdate.name = name;
+    if(consumable) elementToUpdate.consumable = consumable;
+    if(category) elementToUpdate.category = category;
+    if(unitOfMeasure) elementToUpdate.unitOfMeasure = unitOfMeasure;
+    if(shelfLife) elementToUpdate.shelfLife = shelfLife;
+    if(freezable) elementToUpdate.freezable = freezable;
+
+    return Ingredient.updateOne({ _id: _id }, elementToUpdate);
+}

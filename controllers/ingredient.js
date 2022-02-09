@@ -69,7 +69,7 @@ exports.consumableID = (req, res) => {
 }
 exports.searchByName = (req, res) => {
   let fetchedIngredients = [];
-  
+
   Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } })
     .then(documents => {
       fetchedIngredients = documents;
@@ -86,64 +86,54 @@ exports.searchByName = (req, res) => {
 }
 exports.getIngredientByID = async (req, res) => {
   baseIngredient.getIngredientByID(req.query.ingredientID)
-  .then((ingredient) => {
-    res.status(200).json(ingredient);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then((ingredient) => {
+      res.status(200).json(ingredient);
     })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.getAllIngredientsName = async (req, res) => {
   baseIngredient.getAllIngredientsName()
-  .then((ingredientsName) => {
-    res.status(200).json(ingredientsName);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then((ingredientsName) => {
+      res.status(200).json(ingredientsName);
     })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 exports.filteredIngredients = async (req, res) => {
   baseIngredient.getFilteredIngredient(req.query.category)
-  .then((result) => {
-    res.status(200).json(result);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then((result) => {
+      res.status(200).json(result);
     })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 
 //PUT
 exports.editIngredient = (req, res) => {
-  let imagePath = req.body.imagePath;
-
-  if (req.file) {
-    const url = protocol + '://' + req.get("host");
-    imagePath = url + "/images/" + req.file.filename
-  }
-
-  let ingredient = new Ingredient({
-    _id: req.params.id,
-    name: req.body.name,
-    imagePath: imagePath,
-    consumable: consumable,
-    category: req.body.category,
-    unitOfMeasure: req.body.unitOfMeasure,
-    shelfLife: req.body.shelfLife ?? -1,
-    freezable: req.body.freezable
-  });
-
-  Ingredient.updateOne({ _id: req.params.id }, ingredient)
+  baseIngredient.updateIngredient(
+    req.params.id,
+    req.body.name,
+    req.body.consumable,
+    req.body.category,
+    req.body.unitOfMeasure,
+    req.body.shelfLife ?? -1,
+    req.body.freezable
+  )
     .then(result => {
-      if (result.n > 0) {
-        res.status(200).json(ingredient);
+      if (result.modifiedCount > 0) {
+        res.status(200).json({ status: "OK" });
       } else {
-        res.status(401).json({ message: "Pas d'autorisation" });
+        res.status(401).json({ message: "Pas de modification" });
       }
     })
     .catch(error => {
