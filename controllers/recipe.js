@@ -2,6 +2,8 @@ const moment = require('moment');
 
 const Recipe = require('./../models/recipe');
 const baseRecipe = require("../compute/base/recipe");
+const baseMeal = require("../compute/base/meal");
+const handleRecipe = require("../compute/handleRecipe");
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
@@ -97,6 +99,28 @@ exports.getRecipeByName = async (req, res) => {
         errorMessage: error
       })
     });
+}
+exports.getPrettyRecipe = async (req, res) => {
+
+  let recipeID = "";
+  if(req.query.recipeID){
+    recipeID = req.query.recipeID;
+  } else {
+    if(req.query.mealID){
+      let meal = await baseMeal.getMealByID(req.query.mealID);
+      recipeID = meal.recipeID;
+    }
+  }
+
+  handleRecipe.getPrettyRecipe(recipeID)
+  .then(result => {
+    res.status(200).json(result);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
 }
 
 //PUT

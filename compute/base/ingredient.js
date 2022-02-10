@@ -10,6 +10,16 @@ exports.getIngredientByID = async function (ingredientID) {
     return Ingredient.findById(ingredientID);
 }
 
+exports.getIngredientsByID = async function (ingredientsID){
+    let ingredients = [];
+
+    for (ingredientID of ingredientsID) {
+        const ingredient = await this.getIngredientByID(ingredientID);
+        ingredients.push(ingredient);
+    }
+    return ingredients;
+}
+
 exports.getIngredientByName = async function (ingredientName) {
     return Ingredient.find({ name: ingredientName }).then((result) => {
         return result[0];

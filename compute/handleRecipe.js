@@ -67,11 +67,16 @@ exports.getInstructionsByRecipeID = async function (recipeID) {
     let newInstruction = [];
     for (instruction of instructions) {
         const ingredientsID = await getIngredientIDFromInstruction(instruction._id);
-        const ingredientsName = await baseIngredient.getIngredientsNameFromIDs(ingredientsID.map(e => e.ingredientID));
+        const ingredients = await baseIngredient.getIngredientsByID(ingredientsID.map(e => e.ingredientID));
 
         let composition = [];
-        for (let i = 0; i < ingredientsName.length; i++) {
-            composition.push({ name: ingredientsName[i], quantity: instruction.quantity[i] });
+        for (let i = 0; i < ingredients.length; i++) {
+            composition.push(
+                { 
+                    name: ingredients[i].name,
+                    imagePath: ingredients[i].imagePath,
+                    quantity: instruction.quantity[i]
+                });
         }
         
         newInstruction.push({
@@ -84,4 +89,19 @@ exports.getInstructionsByRecipeID = async function (recipeID) {
         });
     }
     return newInstruction;
+}
+
+exports.getPrettyRecipe = async function(recipeID){
+    let instructions = await this.getInstructionsByRecipeID(recipeID);
+    let recipeData = await baseRecipe.getRecipeByID(recipeID);
+    
+    return {
+        _id: recipeData._id,
+        title: recipeData.title,
+        numberOfLunch: recipeData.numberOfLunch,
+        category: recipeData.category,
+        duration: recipeData.duration,
+        score: recipeData.score,
+        instructions: instructions
+    };
 }
