@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
 exports.createUser = (req, res) => {
+  console.log(req.body.invitationCode)
+  console.log(process.env.INVITECODE)
   if (req.body.invitationCode !== process.env.INVITECODE) {
     res.status(500).json({
       message: "Wrong invitation code"
