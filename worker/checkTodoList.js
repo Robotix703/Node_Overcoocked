@@ -20,7 +20,7 @@ async function addIngredientToPantry (itemText) {
     const ingredient = await baseIngredient.getIngredientByName(ingredientName);
     
     let expirationDate = new Date();
-    if(ingredient.shelfLife != -1){
+    if(ingredient.shelfLife){
         expirationDate = expirationDate.addDays(ingredient.shelfLife);
     }
 

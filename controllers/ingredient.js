@@ -13,7 +13,7 @@ exports.writeIngredient = (req, res) => {
     consumable: req.body.consumable,
     category: req.body.category,
     unitOfMeasure: req.body.unitOfMeasure,
-    shelfLife: req.body.shelfLife ? req.body.shelfLife : -1,
+    shelfLife: req.body.shelfLife ? req.body.shelfLife : undefined,
     freezable: req.body.freezable
   });
 
