@@ -14,6 +14,7 @@ router.get("/name", IngredientControllers.searchByName);
 router.get("/byID", IngredientControllers.getIngredientByID);
 router.get("/allNames", IngredientControllers.getAllIngredientsName);
 router.get("/filter", IngredientControllers.filteredIngredients);
+router.get("/forAutocomplete", IngredientControllers.getAllIngredientForAutocomplete);
 
 //POST
 router.post("/", extractFile, IngredientControllers.writeIngredient);

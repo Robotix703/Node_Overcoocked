@@ -71,3 +71,7 @@ exports.updateIngredient = async function(_id, name, consumable, category, unitO
 
     return Ingredient.updateOne({ _id: _id }, elementToUpdate);
 }
+
+exports.getAllIngredients = async function(){
+    return Ingredient.find();
+}

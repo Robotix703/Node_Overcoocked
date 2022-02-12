@@ -89,7 +89,7 @@ exports.readInstructions = (req, res) => {
 exports.getByRecipeID = (req, res) => {
   handleRecipe.getInstructionsByRecipeID(req.query.recipeID)
     .then(instructions => {
-      res.status(200).json({ Instructions: instructions });
+      res.status(200).json(instructions);
     })
     .catch(error => {
       res.status(500).json({

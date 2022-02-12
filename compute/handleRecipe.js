@@ -75,7 +75,8 @@ exports.getInstructionsByRecipeID = async function (recipeID) {
                 { 
                     name: ingredients[i].name,
                     imagePath: ingredients[i].imagePath,
-                    quantity: instruction.quantity[i]
+                    quantity: instruction.quantity[i],
+                    unitOfMeasure: ingredients[i].unitOfMeasure
                 });
         }
         

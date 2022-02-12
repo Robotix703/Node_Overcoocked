@@ -117,6 +117,21 @@ exports.filteredIngredients = async (req, res) => {
       })
     });
 }
+exports.getAllIngredientForAutocomplete = async (req, res) => {
+  baseIngredient.getAllIngredients()
+  .then((result) => {
+    let prettyIngredient = [];
+    for(element of result){
+      prettyIngredient.push(element.name + " - " + element.unitOfMeasure);
+    }
+    res.status(200).json(prettyIngredient);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
+}
 
 //PUT
 exports.editIngredient = (req, res) => {
