@@ -2,6 +2,7 @@ const Instruction = require('./../models/instruction');
 
 const handleRecipe = require("../compute/handleRecipe");
 const baseIngredient = require("../compute/base/ingredient");
+const baseInstruction = require("../compute/base/instruction");
 const handleInstructions = require("../compute/handleInstructions");
 
 //POST
@@ -100,23 +101,37 @@ exports.getInstructionCountForRecipe = async (req, res) => {
   let count = await handleInstructions.getInstructionCountForRecipe(req.query.recipeID);
   res.status(200).json(count);
 }
+exports.getInstructionByID = async (req, res) => {
+  handleInstructions.getPrettyInstructionByID(req.query.instructionID)
+  .then(instruction => {
+    res.status(200).json(instruction);
+  })
+  .catch(error => {
+    res.status(500).json({
+      errorMessage: error
+    })
+  });
+}
 
 //PUT
-exports.updateInstruction = (req, res) => {
-  const instruction = new Instruction({
-    _id: req.params.id,
-    text: req.body.text,
-    recipeID: req.body.recipeID,
-    ingredientsID: [req.body.instructions],
-    quantity: [req.body.quantity],
-    order: req.body.order,
-    cookingTime: req.body.cookingTime ?? undefined
-  });
+exports.updateInstruction = async (req, res) => {
+  const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
+  const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
 
-  Instruction.updateOne({ _id: req.params.id }, instruction)
+  const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
+  
+  baseInstruction.updateInstruction(
+    req.params.id,
+    req.body.text,
+    undefined,
+    ingredientsID,
+    ingredientsQuantity,
+    req.body.order,
+    req.body.cookingTime
+  )
     .then(result => {
       if (result.modifiedCount > 0) {
-        res.status(200).json(instruction);
+        res.status(200).json({status: "OK"});
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }

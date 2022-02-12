@@ -10,13 +10,14 @@ const router = express.Router();
 router.get("/", InstructionControllers.readInstructions);
 router.get("/byRecipeID", InstructionControllers.getByRecipeID);
 router.get("/countForRecipe", InstructionControllers.getInstructionCountForRecipe);
+router.get("/byID", InstructionControllers.getInstructionByID);
 
 //POST
 router.post("/", InstructionControllers.writeInstruction);
 router.post("/byIngredientName", InstructionControllers.writeInstructionByIngredientName);
 
 //PUT
-router.put("/:id", checkAuth, InstructionControllers.updateInstruction);
+router.put("/:id", InstructionControllers.updateInstruction);
 
 //DELETE
 router.delete("/:id", checkAuth, InstructionControllers.deleteInstruction);
