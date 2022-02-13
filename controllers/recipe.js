@@ -101,26 +101,48 @@ exports.getRecipeByName = async (req, res) => {
     });
 }
 exports.getPrettyRecipe = async (req, res) => {
-
   let recipeID = "";
-  if(req.query.recipeID){
+  if (req.query.recipeID) {
     recipeID = req.query.recipeID;
   } else {
-    if(req.query.mealID){
+    if (req.query.mealID) {
       let meal = await baseMeal.getMealByID(req.query.mealID);
       recipeID = meal.recipeID;
     }
   }
 
   handleRecipe.getPrettyRecipe(recipeID)
-  .then(result => {
-    res.status(200).json(result);
-  })
-  .catch(error => {
-    res.status(500).json({
-      errorMessage: error
+    .then(result => {
+      res.status(200).json(result);
     })
-  });
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+}
+exports.getIngredientsNeeded = async (req, res) => {
+  let recipeID = "";
+  if (req.query.recipeID) {
+    recipeID = req.query.recipeID;
+  } else {
+    if (req.query.mealID) {
+      let meal = await baseMeal.getMealByID(req.query.mealID);
+      recipeID = meal.recipeID;
+    }
+  }
+
+  let recipeData = await baseRecipe.getRecipeByID(recipeID);
+
+  handleRecipe.getIngredientList(recipeData._id, recipeData.numberOfLunch)
+    .then(result => {
+      res.status(200).json(result);
+    })
+    .catch(error => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
 }
 
 //PUT
@@ -137,7 +159,7 @@ exports.updateRecipe = (req, res) => {
   )
     .then(result => {
       if (result.modifiedCount > 0) {
-        res.status(200).json({status: "OK"});
+        res.status(200).json({ status: "OK" });
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }

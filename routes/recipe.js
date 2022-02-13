@@ -13,6 +13,7 @@ router.get("/byID", RecipeControllers.getRecipeByID);
 router.get("/filter", RecipeControllers.getFilteredRecipe);
 router.get("/byName", RecipeControllers.getRecipeByName);
 router.get("/prettyRecipe", RecipeControllers.getPrettyRecipe);
+router.get("/ingredientNeeded", RecipeControllers.getIngredientsNeeded);
 
 //POST
 router.post("/", extractFile, RecipeControllers.writeRecipe);

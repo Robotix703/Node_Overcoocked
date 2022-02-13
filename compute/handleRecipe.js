@@ -17,7 +17,7 @@ getIngredientIDFromInstruction = async function (instructionID) {
 
 concatList = function (originalList, additionList) {
     additionList.forEach((elementToAdd) => {
-        let existingIngredient = originalList.find(e => e.ingredient._id == elementToAdd.ingredient._id);
+        let existingIngredient = originalList.find(e => e.ingredient._id.toString() == elementToAdd.ingredient._id.toString());
 
         if (existingIngredient) existingIngredient.quantity += elementToAdd.quantity;
         else originalList.push(elementToAdd);
@@ -52,10 +52,8 @@ exports.getIngredientList = async function (recipeID, numberOfLunch) {
             });
         }
 
-        if (!newIngredients.reason) {
-            adaptQuantity(newIngredients, numberOfLunch, recipe.numberOfLunch);
-            concatList(ingredientsNeeded, newIngredients);
-        }
+        adaptQuantity(newIngredients, numberOfLunch, recipe.numberOfLunch);
+        concatList(ingredientsNeeded, newIngredients);
     }
     return ingredientsNeeded;
 }
