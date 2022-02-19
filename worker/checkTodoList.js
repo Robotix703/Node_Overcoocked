@@ -47,7 +47,7 @@ async function checkDeleteItem(todoItems, mongoItems) {
 
         if (!itemFound) {
             //Add to pantry
-            await addIngredientToPantry(item.text);
+            if(item.consumable) await addIngredientToPantry(item.text);
 
             //Remove item from Mongo
             await removeItemFromMongo(item.todoID);

@@ -4,9 +4,19 @@ const Todoist = require("../modules/Todoist/main");
 const TodoItem = require("../models/todoItem");
 
 exports.readTodoItems = async (req, res) => {
-    let todoItem = await baseTodoItem.readTodoItems();
-
-    res.status(200).json(todoItem);
+    baseTodoItem.readTodoItems()
+    .then(documents => {
+        fetchedTodoItems = documents;
+        return TodoItem.count();
+      })
+      .then(count => {
+        res.status(200).json({ todoItems: fetchedTodoItems, count: count });
+      })
+      .catch(error => {
+        res.status(500).json({
+          errorMessage: error
+        })
+      });
 }
 
 exports.writeTodoItem = async (req, res) => {
@@ -30,7 +40,8 @@ exports.updateTodoItem = async (req, res) => {
         _id: req.params.id,
         todoID: req.body.todoID,
         text: req.body.text,
-        ingredientName: req.body.ingredientName
+        ingredientName: req.body.ingredientName,
+        consumable: req.body.consumable
     });
 
     baseTodoItem.updateTodoItem(todoItem)

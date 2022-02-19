@@ -15,11 +15,12 @@ exports.updateTodoItem = async function (todoItemID, todoID, text, ingredientNam
     return await baseTodoItem.updateTodoItem(todoItem);
 }
 
-exports.registerTodoItem = async function (itemID, itemText, name) {
+exports.registerTodoItem = async function (itemID, itemText, name, consumable) {
     const todoItem = new TodoItem({
         todoID: itemID,
         text: itemText,
-        ingredientName: name
+        ingredientName: name,
+        consumable: consumable
     });
 
     return await todoItem.save()
