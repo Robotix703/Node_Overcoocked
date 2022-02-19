@@ -30,19 +30,7 @@ exports.writeIngredient = (req, res) => {
 
 //GET
 exports.readIngredients = (req, res) => {
-  const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
-  const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
-
-  const ingredientQuery = Ingredient.find();
-  let fetchedIngredients = [];
-
-  if (pageSize && currentPage) {
-    ingredientQuery
-      .skip(pageSize * (currentPage - 1))
-      .limit(pageSize);
-  }
-
-  ingredientQuery
+  baseIngredient.getFilteredIngredient(req.query.name, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
     .then(documents => {
       fetchedIngredients = documents;
       return Ingredient.count();

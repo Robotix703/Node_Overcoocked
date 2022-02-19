@@ -52,10 +52,14 @@ exports.getIngredientsNameFromIDs = async function (ingredientIDs) {
     return ingredientsName;
 }
 
-exports.getFilteredIngredient = async function (category) {
+exports.getFilteredIngredient = async function (name, pageSize, currentPage) {
     let filters = {};
-    if (category) filters.category = category;
-
+    if (name) filters.name = { "$regex": name, "$options": "i" };
+    
+    if (pageSize && currentPage > 0) {
+        const query = Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
+        return query;
+    }
     return Ingredient.find(filters);
 }
 
