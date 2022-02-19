@@ -17,10 +17,10 @@ router.get("/filter", IngredientControllers.filteredIngredients);
 router.get("/forAutocomplete", IngredientControllers.getAllIngredientForAutocomplete);
 
 //POST
-router.post("/", extractFile, IngredientControllers.writeIngredient);
+router.post("/", checkAuth, extractFile, IngredientControllers.writeIngredient);
 
 //PUT
-router.put("/:id", IngredientControllers.editIngredient);
+router.put("/:id", checkAuth, IngredientControllers.editIngredient);
 
 //DELETE
 router.delete("/:id", checkAuth, IngredientControllers.deleteIngredient);

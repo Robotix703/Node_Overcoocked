@@ -14,13 +14,13 @@ router.get("/fullPantryInventory", PantryControllers.getFullPantryInventory);
 router.get("/byID", PantryControllers.getPantryByID);
 
 //POST
-router.post("/", PantryControllers.writePantry);
-router.post("/createByIngredientName", PantryControllers.writePantryByIngredientName);
-router.post("/freeze", PantryControllers.freezePantry);
-router.post("/refreshTodoist", PantryControllers.refreshTodoist);
+router.post("/", checkAuth, PantryControllers.writePantry);
+router.post("/createByIngredientName", checkAuth, PantryControllers.writePantryByIngredientName);
+router.post("/freeze", checkAuth, PantryControllers.freezePantry);
+router.post("/refreshTodoist", checkAuth, PantryControllers.refreshTodoist);
 
 //PUT
-router.put("/:id", PantryControllers.updatePantry);
+router.put("/:id", checkAuth, PantryControllers.updatePantry);
 
 //DELETE
 router.delete("/:id", checkAuth, PantryControllers.deletePantry);

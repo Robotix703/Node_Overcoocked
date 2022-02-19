@@ -12,8 +12,8 @@ router.get("/checkIfReady", MealControllers.checkIfReady);
 router.get("/displayable", MealControllers.displayable);
 
 //POST
-router.post("/", MealControllers.writeMeal);
-router.post("/consume", MealControllers.consumeMeal);
+router.post("/", checkAuth, MealControllers.writeMeal);
+router.post("/consume", checkAuth, MealControllers.consumeMeal);
 
 //PUT
 router.put("/:id", checkAuth, MealControllers.updateMeal);

@@ -16,10 +16,10 @@ router.get("/prettyRecipe", RecipeControllers.getPrettyRecipe);
 router.get("/ingredientNeeded", RecipeControllers.getIngredientsNeeded);
 
 //POST
-router.post("/", extractFile, RecipeControllers.writeRecipe);
+router.post("/", checkAuth, extractFile, RecipeControllers.writeRecipe);
 
 //PUT
-router.put("/:id", RecipeControllers.updateRecipe);
+router.put("/:id", checkAuth, RecipeControllers.updateRecipe);
 
 //DELETE
 router.delete("/:id", checkAuth, RecipeControllers.deleteRecipe);

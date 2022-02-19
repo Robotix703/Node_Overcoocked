@@ -13,11 +13,11 @@ router.get("/countForRecipe", InstructionControllers.getInstructionCountForRecip
 router.get("/byID", InstructionControllers.getInstructionByID);
 
 //POST
-router.post("/", InstructionControllers.writeInstruction);
-router.post("/byIngredientName", InstructionControllers.writeInstructionByIngredientName);
+router.post("/", checkAuth, InstructionControllers.writeInstruction);
+router.post("/byIngredientName", checkAuth, InstructionControllers.writeInstructionByIngredientName);
 
 //PUT
-router.put("/:id", InstructionControllers.updateInstruction);
+router.put("/:id", checkAuth, InstructionControllers.updateInstruction);
 
 //DELETE
 router.delete("/:id", checkAuth, InstructionControllers.deleteInstruction);

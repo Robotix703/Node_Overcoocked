@@ -8,7 +8,7 @@ const router = express.Router();
 router.get("/", TodoItemControllers.readTodoItems);
 
 //POST
-router.post("/", TodoItemControllers.writeTodoItem);
+router.post("/", checkAuth, TodoItemControllers.writeTodoItem);
 
 //PUT
 router.put("/:id", checkAuth, TodoItemControllers.updateTodoItem);
