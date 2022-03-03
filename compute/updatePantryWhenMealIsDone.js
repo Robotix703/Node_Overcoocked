@@ -53,10 +53,13 @@ async function consumeIngredientFromPantry(ingredientID, quantity){
 exports.updatePantryWhenMealsIsDone = async function(mealID){
     const meal = await baseMeal.getMealByID(mealID);
 
-    baseRecipe.updateLastCooked(meal.recipeID, Date.now());
+    baseRecipe.updateLastCooked(meal.recipeID);
 
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
     for(ingredient of ingredientsNeeded){
-        await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);
+        if(ingredient.consumable)
+        {
+            await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);
+        }
     }
 }

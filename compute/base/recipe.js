@@ -4,9 +4,9 @@ exports.getRecipeByID = async function (recipeID) {
     return Recipe.findById(recipeID);
 }
 
-exports.updateLastCooked = async function (recipeID, lastCookedDate) {
+exports.updateLastCooked = async function (recipeID) {
     let recipeToUpdate = await Recipe.findById(recipeID);
-    recipeToUpdate.lastCooked = lastCookedDate.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
+    recipeToUpdate.lastCooked = Date.now();
     return Recipe.updateOne({ _id: recipeID }, recipeToUpdate);
 }
 

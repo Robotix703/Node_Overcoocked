@@ -19,7 +19,7 @@ Date.prototype.addDays = function(days) {
 function checkDisponibility(ingredientID, quantity){
     const ingredientFound = g_pantryInventory.find(e => e.ingredientID.toString() == ingredientID.toString());
     if(ingredientFound){
-        if(quantity < ingredientFound.quantityLeft){
+        if(quantity <= ingredientFound.quantityLeft){
             let dateNow = new Date();
             dateNow = dateNow.addDays(3);
 
