@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "es6",
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "build",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        }
+    },
+    "include": [
+        "src/*",
+        //"src/worker/*",
+        //"src/models/*",
+        //"src/modules/*/*"
+        //"src/controllers/*",
+        //"src/routes/*"
+    ],
+    "exclude": [
+        "build/*"
+    ]
+}

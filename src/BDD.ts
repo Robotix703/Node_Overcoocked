@@ -1,22 +1,22 @@
 const mongoose = require('mongoose');
 require('dotenv').config()
 
-let user, pwd, host, name;
+let user: string, pwd: string, host: string, BDDname: string;
 if (process.env.NODE_ENV === "production") {
-    name = process.env.DB_PROD_NAME;
+    BDDname = process.env.DB_PROD_NAME;
     host = process.env.DB_HOST;
     user = process.env.DB_PROD_USER;
     pwd = process.env.DB_PROD_PASS;
 }else{
-    name = process.env.DB_DEV_NAME;
+    BDDname = process.env.DB_DEV_NAME;
     host = process.env.DB_IP;
     user = process.env.DB_DEV_USER;
     pwd = process.env.DB_DEV_PASS;
 }
 
-exports.connectToDataBase = async function(){
+export async function connectToDataBase(){
     return mongoose.connect(
-        "mongodb://" + user + ":" + pwd + "@" + host + "/" + name, 
+        "mongodb://" + user + ":" + pwd + "@" + host + "/" + BDDname, 
         { useNewUrlParser: true, useUnifiedTopology: true }
     )
 }

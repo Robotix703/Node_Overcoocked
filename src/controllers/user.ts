@@ -1,11 +1,13 @@
 require('dotenv').config();
 
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import { Request, Response } from "express";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { userType } from "../models/user";
 
 const User = require("../models/user");
 
-exports.createUser = (req, res) => {
+export function createUser(req: Request, res: Response){
   if (req.body.invitationCode !== process.env.INVITECODE) {
     res.status(500).json({
       message: "Wrong invitation code"
@@ -13,7 +15,7 @@ exports.createUser = (req, res) => {
     return;
   }
 
-  bcrypt.hash(req.body.password, 10).then(hash => {
+  bcrypt.hash(req.body.password, 10).then((hash: string) => {
     const user = new User({
       email: req.body.email,
       password: hash,
@@ -21,12 +23,12 @@ exports.createUser = (req, res) => {
     });
 
     user.save()
-      .then(result => {
+      .then((result: any) => {
         res.status(201).json({
           result
         });
       })
-      .catch(error => {
+      .catch((error: Error) => {
         res.status(500).json({
           errorMessage: error
         });
@@ -34,11 +36,12 @@ exports.createUser = (req, res) => {
   });
 };
 
-exports.userLogin = (req, res) => {
-  let fetchUser;
+export function userLogin(req: Request, res: Response){
+
+  let fetchUser: userType;
 
   User.findOne({ email: req.body.email })
-    .then(user => {
+    .then((user: userType) => {
       fetchUser = user;
 
       if (!user) {
@@ -48,7 +51,7 @@ exports.userLogin = (req, res) => {
       }
       return bcrypt.compare(req.body.password, user.password)
     })
-    .then(result => {
+    .then((result: any) => {
       if (!result) {
         return res.status(401).json({
           message: "Mauvaise Mot de passe"
@@ -70,7 +73,7 @@ exports.userLogin = (req, res) => {
         userId: fetchUser._id
       });
     })
-    .catch(error => {
+    .catch((error: any) => {
       return res.status(401).json({
         errorMessage: error
       });
