@@ -1,3 +1,14 @@
+export interface ingredient {
+  _id: string
+  name: string
+  imagePath: string
+  consumable: boolean
+  category: string
+  unitOfMeasure: string
+  shelfLife: number | null
+  freezable: boolean
+}
+
 const mongoose = require('mongoose');
 
 const ingredientSchema = mongoose.Schema({
