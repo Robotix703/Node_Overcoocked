@@ -18,10 +18,10 @@
     "include": [
         "src/*",
         //"src/worker/*",
-        //"src/models/*",
+        "src/models/*",
         //"src/modules/*/*"
-        //"src/controllers/*",
-        //"src/routes/*"
+        "src/controllers/*",
+        "src/routes/*"
     ],
     "exclude": [
         "build/*"
