@@ -1,3 +1,11 @@
+export interface pantry {
+    _id: string
+    ingredientID: string
+    quantity: number
+    expirationDate: Date | null
+    frozen: boolean | null
+}
+
 const mongoose = require('mongoose');
 
 const pantrySchema = mongoose.Schema({

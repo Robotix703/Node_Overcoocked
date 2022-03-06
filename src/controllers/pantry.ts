@@ -1,4 +1,7 @@
-const moment = require('moment');
+import { Request, Response } from "express";
+import moment from 'moment';
+import { pantry } from "../models/pantry";
+import { recipe } from "../models/recipe";
 
 const Pantry = require('../models/pantry');
 const pantryInventory = require("../compute/pantryInventory");
@@ -9,7 +12,7 @@ const handlePantry = require("../compute/handlePantry");
 const checkTodoList = require("../worker/checkTodoList");
 
 //POST
-exports.writePantry = (req, res) => {
+export function writePantry(req: Request, res: Response){
   const pantry = new Pantry({
     ingredientID: req.body.ingredientID,
     quantity: req.body.quantity,
@@ -18,16 +21,16 @@ exports.writePantry = (req, res) => {
   });
 
   pantry.save()
-    .then(result => {
+    .then((result: any) => {
       res.status(201).json({ id: result._id, pantry });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.writePantryByIngredientName = async (req, res) => {
+export async function writePantryByIngredientName(req: Request, res: Response){
   const ingredientID = await baseIngredient.getIngredientByName(req.body.ingredientName);
   const pantry = new Pantry({
     ingredientID: ingredientID._id,
@@ -37,31 +40,31 @@ exports.writePantryByIngredientName = async (req, res) => {
   });
 
   pantry.save()
-    .then(result => {
+    .then((result: any) => {
       res.status(201).json({ id: result._id, pantry });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.freezePantry = async (req, res) => {
+export async function freezePantry(req: Request, res: Response){
   await handlePantry.freezePantry(req.body.pantryID);
   res.status(201).json({ result: "OK" });
 }
-exports.refreshTodoist = async (req, res) => {
+export async function refreshTodoist(req: Request, res: Response){
   await checkTodoList.checkTodoList();
   res.status(201).json({ result: "OK" });
 }
 
 //GET
-exports.readPantries = (req, res) => {
+export function readPantries(req: any, res: Response){
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const pantryQuery = Pantry.find();
-  let fetchedPantries = [];
+  let fetchedPantries: pantry[] = [];
 
   if (pageSize && currentPage) {
     pantryQuery
@@ -70,24 +73,24 @@ exports.readPantries = (req, res) => {
   }
 
   pantryQuery
-    .then(documents => {
+    .then((documents: pantry[]) => {
       fetchedPantries = documents;
       return Pantry.count();
     })
-    .then(count => {
+    .then((count: number) => {
       res.status(200).json({ pantries: fetchedPantries, pantryCount: count });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.quantityLeft = (req, res) => {
+export function quantityLeft(req: Request, res: Response){
   const ingredientID = req.query.ingredientID;
 
   Pantry.find({ ingredientID: ingredientID })
-    .then(documents => {
+    .then((documents: pantry[]) => {
       const fetchedPantries = [...documents];
       let sum = 0;
       fetchedPantries.forEach((e) => {
@@ -95,17 +98,17 @@ exports.quantityLeft = (req, res) => {
       })
       res.status(200).json({ quantityLeft: sum });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getNearestExpirationDate = (req, res) => {
+export function getNearestExpirationDate(req: Request, res: Response){
   const ingredientID = req.query.ingredientID;
 
   Pantry.find({ ingredientID: ingredientID })
-    .then(documents => {
+    .then((documents: pantry[]) => {
       const fetchedPantries = [...documents];
       let nearestExpirationDate = new Date();
       nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);
@@ -114,24 +117,24 @@ exports.getNearestExpirationDate = (req, res) => {
       })
       res.status(200).json({ nearestExpirationDate: nearestExpirationDate });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getFullPantryInventory = async (req, res) => {
+export async function getFullPantryInventory(req: Request, res: Response){
   pantryInventory.getFullInventory()
-    .then((fullInventory) => {
+    .then((fullInventory: any) => {
       res.status(200).json(fullInventory);
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getPantryByID = async (req, res) => {
+export async function getPantryByID(req: Request, res: Response){
   const pantry = await basePantry.getPantryByID(req.query.pantryID);
   const ingredientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
 
@@ -146,7 +149,7 @@ exports.getPantryByID = async (req, res) => {
 }
 
 //PUT
-exports.updatePantry = async (req, res) => {
+export async function updatePantry(req: Request, res: Response){
   let ingredientID = "";
   if(req.body.ingredientName){
     let ingredient = await baseIngredient.getIngredientByName(req.body.ingredientName);
@@ -160,14 +163,14 @@ exports.updatePantry = async (req, res) => {
     req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
     req.body.frozen
   )
-    .then(result => {
+    .then((result: any) => {
       if (result.modifiedCount > 0) {
         res.status(200).json({status: "OK"});
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -175,16 +178,16 @@ exports.updatePantry = async (req, res) => {
 }
 
 //DELETE
-exports.deletePantry = (req, res) => {
+export function deletePantry(req: Request, res: Response){
   Pantry.deleteOne({ _id: req.params.id })
-    .then((result) => {
+    .then((result: any) => {
       if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
