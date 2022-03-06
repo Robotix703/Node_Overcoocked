@@ -1,3 +1,6 @@
+import { Request, Response } from "express";
+import { ingredient } from "../models/ingredient";
+import { instruction } from "../models/instruction";
 const Instruction = require('./../models/instruction');
 
 const handleRecipe = require("../compute/handleRecipe");
@@ -6,7 +9,7 @@ const baseInstruction = require("../compute/base/instruction");
 const handleInstructions = require("../compute/handleInstructions");
 
 //POST
-exports.writeInstruction = (req, res) => {
+export function writeInstruction(req: Request, res: Response){
   const instruction = new Instruction({
     text: req.body.text,
     recipeID: req.body.recipeID,
@@ -17,20 +20,20 @@ exports.writeInstruction = (req, res) => {
   });
 
   instruction.save()
-    .then(result => {
-      res.status(201).json({ id: result._id, instruction });
+    .then((result: any) => {
+      res.status(201).json({ id: result._id, instruction: instruction });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.writeInstructionByIngredientName = async (req, res) => {
-  const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
-  const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
+export async function writeInstructionByIngredientName(req: Request, res: Response){
+  const ingredientsName = req.body.ingredients.map((e: any) => e.ingredientName);
+  const ingredientsQuantity = req.body.ingredients.map((e: any) => e.quantity);
 
-  const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
+  const ingredientsID: string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
 
   if (ingredientsID[0]) {
     const instruction = new Instruction({
@@ -43,10 +46,10 @@ exports.writeInstructionByIngredientName = async (req, res) => {
     })
 
     instruction.save()
-      .then(result => {
+      .then((result: any) => {
         res.status(201).json({ id: result._id, instruction });
       })
-      .catch(error => {
+      .catch((error: Error) => {
         res.status(500).json({
           errorMessage: error
         })
@@ -59,12 +62,12 @@ exports.writeInstructionByIngredientName = async (req, res) => {
 }
 
 //GET
-exports.readInstructions = (req, res) => {
+export function readInstructions(req: any, res: Response){
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const instructionQuery = Instruction.find();
-  let fetchedInstructions = [];
+  let fetchedInstructions: instruction[] = [];
 
   if (pageSize && currentPage) {
     instructionQuery
@@ -73,40 +76,40 @@ exports.readInstructions = (req, res) => {
   }
 
   instructionQuery
-    .then(documents => {
+    .then((documents: instruction[]) => {
       fetchedInstructions = documents;
       return Instruction.count();
     })
-    .then(count => {
+    .then((count: number) => {
       res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getByRecipeID = (req, res) => {
+export function getByRecipeID(req: Request, res: Response){
   handleRecipe.getInstructionsByRecipeID(req.query.recipeID)
-    .then(instructions => {
+    .then((instructions: instruction[]) => {
       res.status(200).json(instructions);
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getInstructionCountForRecipe = async (req, res) => {
+export async function getInstructionCountForRecipe(req: Request, res: Response){
   let count = await handleInstructions.getInstructionCountForRecipe(req.query.recipeID);
   res.status(200).json(count);
 }
-exports.getInstructionByID = async (req, res) => {
+export async function getInstructionByID(req: Request, res: Response){
   handleInstructions.getPrettyInstructionByID(req.query.instructionID)
-  .then(instruction => {
+  .then((instruction: instruction) => {
     res.status(200).json(instruction);
   })
-  .catch(error => {
+  .catch((error: Error) => {
     res.status(500).json({
       errorMessage: error
     })
@@ -114,9 +117,9 @@ exports.getInstructionByID = async (req, res) => {
 }
 
 //PUT
-exports.updateInstruction = async (req, res) => {
-  const ingredientsName = req.body.ingredients.map(e => e.ingredientName);
-  const ingredientsQuantity = req.body.ingredients.map(e => e.quantity);
+export async function updateInstruction(req: Request, res: Response){
+  const ingredientsName = req.body.ingredients.map((e: any) => e.ingredientName);
+  const ingredientsQuantity = req.body.ingredients.map((e: any) => e.quantity);
 
   const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
   
@@ -129,14 +132,14 @@ exports.updateInstruction = async (req, res) => {
     req.body.order,
     req.body.cookingTime
   )
-    .then(result => {
+    .then((result: any) => {
       if (result.modifiedCount > 0) {
         res.status(200).json({status: "OK"});
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -144,16 +147,16 @@ exports.updateInstruction = async (req, res) => {
 }
 
 //DELETE
-exports.deleteInstruction = (req, res) => {
+export function deleteInstruction(req: Request, res: Response){
   Instruction.deleteOne({ _id: req.params.id })
-    .then((result) => {
+    .then((result: any) => {
       if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })

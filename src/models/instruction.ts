@@ -1,3 +1,13 @@
+export interface instruction {
+  _id: string
+  text: string
+  recipeID: string
+  ingredientsID: string[] | null
+  quantity: number[] | null
+  order: number
+  cookingTime: number | null
+}
+
 const mongoose = require('mongoose');
 
 const instructionSchema = mongoose.Schema({

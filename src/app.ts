@@ -20,9 +20,10 @@ BDD.connectToDataBase()
 //Routes
 import { userRoutes } from "./routes/user";
 import { ingredientRoutes } from "./routes/ingredients";
+import { instructionRoutes } from "./routes/instruction";
 /*
 
-const instructionRoutes = require("./routes/instruction");
+
 const recipeRoutes = require("./routes/recipe");
 const pantryRoutes = require("./routes/pantry");
 const mealRoutes = require("./routes/meal");
@@ -39,9 +40,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //Use routes
 app.use("/api/user", userRoutes);
 app.use("/api/ingredient", ingredientRoutes);
+app.use("/api/instruction", instructionRoutes);
 
 /*
-app.use("/api/instruction", instructionRoutes);
+
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/pantry", pantryRoutes);
 app.use("/api/meal", mealRoutes);
