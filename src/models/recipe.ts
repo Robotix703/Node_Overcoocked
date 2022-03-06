@@ -1,3 +1,14 @@
+export interface recipe{
+  _id: string
+  title: string
+  numberOfLunch: number
+  imagePath: string
+  category: string
+  duration: number
+  score: number | null
+  lastCooked: Date | null
+}
+
 const mongoose = require('mongoose');
 
 const recipeSchema = mongoose.Schema({

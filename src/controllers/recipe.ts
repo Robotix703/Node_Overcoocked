@@ -1,4 +1,6 @@
-const moment = require('moment');
+import { Request, Response } from "express";
+import moment from 'moment';
+import { recipe } from "../models/recipe";
 
 const Recipe = require('./../models/recipe');
 const baseRecipe = require("../compute/base/recipe");
@@ -8,7 +10,7 @@ const handleRecipe = require("../compute/handleRecipe");
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
 //POST
-exports.writeRecipe = (req, res) => {
+export function writeRecipe(req: any, res: Response){
   const url = protocol + '://' + req.get("host");
 
   const recipe = new Recipe({
@@ -22,10 +24,10 @@ exports.writeRecipe = (req, res) => {
   });
 
   recipe.save()
-    .then(result => {
+    .then((result: any) => {
       res.status(201).json({ id: result._id, recipe });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -33,12 +35,12 @@ exports.writeRecipe = (req, res) => {
 }
 
 //GET
-exports.readRecipes = (req, res) => {
+export function readRecipes(req: any, res: Response){
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const recipeQuery = Recipe.find();
-  let fetchedRecipes = [];
+  let fetchedRecipes: recipe[] = [];
 
   if (pageSize && currentPage) {
     recipeQuery
@@ -47,61 +49,65 @@ exports.readRecipes = (req, res) => {
   }
 
   recipeQuery
-    .then(documents => {
+    .then((documents: recipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
-    .then(count => {
+    .then((count: number) => {
       res.status(200).json({ recipes: fetchedRecipes, count: count });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getRecipeByID = async (req, res) => {
-  baseRecipe.getRecipeByID(req.query.recipeID).then((result) => {
+export async function getRecipeByID(req: Request, res: Response){
+  baseRecipe.getRecipeByID(req.query.recipeID).then((result: recipe) => {
     res.status(200).json(result);
   })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getFilteredRecipe = async (req, res) => {
+export async function getFilteredRecipe(req: any, res: Response){
+  let fetchedRecipes: recipe[] = [];
+
   baseRecipe.filterRecipe(req.query.category, req.query.name, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
-    .then(documents => {
+    .then((documents: recipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
-    .then(count => {
+    .then((count: number) => {
       res.status(200).json({ recipes: fetchedRecipes, count: count });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getRecipeByName = async (req, res) => {
+export async function getRecipeByName(req: Request, res: Response){
+  let fetchedRecipes: recipe[] = [];
+  
   baseRecipe.searchByName(req.query.name)
-    .then(documents => {
+    .then((documents: recipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
-    .then(count => {
+    .then((count: number) => {
       res.status(200).json({ recipes: fetchedRecipes, count: count });
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getPrettyRecipe = async (req, res) => {
-  let recipeID = "";
+export async function getPrettyRecipe(req: Request, res: Response){
+  let recipeID: any = "";
   if (req.query.recipeID) {
     recipeID = req.query.recipeID;
   } else {
@@ -112,17 +118,17 @@ exports.getPrettyRecipe = async (req, res) => {
   }
 
   handleRecipe.getPrettyRecipe(recipeID)
-    .then(result => {
+    .then((result: recipe) => {
       res.status(200).json(result);
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.getIngredientsNeeded = async (req, res) => {
-  let recipeID = "";
+export async function getIngredientsNeeded(req: Request, res: Response){
+  let recipeID: any = "";
   if (req.query.recipeID) {
     recipeID = req.query.recipeID;
   } else {
@@ -135,10 +141,10 @@ exports.getIngredientsNeeded = async (req, res) => {
   let recipeData = await baseRecipe.getRecipeByID(recipeID);
 
   handleRecipe.getIngredientList(recipeData._id, recipeData.numberOfLunch)
-    .then(result => {
+    .then((result: any) => {
       res.status(200).json(result);
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -146,7 +152,7 @@ exports.getIngredientsNeeded = async (req, res) => {
 }
 
 //PUT
-exports.updateRecipe = (req, res) => {
+export function updateRecipe(req: Request, res: Response){
   baseRecipe.updateRecipe(
     req.params.id,
     req.body.title,
@@ -157,14 +163,14 @@ exports.updateRecipe = (req, res) => {
     req.body.score ?? undefined,
     req.body.lastCooked ? moment(req.body.expirationDate, "DD/MM/YYYY") : undefined
   )
-    .then(result => {
+    .then((result: any) => {
       if (result.modifiedCount > 0) {
         res.status(200).json({ status: "OK" });
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -172,16 +178,16 @@ exports.updateRecipe = (req, res) => {
 }
 
 //DELETE
-exports.deleteRecipe = (req, res) => {
+export function deleteRecipe(req: Request, res: Response){
   Recipe.deleteOne({ _id: req.params.id })
-    .then((result) => {
+    .then((result: any) => {
       if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);
       }
     })
-    .catch(error => {
+    .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
