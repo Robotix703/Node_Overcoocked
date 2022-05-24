@@ -23,10 +23,9 @@ import { ingredientRoutes } from "./routes/ingredients";
 import { instructionRoutes } from "./routes/instruction";
 import { recipeRoutes } from "./routes/recipe";
 import { pantryRoutes } from "./routes/pantry";
+import { mealRoutes } from "./routes/meal";
 /*
 
-
-const mealRoutes = require("./routes/meal");
 const todoItemRoutes = require("./routes/todoItem");
 */
 const app = express();
@@ -43,10 +42,9 @@ app.use("/api/ingredient", ingredientRoutes);
 app.use("/api/instruction", instructionRoutes);
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/pantry", pantryRoutes);
-
+app.use("/api/meal", mealRoutes);
 /*
 
-app.use("/api/meal", mealRoutes);
 app.use("/api/todoItem", todoItemRoutes);
 */
 

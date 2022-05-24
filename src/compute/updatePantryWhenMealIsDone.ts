@@ -1,9 +1,9 @@
-const baseMeal = require("./base/meal");
-const basePantry = require("./base/pantry");
-const baseRecipe = require("../compute/base/recipe");
-const recipeIngredientsNeeded = require("./handleRecipe");
+const baseMealForUpdate = require("./base/meal");
+const basePantryForUpdate = require("./base/pantry");
+const baseRecipeForUpdate = require("../compute/base/recipe");
+const recipeIngredientsNeededForUpdate = require("./handleRecipe");
 
-function comparePantriesByQuantity(x, y){
+function comparePantriesByQuantity(x : any, y : any){
     if(x.quantity > y.quantity) return 1;
 
     if(x.quantity < y.quantity) return -1;
@@ -11,7 +11,7 @@ function comparePantriesByQuantity(x, y){
     return 0;
 }
 
-function comparePantriesByExpirationDate(x, y){
+function comparePantriesByExpirationDate(x : any, y : any){
     if(x.expirationDate == undefined && y.expirationDate == undefined) return comparePantriesByQuantity(x, y);
 
     if(x.expirationDate == undefined) return 1;
@@ -25,7 +25,7 @@ function comparePantriesByExpirationDate(x, y){
     return comparePantriesByQuantity(x, y);
 }
 
-async function consumeIngredientFromPantry(ingredientID, quantity){
+async function consumeIngredientFromPantry(ingredientID : string, quantity : number){
     let quantityToConsume = quantity;
     let allPantry = await basePantry.getAllPantryByIngredientID(ingredientID);
 
@@ -50,13 +50,13 @@ async function consumeIngredientFromPantry(ingredientID, quantity){
     }
 }
 
-exports.updatePantryWhenMealsIsDone = async function(mealID){
+exports.updatePantryWhenMealsIsDone = async function(mealID : string){
     const meal = await baseMeal.getMealByID(mealID);
 
     baseRecipe.updateLastCooked(meal.recipeID);
 
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
-    for(ingredient of ingredientsNeeded){
+    for(let ingredient of ingredientsNeeded){
         if(ingredient.consumable)
         {
             await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);

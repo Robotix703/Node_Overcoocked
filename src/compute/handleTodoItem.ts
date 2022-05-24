@@ -1,11 +1,11 @@
 const TodoItem = require("../models/todoItem");
 const baseTodoItem = require("./base/todoItem");
 
-exports.checkIfIngredientIsAlreadyInTodo = async function (ingredientName) {
+exports.checkIfIngredientIsAlreadyInTodo = async function (ingredientName : string) {
     return await baseTodoItem.getTodoItemByIngredientName(ingredientName);
 }
 
-exports.updateTodoItem = async function (todoItemID, todoID, text, ingredientName) {
+exports.updateTodoItem = async function (todoItemID : string, todoID : string, text : string, ingredientName : string) {
     let todoItem = new TodoItem({
         _id: todoItemID,
         todoID: todoID,
@@ -15,7 +15,7 @@ exports.updateTodoItem = async function (todoItemID, todoID, text, ingredientNam
     return await baseTodoItem.updateTodoItem(todoItem);
 }
 
-exports.registerTodoItem = async function (itemID, itemText, name, consumable) {
+exports.registerTodoItem = async function (itemID : string, itemText : string, name : string, consumable : boolean) {
     const todoItem = new TodoItem({
         todoID: itemID,
         text: itemText,
@@ -24,10 +24,10 @@ exports.registerTodoItem = async function (itemID, itemText, name, consumable) {
     });
 
     return await todoItem.save()
-        .then(result => {
+        .then((result : any) => {
             return true;
         })
-        .catch(error => {
+        .catch((error : Error) => {
             console.error(error);
             return false;
         });

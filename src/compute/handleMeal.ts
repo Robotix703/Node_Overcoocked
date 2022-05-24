@@ -2,9 +2,9 @@ const pantryInventory = require("./pantryInventory");
 const recipeIngredientsNeeded = require("./handleRecipe");
 
 const baseMeal = require("./base/meal");
-const baseRecipe = require("./base/recipe");
+const baseRecipeForMeal = require("./base/recipe");
 
-let g_pantryInventory = [];
+let g_pantryInventory : any = [];
 
 exports.initPantryInventory = async function(){
     g_pantryInventory = await pantryInventory.getInventory();
@@ -16,8 +16,8 @@ Date.prototype.addDays = function(days) {
     return date;
 }
 
-function checkDisponibility(ingredientID, quantity){
-    const ingredientFound = g_pantryInventory.find(e => e.ingredientID.toString() == ingredientID.toString());
+function checkDisponibility(ingredientID : string, quantity : number){
+    const ingredientFound = g_pantryInventory.find((e : any) => e.ingredientID.toString() == ingredientID.toString());
     if(ingredientFound){
         if(quantity <= ingredientFound.quantityLeft){
             let dateNow = new Date();
@@ -36,7 +36,7 @@ function checkDisponibility(ingredientID, quantity){
     }
 }
 
-exports.checkIfMealIsReady = async function(mealID){
+exports.checkIfMealIsReady = async function(mealID : string){
     const meal = await baseMeal.getMealByID(mealID);
     const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
 
@@ -44,7 +44,7 @@ exports.checkIfMealIsReady = async function(mealID){
     let ingredientUnavailable = [];
     let ingredientAlmostExpire = [];
 
-    for(ingredient of ingredientsNeeded){
+    for(let ingredient of ingredientsNeeded){
         if(ingredient.ingredient.consumable)
         {
             let state = checkDisponibility(ingredient.ingredient._id, ingredient.quantity);
@@ -66,7 +66,7 @@ exports.checkMealList = async function(){
     await this.initPantryInventory();
 
     let mealState = [];
-    for(oneMeal of allMeals){
+    for(let oneMeal of allMeals){
         const recipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
         const mealReady = await this.checkIfMealIsReady(oneMeal._id);
 
@@ -84,7 +84,7 @@ exports.displayMealWithRecipeAndState = async function(){
 
     let mealData = [];
 
-    for(meal of allMeals){
+    for(let meal of allMeals){
         const recipeData = await baseRecipe.getRecipeByID(meal.recipeID);
         const mealState = await this.checkIfMealIsReady(meal._id);
 

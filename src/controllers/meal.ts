@@ -1,4 +1,6 @@
-const Meal = require('./../models/meal');
+import { Request, Response } from "express";
+import { meal } from "../models/meal";
+const Meal = require("../models/meal");
 
 const baseMeal = require("../compute/base/meal");
 const handleRecipe = require("../compute/handleRecipe");
@@ -9,7 +11,7 @@ const checkIfMealIsReady = require("../compute/handleMeal");
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
 
 //POST
-exports.writeMeal = async function (req, res) {
+exports.writeMeal = async function (req : Request, res : Response) {
   const meal = new Meal({
     recipeID: req.body.recipeID,
     numberOfLunchPlanned: req.body.numberOfLunchPlanned
@@ -19,16 +21,16 @@ exports.writeMeal = async function (req, res) {
   registerIngredientOnTodo.registerIngredients(ingredientsNeeded);
 
   meal.save()
-    .then(result => {
+    .then((result : any) => {
       res.status(201).json({ id: result._id, meal });
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.consumeMeal = async function (req, res) {
+exports.consumeMeal = async function (req : Request, res : Response) {
   if (req.body.mealID) {
     await updatePantryWhenMealsIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
     const result = await baseMeal.deleteMeal(req.body.mealID);
@@ -42,12 +44,12 @@ exports.consumeMeal = async function (req, res) {
 }
 
 //GET
-exports.readMeals = (req, res) => {
+exports.readMeals = (req : any, res : Response) => {
   const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const mealQuery = Meal.find();
-  let fetchedMeals = [];
+  let fetchedMeals : any[] = [];
 
   if (pageSize && currentPage) {
     mealQuery
@@ -56,37 +58,37 @@ exports.readMeals = (req, res) => {
   }
 
   mealQuery
-    .then(documents => {
+    .then((documents : any) => {
       fetchedMeals = documents;
       return Meal.count();
     })
-    .then(count => {
+    .then((count : number) => {
       res.status(200).json({ meals: fetchedMeals, count: count });
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.checkIfReady = async (req, res) => {
+exports.checkIfReady = async (req : any, res : Response) => {
   await checkIfMealIsReady.initPantryInventory();
   handleMeal.checkIfMealIsReady(req.query.mealID)
-    .then((ready) => {
+    .then((ready : boolean) => {
       res.status(200).json(ready);
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
 }
-exports.displayable = async (req, res) => {
+exports.displayable = async (req : Request, res : Response) => {
   handleMeal.displayMealWithRecipeAndState()
-    .then((mealsData) => {
+    .then((mealsData : any) => {
       res.status(200).json(mealsData);
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -94,7 +96,7 @@ exports.displayable = async (req, res) => {
 }
 
 //PUT
-exports.updateMeal = (req, res) => {
+exports.updateMeal = (req : Request, res: Response) => {
   const meal = new Meal({
     _id: req.params.id,
     recipeID: req.body.recipeID,
@@ -102,14 +104,14 @@ exports.updateMeal = (req, res) => {
   });
 
   Meal.updateOne({ _id: req.params.id }, meal)
-    .then(result => {
+    .then((result : any) => {
       if (result.modifiedCount > 0) {
         res.status(200).json(meal);
       } else {
         res.status(401).json({ message: "Pas de modification" });
       }
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
@@ -117,16 +119,16 @@ exports.updateMeal = (req, res) => {
 }
 
 //DELETE
-exports.deleteMeal = (req, res) => {
+exports.deleteMeal = (req : Request, res : Response) => {
   Meal.deleteOne({ _id: req.params.id })
-    .then((result) => {
+    .then((result : any) => {
       if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
         res.status(401).json(result);
       }
     })
-    .catch(error => {
+    .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
