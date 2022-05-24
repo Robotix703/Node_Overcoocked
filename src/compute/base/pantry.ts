@@ -1,14 +1,14 @@
-const Pantry = require("../../models/pantry");
+const PantryForPantry = require("../../models/pantry");
 
-exports.getAllPantryByIngredientID = async function(ingredientID){
+exports.getAllPantryByIngredientID = async function(ingredientID : string){
     return Pantry.find({ingredientID: ingredientID});
 }
 
-exports.deletePantryByID = async function(pantryID){
+exports.deletePantryByID = async function(pantryID : string){
     return Pantry.deleteOne({ _id: pantryID });
 }
 
-exports.updatePantry = async function(pantry){    
+exports.updatePantry = async function(pantry : any){    
     return Pantry.updateOne({ _id: pantry._id }, pantry)
 }
 
@@ -16,7 +16,7 @@ exports.getAllPantries = async function(){
     return Pantry.find();
 }
 
-exports.getPantryByID = async function(pantryID){
+exports.getPantryByID = async function(pantryID : string){
     return Pantry.findById(pantryID);
 }
 
@@ -24,8 +24,8 @@ exports.getAllPantryWithExpirationDate = async function(){
     return Pantry.find({expirationDate: {$exists: true}});
 }
 
-exports.updatePantry = async function(_id, ingredientID, quantity, expirationDate, frozen){
-    let elementToUpdate = { _id: _id };
+exports.updatePantry = async function(_id : string, ingredientID : string, quantity : number, expirationDate : any, frozen : boolean){
+    let elementToUpdate : any = { _id: _id };
 
     if(ingredientID) elementToUpdate.ingredientID = ingredientID;
     if(quantity) elementToUpdate.quantity = quantity;

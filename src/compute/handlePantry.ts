@@ -1,18 +1,22 @@
-const Pantry = require("../models/pantry");
-const basePantry = require("./base/pantry");
-const baseIngredient = require("./base/ingredient");
+const PantryForHandlePantry = require("../models/pantry");
+const basePantryForHandlePantry = require("./base/pantry");
+const baseIngredientForHandlePantry = require("./base/ingredient");
 
-Date.prototype.addDays = function (days) {
+declare interface Date {
+    addDays: (days : number) => Date
+}
+
+Date.prototype.addDays = function (days : number) {
     var date = new Date(this.valueOf());
     date.setDate(date.getDate() + days);
     return date;
 }
 
-async function removePantry(PantryID) {
+async function removePantry(PantryID : string) {
     await basePantry.deletePantryByID(PantryID);
 }
 
-exports.freezePantry = async function (pantryID) {
+exports.freezePantry = async function (pantryID : string) {
     let pantry = await Pantry.findById(pantryID);
     pantry.frozen = true;
     return Pantry.updateOne({ _id: pantryID }, pantry);
@@ -25,7 +29,7 @@ exports.checkPantryExpiration = async function () {
     dateNow = dateNow.addDays(3);
 
     let almostExpired = [];
-    for (pantry of allPantry) {
+    for (let pantry of allPantry) {
         if (pantry.expirationDate) {
             if (pantry.expirationDate.getTime() < Date.now()) {
                 await removePantry(pantry._id);

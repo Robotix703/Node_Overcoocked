@@ -1,3 +1,9 @@
+export interface meal {
+    _id: string
+    recipeID: string
+    numberOfLunchPlanned: number
+}
+
 const mongoose = require('mongoose');
 
 const mealSchema = mongoose.Schema({

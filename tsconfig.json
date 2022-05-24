@@ -17,12 +17,14 @@
     },
     "include": [
         "src/*",
-        //"src/worker/*",
+        "src/worker/*",
         "src/models/*",
         //"src/modules/*/*"
         "src/controllers/*",
         "src/routes/*",
-        "src/middleware/*"
+        "src/middleware/*",
+        "src/compute/*",
+        "src/compute/base/*"
     ],
     "exclude": [
         "build/*"

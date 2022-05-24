@@ -1,59 +1,59 @@
 const Ingredient = require("../../models/ingredient");
 
-exports.getIngredientNameByID = async function (ingredientID) {
-    return Ingredient.findById(ingredientID).then((result) => {
+exports.getIngredientNameByID = async function (ingredientID : string) {
+    return Ingredient.findById(ingredientID).then((result : any) => {
         return result.name;
     })
 }
 
-exports.getIngredientByID = async function (ingredientID) {
+exports.getIngredientByID = async function (ingredientID : string) {
     return Ingredient.findById(ingredientID);
 }
 
-exports.getIngredientsByID = async function (ingredientsID){
+exports.getIngredientsByID = async function (ingredientsID : string){
     let ingredients = [];
 
-    for (ingredientID of ingredientsID) {
+    for (let ingredientID of ingredientsID) {
         const ingredient = await this.getIngredientByID(ingredientID);
         ingredients.push(ingredient);
     }
     return ingredients;
 }
 
-exports.getIngredientByName = async function (ingredientName) {
-    return Ingredient.find({ name: ingredientName }).then((result) => {
+exports.getIngredientByName = async function (ingredientName : string) {
+    return Ingredient.find({ name: ingredientName }).then((result : any) => {
         return result[0];
     });
 }
 
 exports.getAllIngredientsName = async function () {
-    return Ingredient.find().then((result) => {
-        return result.map(e => e.name);
+    return Ingredient.find().then((result : any) => {
+        return result.map((e : any) => e.name);
     })
 }
 
-exports.getIngredientsIDByName = async function (ingredientsName) {
+exports.getIngredientsIDByName = async function (ingredientsName : string) {
     let ingredientsID = [];
 
-    for (ingredientName of ingredientsName) {
+    for (let ingredientName of ingredientsName) {
         const ingredient = await this.getIngredientByName(ingredientName);
         ingredientsID.push(ingredient._id);
     }
     return ingredientsID;
 }
 
-exports.getIngredientsNameFromIDs = async function (ingredientIDs) {
+exports.getIngredientsNameFromIDs = async function (ingredientIDs : string[]) {
     let ingredientsName = [];
 
-    for (ingredientID of ingredientIDs) {
+    for (let ingredientID of ingredientIDs) {
         const ingredientName = await this.getIngredientNameByID(ingredientID);
         ingredientsName.push(ingredientName);
     }
     return ingredientsName;
 }
 
-exports.getFilteredIngredient = async function (name, pageSize, currentPage) {
-    let filters = {};
+exports.getFilteredIngredient = async function (name : string, pageSize : number, currentPage : number) {
+    let filters : any = {};
     if (name) filters.name = { "$regex": name, "$options": "i" };
     
     if (pageSize && currentPage > 0) {
@@ -63,8 +63,8 @@ exports.getFilteredIngredient = async function (name, pageSize, currentPage) {
     return Ingredient.find(filters);
 }
 
-exports.updateIngredient = async function(_id, name, consumable, category, unitOfMeasure, shelfLife, freezable){
-    let elementToUpdate = { _id: _id };
+exports.updateIngredient = async function(_id : string, name : string, consumable : boolean, category : string, unitOfMeasure : string, shelfLife : boolean, freezable : boolean){
+    let elementToUpdate : any = { _id: _id };
 
     if(name) elementToUpdate.name = name;
     if(consumable) elementToUpdate.consumable = consumable;

@@ -1,12 +1,12 @@
-const baseIngredient = require("./base/ingredient");
-const baseInstruction = require("./base/instruction");
+const baseIngredientForRecipe = require("./base/ingredient");
+const baseInstructionForRecipe = require("./base/instruction");
 const baseRecipe = require("./base/recipe");
 
-getIngredientIDFromInstruction = async function (instructionID) {
-    const instruction = await baseInstruction.getInstructionByID(instructionID);
+const getIngredientIDFromInstruction = async function (instructionID : string) {
+    const instruction = await baseInstructionForRecipe.getInstructionByID(instructionID);
 
-    let ingredientsNeeded = [];
-    instruction.ingredientsID.forEach((ingredient, index) => {
+    let ingredientsNeeded : any[] = [];
+    instruction.ingredientsID.forEach((ingredient : any, index : number) => {
         ingredientsNeeded.push({
             ingredientID: ingredient,
             quantity: instruction.quantity[index]
@@ -15,37 +15,37 @@ getIngredientIDFromInstruction = async function (instructionID) {
     return ingredientsNeeded;
 }
 
-concatList = function (originalList, additionList) {
-    additionList.forEach((elementToAdd) => {
-        let existingIngredient = originalList.find(e => e.ingredient._id.toString() == elementToAdd.ingredient._id.toString());
+const concatList = function (originalList : any, additionList : any) {
+    additionList.forEach((elementToAdd : any) => {
+        let existingIngredient = originalList.find((e : any) => e.ingredient._id.toString() == elementToAdd.ingredient._id.toString());
 
         if (existingIngredient) existingIngredient.quantity += elementToAdd.quantity;
         else originalList.push(elementToAdd);
     })
 }
 
-adaptQuantity = function (ingredientList, numberOfLunch, numberOfLunchRecipe) {
-    ingredientList.forEach((ingredient) => {
+const adaptQuantity = function (ingredientList : any, numberOfLunch : number, numberOfLunchRecipe : number) {
+    ingredientList.forEach((ingredient : any) => {
         ingredient.quantity *= (numberOfLunch / numberOfLunchRecipe);
     });
 }
 
-sortInstructions = function(x, y){
+const sortInstructions = function(x : any, y : any){
     if (x.order < y.order) return -1;
     if (x.order > y.order) return 1;
     return 0;
 }
 
-exports.getIngredientList = async function (recipeID, numberOfLunch) {
-    const instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
+exports.getIngredientList = async function (recipeID : string, numberOfLunch : number) {
+    const instructions = await baseInstructionForRecipe.getInstructionByRecipeID(recipeID);
     const recipe = await baseRecipe.getRecipeByID(recipeID);
 
-    let ingredientsNeeded = [];
-    for (instruction of instructions) {
+    let ingredientsNeeded : any[] = [];
+    for (let instruction of instructions) {
 
         let newIngredients = [];
         for (let i = 0; i < instruction.ingredientsID.length; i++) {
-            const ingredient = await baseIngredient.getIngredientByID(instruction.ingredientsID[i]);
+            const ingredient = await baseIngredientForRecipe.getIngredientByID(instruction.ingredientsID[i]);
             newIngredients.push({
                 ingredient: ingredient,
                 quantity: instruction.quantity[i]
@@ -58,14 +58,14 @@ exports.getIngredientList = async function (recipeID, numberOfLunch) {
     return ingredientsNeeded;
 }
 
-exports.getInstructionsByRecipeID = async function (recipeID) {
-    let instructions = await baseInstruction.getInstructionByRecipeID(recipeID);
+exports.getInstructionsByRecipeID = async function (recipeID : string) {
+    let instructions = await baseInstructionForRecipe.getInstructionByRecipeID(recipeID);
     instructions.sort(sortInstructions);
 
     let newInstruction = [];
-    for (instruction of instructions) {
+    for (let instruction of instructions) {
         const ingredientsID = await getIngredientIDFromInstruction(instruction._id);
-        const ingredients = await baseIngredient.getIngredientsByID(ingredientsID.map(e => e.ingredientID));
+        const ingredients = await baseIngredientForRecipe.getIngredientsByID(ingredientsID.map(e => e.ingredientID));
 
         let composition = [];
         for (let i = 0; i < ingredients.length; i++) {
@@ -90,7 +90,7 @@ exports.getInstructionsByRecipeID = async function (recipeID) {
     return newInstruction;
 }
 
-exports.getPrettyRecipe = async function(recipeID){
+exports.getPrettyRecipe = async function(recipeID : string){
     let instructions = await this.getInstructionsByRecipeID(recipeID);
     let recipeData = await baseRecipe.getRecipeByID(recipeID);
     

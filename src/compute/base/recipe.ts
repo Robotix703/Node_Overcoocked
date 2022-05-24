@@ -1,17 +1,17 @@
 const Recipe = require("../../models/recipe");
 
-exports.getRecipeByID = async function (recipeID) {
+exports.getRecipeByID = async function (recipeID : string) {
     return Recipe.findById(recipeID);
 }
 
-exports.updateLastCooked = async function (recipeID) {
+exports.updateLastCooked = async function (recipeID : string) {
     let recipeToUpdate = await Recipe.findById(recipeID);
     recipeToUpdate.lastCooked = Date.now();
     return Recipe.updateOne({ _id: recipeID }, recipeToUpdate);
 }
 
-exports.filterRecipe = async function (category, name, pageSize, currentPage) {
-    let filters = {};
+exports.filterRecipe = async function (category : string, name : string, pageSize : number, currentPage : number) {
+    let filters : any = {};
     if (category) filters.category = category;
     if (name) filters.title = { "$regex": name, "$options": "i" };
 
@@ -22,12 +22,12 @@ exports.filterRecipe = async function (category, name, pageSize, currentPage) {
     return Recipe.find(filters);
 }
 
-exports.searchByName = async function (name) {
+exports.searchByName = async function (name : string) {
     return Recipe.find({ 'title': { "$regex": name, "$options": "i" } });
 }
 
-exports.updateRecipe = async function (_id, title, numberOfLunch, imagePath, category, duration, score, lastCooked){
-    let elementToUpdate = { _id: _id };
+exports.updateRecipe = async function (_id : string, title : string, numberOfLunch : number, imagePath : string, category : string, duration : number, score : number, lastCooked : boolean){
+    let elementToUpdate : any = { _id: _id };
 
     if(title) elementToUpdate.title = title;
     if(numberOfLunch) elementToUpdate.numberOfLunch = numberOfLunch;

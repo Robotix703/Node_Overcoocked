@@ -1,24 +1,24 @@
-const Ingredient = require('../models/ingredient');
+const IngredientForInventory = require('../models/ingredient');
 const Pantry = require('../models/pantry');
 
 const basePantry = require("./base/pantry");
 const baseIngredient = require("./base/ingredient");
 
-getConsumableID = async function(){
+const getConsumableID = async function(){
     return Ingredient.find({consumable: true})
-        .then(documents => {
+        .then((documents : any) => {
             const fetchedingredients = [...documents];
             return fetchedingredients.map(e => e._id);
         })
-        .catch(error => {
+        .catch((error : Error) => {
             console.error("getConsumableID error : ", error);
             return;
         });
 }
 
-getInventoryForIngredientID = async function(ingredientID){  
+const getInventoryForIngredientID = async function(ingredientID : string){  
     return Pantry.find({ingredientID: ingredientID})
-        .then(documents => {
+        .then((documents : any) => {
             const fetchedPantries = [...documents];
 
             let sum = 0;
@@ -31,7 +31,7 @@ getInventoryForIngredientID = async function(ingredientID){
             })
             return {quantityLeft: sum, nearestExpirationDate: nearestExpirationDate};
         })
-        .catch(error => {
+        .catch((error : Error) => {
             console.error(error);
             return;
         });
@@ -42,7 +42,7 @@ exports.getInventory = async function(){
 
     let listAllConsumableLeft = [];
 
-    for(ingredientID of consumableIDs){
+    for(let ingredientID of consumableIDs){
         const inventory = await getInventoryForIngredientID(ingredientID);
         listAllConsumableLeft.push({
             ingredientID: ingredientID,
@@ -58,7 +58,7 @@ exports.getFullInventory = async function(){
 
     let prettyPantries = [];
 
-    for(pantry of allPantry){
+    for(let pantry of allPantry){
         let ingredient = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
 
         if(ingredient){
