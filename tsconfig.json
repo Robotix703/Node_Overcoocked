@@ -21,7 +21,8 @@
         "src/models/*",
         //"src/modules/*/*"
         "src/controllers/*",
-        "src/routes/*"
+        "src/routes/*",
+        "src/middleware/*"
     ],
     "exclude": [
         "build/*"

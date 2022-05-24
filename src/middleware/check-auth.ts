@@ -1,6 +1,7 @@
+import { Request, Response } from "express";
 const jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
+module.exports = (req: any, res: Response, next: any) => {
     try{
         const token = req.headers.authorization.split(" ")[1];
         const decodedToken =  jwt.verify(token, process.env.JWT);
