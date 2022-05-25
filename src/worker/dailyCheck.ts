@@ -1,7 +1,7 @@
 const handleMeal = require("../compute/handleMeal");
 const handlePantry = require("../compute/handlePantry");
 
-const smsSender = require("./sendSMSToEverybody");
+const smsSenderForDailyCheck = require("./sendSMSToEverybody");
 
 async function checkPlannedMeals(){
     await handleMeal.initPantryInventory();
@@ -10,18 +10,18 @@ async function checkPlannedMeals(){
 
     let notReadyMeals = [];
     let almostExpiredMeals = [];
-    for(mealState of mealsState){
+    for(let mealState of mealsState){
         if(mealState.state.ingredientUnavailable) notReadyMeals.push(mealState);
         else if(mealState.state.ingredientAlmostExpire) almostExpiredMeals.push(mealState);
     }
 
     if(notReadyMeals.length > 0){
         let message = "";
-        for(mealNotReady of notReadyMeals){
+        for(let mealNotReady of notReadyMeals){
             message += "Le repas " + mealNotReady.title + " n'est pas prêt\n";
         }
 
-        for(mealAlmostExpire of almostExpiredMeals){
+        for(let mealAlmostExpire of almostExpiredMeals){
             message += "Le repas " + mealAlmostExpire.title + " va bientôt périmer\n";
         }
 
@@ -43,7 +43,7 @@ async function checkPantry(){
     {
         message = "\nLes ingrédients suivants vont périmer :\n";
 
-        for(element of almostExpired){
+        for(let element of almostExpired){
             message += element.ingredientName + " (Qty: " + element.quantity + ")(Exp: " + element.expirationDate + ")\n";
         }
     }

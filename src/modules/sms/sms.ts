@@ -7,8 +7,8 @@ var ovh = require('ovh')({
     consumerKey: process.env.OVHCONSKEY
 });
 
-function SendSMS(receivers, message){
-    ovh.request('GET', '/sms', function (err, serviceName) {
+export function SendSMS(receivers : any, message : string){
+    ovh.request('GET', '/sms', function (err : Error, serviceName : string) {
         if(err) {
             console.error("SendSMS - " + err, serviceName);
         }
@@ -19,11 +19,9 @@ function SendSMS(receivers, message){
                 noStopClause: true,
                 receivers: receivers
                 
-            }, function (errsend, result) {
+            }, function (errsend : any, result : any) {
                 if(errsend) console.error(errsend, result);
             });
         }
     });
 }
-
-module.exports = {SendSMS}

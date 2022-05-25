@@ -4,13 +4,13 @@ import path from 'path';
 import cors from 'cors';
 
 import * as BDD from './BDD';
-//import { init } from "./initialization";
+import { init } from "./initialization";
 
 BDD.connectToDataBase()
 .then(() => {
     console.log("BDD - Connectée");
 
-    //init();
+    init();
 })
 .catch((error: Error) => {
     console.log("BDD - Erreur de connexion");
@@ -32,7 +32,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-//app.use("/images", express.static(path.join("images")));
+app.use("/images", express.static(path.join("images")));
 
 //Use routes
 app.use("/api/user", userRoutes);

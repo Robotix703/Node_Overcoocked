@@ -12,11 +12,11 @@ function initSMS(){
     smsSender.fetchPhoneNumber();
 }
 
-function createIntervalCronSettings(interval){
+function createIntervalCronSettings(interval: string){
     return "*/" + interval + " * * * *";
 }
 
-function createDailyCronSettings(hour){
+function createDailyCronSettings(hour: string){
     return "0 " + hour + " * * *";
 }
 
@@ -40,7 +40,7 @@ function initDailyCheck(){
     )
 }
 
-exports.init = function(){
+export function init(){
     initSMS();
     initTodoSurvey();
     initDailyCheck();

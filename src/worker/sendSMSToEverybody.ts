@@ -2,9 +2,9 @@ const baseUser = require("../compute/base/user");
 const smsSender = require("../modules/sms/sms");
 const Frindicator = "0033";
 
-let g_phoneNumbers = [];
+let g_phoneNumbers : any = [];
 
-function processPhoneNumber(phoneNumbers){
+function processPhoneNumber(phoneNumbers : any[]){
     phoneNumbers.forEach((phoneNumber) => {
         g_phoneNumbers.push(
             Frindicator + phoneNumber.slice(1)
@@ -17,7 +17,7 @@ exports.fetchPhoneNumber = async function(){
     processPhoneNumber(phoneNumbers);
 }
 
-exports.sendSMS = function(message){
+exports.sendSMS = function(message : string){
     if(process.env.NODE_ENV === "production"){
         smsSender.SendSMS(g_phoneNumbers, message);
     }
