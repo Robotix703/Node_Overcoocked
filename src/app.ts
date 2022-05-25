@@ -24,10 +24,8 @@ import { instructionRoutes } from "./routes/instruction";
 import { recipeRoutes } from "./routes/recipe";
 import { pantryRoutes } from "./routes/pantry";
 import { mealRoutes } from "./routes/meal";
-/*
+import { todoItemRoutes } from "./routes/todoItem";
 
-const todoItemRoutes = require("./routes/todoItem");
-*/
 const app = express();
 
 app.use(cors());
@@ -43,9 +41,6 @@ app.use("/api/instruction", instructionRoutes);
 app.use("/api/recipe", recipeRoutes);
 app.use("/api/pantry", pantryRoutes);
 app.use("/api/meal", mealRoutes);
-/*
-
 app.use("/api/todoItem", todoItemRoutes);
-*/
 
 module.exports = app;

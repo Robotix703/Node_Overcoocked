@@ -1,41 +1,44 @@
-const baseTodoItem = require("../compute/base/todoItem");
-const registerIngredient = require("../worker/registerIngredientsOnTodo");
-const Todoist = require("../modules/Todoist/main");
-const TodoItem = require("../models/todoItem");
+import { Request, Response } from "express";
 
-exports.readTodoItems = async (req, res) => {
+const baseTodoItemForTodoItem = require("../compute/base/todoItem");
+const registerIngredient = require("../worker/registerIngredientsOnTodo");
+const TodoistForTodoItem = require("../modules/Todoist/main");
+const TodoItemForTodoItem = require("../models/todoItem");
+
+exports.readTodoItems = async (req : Request, res : Response) => {
+    let fetchedTodoItems : any= [];
     baseTodoItem.readTodoItems()
-    .then(documents => {
+    .then((documents : any) => {
         fetchedTodoItems = documents;
         return TodoItem.count();
       })
-      .then(count => {
+      .then((count : number) => {
         res.status(200).json({ todoItems: fetchedTodoItems, count: count });
       })
-      .catch(error => {
+      .catch((error : Error) => {
         res.status(500).json({
           errorMessage: error
         })
       });
 }
 
-exports.writeTodoItem = async (req, res) => {
+exports.writeTodoItem = async (req : Request, res : Response) => {
     registerIngredient.registerIngredient(
         req.body.ingredientID,
         req.body.name,
         req.body.quantity,
         req.body.unitOfMeasure)
-        .then((result) => {
+        .then((result : any) => {
             res.status(201).json(result);
         })
-        .catch(error => {
+        .catch((error : Error) => {
             res.status(500).json({
                 errorMessage: error
             })
         });
 }
 
-exports.updateTodoItem = async (req, res) => {
+exports.updateTodoItem = async (req : Request, res : Response) => {
     let todoItem = new TodoItem({
         _id: req.params.id,
         todoID: req.body.todoID,
@@ -45,26 +48,26 @@ exports.updateTodoItem = async (req, res) => {
     });
 
     baseTodoItem.updateTodoItem(todoItem)
-        .then(async (result) => {
+        .then(async (result : any) => {
             if (result.modifiedCount > 0) {
-                await Todoist.updateItemInProjectByName(process.env.TODOPROJECT, req.body.todoID, text);
+                await Todoist.updateItemInProjectByName(process.env.TODOPROJECT, req.body.todoID, req.body.text);
                 res.status(200).json({status: "Ok"});
             } else {
                 res.status(401).json({ message: "Pas de modification" });
             }
         })
-        .catch(error => {
+        .catch((error : Error) => {
             res.status(500).json({
                 errorMessage: error
             })
         });
 }
 
-exports.deleteTodoItem = async (req, res) => {
+exports.deleteTodoItem = async (req : Request, res : Response) => {
     let todoItem = await baseTodoItem.getTodoItemByID(req.params.id);
 
     baseTodoItem.deleteTodoItem(req.params.id)
-        .then(async (result) => {
+        .then(async (result : any) => {
             if (result.deletedCount > 0) {
                 await Todoist.deleteItemInProjectByName(process.env.TODOPROJECT, todoItem.todoID);
                 res.status(200).json({ status: "Ok" });
@@ -72,7 +75,7 @@ exports.deleteTodoItem = async (req, res) => {
                 res.status(401).json(result);
             }
         })
-        .catch(error => {
+        .catch((error : Error) => {
             res.status(500).json({
                 errorMessage: error
             })
