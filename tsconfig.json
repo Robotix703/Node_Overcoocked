@@ -9,6 +9,7 @@
         "sourceMap": true,
         "outDir": "build",
         "baseUrl": ".",
+        "types": ["node"],
         "paths": {
             "*": [
                 "node_modules/*"
@@ -19,7 +20,7 @@
         "src/*",
         "src/worker/*",
         "src/models/*",
-        //"src/modules/*/*"
+        "src/modules/*/*",
         "src/controllers/*",
         "src/routes/*",
         "src/middleware/*",

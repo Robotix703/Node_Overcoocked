@@ -1,11 +1,11 @@
-const schedule = require('node-schedule');
+const schedule = require("node-schedule");
 
-exports.createJob = function(callback, cronSettings){
+export function createJob(callback : any, cronSettings : string){
     console.log("Job Created !");
     return schedule.scheduleJob(cronSettings, callback);
 }
 
-exports.cancelJob = function(job){
+export function cancelJob(job : any){
     console.log("Job cancelled !");
     job.cancel();
 }
