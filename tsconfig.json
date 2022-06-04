@@ -3,7 +3,7 @@
         "module": "commonjs",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
-        "target": "es6",
+        "target": "es2022",
         "noImplicitAny": true,
         "moduleResolution": "node",
         "sourceMap": true,
@@ -25,7 +25,8 @@
         "src/routes/*",
         "src/middleware/*",
         "src/compute/*",
-        "src/compute/base/*"
+        "src/compute/base/*",
+        "src/modules/*"
     ],
     "exclude": [
         "build/*"
