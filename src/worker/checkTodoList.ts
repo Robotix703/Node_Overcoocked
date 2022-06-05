@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { todoItem } from "../models/todoItem";
-import { getItemsInProjectByName } from "../modules/Todoist/main";
+import { getItemsInProjectByName } from "../modules/todoist";
 
 const baseIngredient = require("../compute/base/ingredient");
 

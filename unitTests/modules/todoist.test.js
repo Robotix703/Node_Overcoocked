@@ -1,4 +1,4 @@
-const todoist = require("../build/modules/todoist");
+const todoist = require("../../build/modules/todoist");
 
 let taskText = "TEST";
 let taskID;

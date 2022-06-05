@@ -1,5 +1,7 @@
 require('dotenv').config()
 
+// Obtenir les clé API
+// Suivre ce lien https://eu.api.ovh.com/createToken/index.cgi?GET=/*&POST=/*
 var ovh = require('ovh')({
     endpoint: 'ovh-eu',
     appKey: process.env.OVHAPPKEY,
@@ -7,7 +9,7 @@ var ovh = require('ovh')({
     consumerKey: process.env.OVHCONSKEY
 });
 
-export function SendSMS(receivers : any, message : string){
+export function SendSMS(receivers: string[], message: string){
     ovh.request('GET', '/sms', function (err : Error, serviceName : string) {
         if(err) {
             console.error("SendSMS - " + err, serviceName);
