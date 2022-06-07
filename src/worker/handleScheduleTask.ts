@@ -1,4 +1,4 @@
-const Scheduler = require("../modules/scheduler/main");
+const Scheduler = require("../modules/scheduler");
 
 let activeTasks : any = [];
 

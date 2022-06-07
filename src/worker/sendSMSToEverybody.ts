@@ -1,5 +1,5 @@
 const baseUser = require("../compute/base/user");
-const smsSender = require("../modules/sms/sms");
+const smsSender = require("../modules/sms");
 const Frindicator = "0033";
 
 let g_phoneNumbers : any = [];

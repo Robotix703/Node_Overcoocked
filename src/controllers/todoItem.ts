@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 
-const baseTodoItemForTodoItem = require("../compute/base/todoItem");
 const registerIngredient = require("../worker/registerIngredientsOnTodo");
-const TodoistForTodoItem = require("../modules/Todoist/main");
-const TodoItemForTodoItem = require("../models/todoItem");
 
 exports.readTodoItems = async (req : Request, res : Response) => {
     let fetchedTodoItems : any= [];

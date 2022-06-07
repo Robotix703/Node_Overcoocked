@@ -1,5 +1,5 @@
 require('dotenv').config();
-const Todoist = require("../modules/Todoist/main");
+const Todoist = require("../modules/todoist");
 
 const handleTodoItem = require("../compute/handleTodoItem");
 const handleIngredient = require("../compute/handleIngredient");
