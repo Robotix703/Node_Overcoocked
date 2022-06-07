@@ -1,7 +1,9 @@
+import { userType } from "../../models/user";
+
 const user = require("../../models/user");
 
-exports.getAllUserPhoneNumber = async function(){
-    return user.find().then((result : any) => {
-        return result.map((e : any) => e.phoneNumber);
+exports.getAllUserPhoneNumber = async function() : Promise<string[]>{
+    return user.find().then((results : userType[]) => {
+        return results.map((e : userType) => e.phoneNumber);
     });
 }

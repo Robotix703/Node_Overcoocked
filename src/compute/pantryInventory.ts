@@ -5,7 +5,7 @@ const basePantry = require("./base/pantry");
 const baseIngredient = require("./base/ingredient");
 
 const getConsumableID = async function(){
-    return Ingredient.find({consumable: true})
+    return IngredientForInventory.find({consumable: true})
         .then((documents : any) => {
             const fetchedingredients = [...documents];
             return fetchedingredients.map(e => e._id);

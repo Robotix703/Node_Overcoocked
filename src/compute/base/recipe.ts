@@ -1,16 +1,19 @@
+import { IUpdateOne } from "../../models/mongoose";
+import { recipe } from "../../models/recipe";
+
 const Recipe = require("../../models/recipe");
 
-exports.getRecipeByID = async function (recipeID : string) {
+exports.getRecipeByID = async function (recipeID : string) : Promise<recipe> {
     return Recipe.findById(recipeID);
 }
 
-exports.updateLastCooked = async function (recipeID : string) {
-    let recipeToUpdate = await Recipe.findById(recipeID);
-    recipeToUpdate.lastCooked = Date.now();
+exports.updateLastCooked = async function (recipeID : string) : Promise<IUpdateOne> {
+    let recipeToUpdate : recipe = await Recipe.findById(recipeID);
+    recipeToUpdate.lastCooked = new Date;
     return Recipe.updateOne({ _id: recipeID }, recipeToUpdate);
 }
 
-exports.filterRecipe = async function (category : string, name : string, pageSize : number, currentPage : number) {
+exports.filterRecipe = async function (category : string, name : string, pageSize : number, currentPage : number) : Promise<recipe[]> {
     let filters : any = {};
     if (category) filters.category = category;
     if (name) filters.title = { "$regex": name, "$options": "i" };
@@ -22,11 +25,11 @@ exports.filterRecipe = async function (category : string, name : string, pageSiz
     return Recipe.find(filters);
 }
 
-exports.searchByName = async function (name : string) {
+exports.searchByName = async function (name : string) : Promise<recipe[]> {
     return Recipe.find({ 'title': { "$regex": name, "$options": "i" } });
 }
 
-exports.updateRecipe = async function (_id : string, title : string, numberOfLunch : number, imagePath : string, category : string, duration : number, score : number, lastCooked : boolean){
+exports.updateRecipe = async function (_id : string, title : string, numberOfLunch : number, imagePath : string, category : string, duration : number, score : number, lastCooked : Date) : Promise<IUpdateOne> {
     let elementToUpdate : any = { _id: _id };
 
     if(title) elementToUpdate.title = title;
