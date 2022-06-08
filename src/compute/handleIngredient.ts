@@ -1,4 +1,4 @@
-const baseIngredientForHandle = require("./base/ingredient");
+import { baseIngredient } from "./base/ingredient";
 
 exports.getConsumable = async function(ingredientID : string){
     let ingredient = await baseIngredient.getIngredientByID(ingredientID);

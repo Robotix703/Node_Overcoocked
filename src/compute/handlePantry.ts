@@ -1,10 +1,18 @@
-const PantryForHandlePantry = require("../models/pantry");
-const basePantryForHandlePantry = require("./base/pantry");
-const baseIngredientForHandlePantry = require("./base/ingredient");
+import Pantry from "../models/pantry";
+import { baseIngredient } from "./base/ingredient";
+import { basePantry } from "./base/pantry";
 
-declare interface Date {
-    addDays: (days : number) => Date
-}
+declare global {
+    interface Date {
+       addDays(days: number, useThis?: boolean): Date;
+       isToday(): boolean;
+       clone(): Date;
+       isAnotherMonth(date: Date): boolean;
+       isWeekend(): boolean;
+       isSameDate(date: Date): boolean;
+       getStringDate(): String;
+    }
+ }
 
 Date.prototype.addDays = function (days : number) {
     var date = new Date(this.valueOf());

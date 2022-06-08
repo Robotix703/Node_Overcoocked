@@ -1,7 +1,4 @@
-const baseMealForUpdate = require("./base/meal");
-const basePantryForUpdate = require("./base/pantry");
-const baseRecipeForUpdate = require("../compute/base/recipe");
-const recipeIngredientsNeededForUpdate = require("./handleRecipe");
+import { basePantry } from "./base/pantry";
 
 function comparePantriesByQuantity(x : any, y : any){
     if(x.quantity > y.quantity) return 1;
@@ -27,7 +24,7 @@ function comparePantriesByExpirationDate(x : any, y : any){
 
 async function consumeIngredientFromPantry(ingredientID : string, quantity : number){
     let quantityToConsume = quantity;
-    let allPantry = await basePantry.getAllPantryByIngredientID(ingredientID);
+    let allPantry : any = await basePantry.getAllPantryByIngredientID(ingredientID);
 
     allPantry = allPantry.sort(comparePantriesByExpirationDate);
 
@@ -35,7 +32,7 @@ async function consumeIngredientFromPantry(ingredientID : string, quantity : num
         if(allPantry[0].quantity > quantityToConsume){
             //Update pantry
             allPantry[0].quantity -= quantityToConsume;
-            await basePantry.updatePantry(allPantry[0]);
+            await basePantry.updatePantryWithPantry(allPantry[0]);
 
             quantityToConsume = 0;
         }else{

@@ -1,9 +1,7 @@
 import { Request, Response } from "express";
 import moment from 'moment';
-import { pantry } from "../models/pantry";
-import { recipe } from "../models/recipe";
+import Pantry, { IPantry } from "../models/pantry";
 
-const Pantry = require('../models/pantry');
 const pantryInventory = require("../compute/pantryInventory");
 const baseIngredient = require("../compute/base/ingredient");
 const basePantry = require("../compute/base/pantry");
@@ -64,7 +62,7 @@ export function readPantries(req: any, res: Response){
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const pantryQuery = Pantry.find();
-  let fetchedPantries: pantry[] = [];
+  let fetchedPantries: IPantry[] = [];
 
   if (pageSize && currentPage) {
     pantryQuery
@@ -73,7 +71,7 @@ export function readPantries(req: any, res: Response){
   }
 
   pantryQuery
-    .then((documents: pantry[]) => {
+    .then((documents: IPantry[]) => {
       fetchedPantries = documents;
       return Pantry.count();
     })
@@ -90,7 +88,7 @@ export function quantityLeft(req: Request, res: Response){
   const ingredientID = req.query.ingredientID;
 
   Pantry.find({ ingredientID: ingredientID })
-    .then((documents: pantry[]) => {
+    .then((documents: IPantry[]) => {
       const fetchedPantries = [...documents];
       let sum = 0;
       fetchedPantries.forEach((e) => {
@@ -108,7 +106,7 @@ export function getNearestExpirationDate(req: Request, res: Response){
   const ingredientID = req.query.ingredientID;
 
   Pantry.find({ ingredientID: ingredientID })
-    .then((documents: pantry[]) => {
+    .then((documents: IPantry[]) => {
       const fetchedPantries = [...documents];
       let nearestExpirationDate = new Date();
       nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);

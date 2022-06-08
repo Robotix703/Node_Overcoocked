@@ -2,7 +2,7 @@ const IngredientForInventory = require('../models/ingredient');
 const Pantry = require('../models/pantry');
 
 const basePantry = require("./base/pantry");
-const baseIngredient = require("./base/ingredient");
+import { baseIngredient } from "./base/ingredient";
 
 const getConsumableID = async function(){
     return IngredientForInventory.find({consumable: true})

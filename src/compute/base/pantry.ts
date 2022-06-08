@@ -1,37 +1,40 @@
 import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
-import { pantry } from "../../models/pantry";
+import Pantry, { IPantry } from "../../models/pantry";
 
-exports.getAllPantryByIngredientID = async function(ingredientID : string) : Promise<pantry> {
-    return Pantry.find({ingredientID: ingredientID});
-}
+export namespace basePantry {
 
-exports.deletePantryByID = async function(pantryID : string) : Promise<IDeleteOne> {
-    return Pantry.deleteOne({ _id: pantryID });
-}
+    export async function getAllPantryByIngredientID(ingredientID : string) : Promise<IPantry> {
+        return Pantry.find({ingredientID: ingredientID});
+    }
 
-exports.updatePantry = async function(pantry : pantry) : Promise<IUpdateOne> {    
-    return Pantry.updateOne({ _id: pantry._id }, pantry);
-}
+    export async function deletePantryByID(pantryID : string) : Promise<IDeleteOne> {
+        return Pantry.deleteOne({ _id: pantryID });
+    }
 
-exports.getAllPantries = async function() : Promise<pantry[]> {
-    return Pantry.find();
-}
+    export async function updatePantryWithPantry(pantry : IPantry) : Promise<IUpdateOne> {    
+        return Pantry.updateOne({ _id: pantry._id }, pantry);
+    }
 
-exports.getPantryByID = async function(pantryID : string) : Promise<pantry> {
-    return Pantry.findById(pantryID);
-}
+    export async function getAllPantries() : Promise<IPantry[]> {
+        return Pantry.find();
+    }
 
-exports.getAllPantryWithExpirationDate = async function() : Promise<pantry[]> {
-    return Pantry.find({expirationDate: {$exists: true}});
-}
+    export async function getPantryByID(pantryID : string) : Promise<IPantry> {
+        return Pantry.findById(pantryID);
+    }
 
-exports.updatePantry = async function(_id : string, ingredientID : string, quantity : number, expirationDate : string, frozen : boolean) : Promise<IUpdateOne> {
-    let elementToUpdate : any = { _id: _id };
+    export async function getAllPantryWithExpirationDate() : Promise<IPantry[]> {
+        return Pantry.find({expirationDate: {$exists: true}});
+    }
 
-    if(ingredientID) elementToUpdate.ingredientID = ingredientID;
-    if(quantity) elementToUpdate.quantity = quantity;
-    if(expirationDate) elementToUpdate.expirationDate = expirationDate;
-    if(frozen) elementToUpdate.frozen = frozen;
+    export async function updatePantry(_id : string, ingredientID : string, quantity : number, expirationDate : string, frozen : boolean) : Promise<IUpdateOne> {
+        let elementToUpdate : any = { _id: _id };
 
-    return Pantry.updateOne({ _id: _id }, elementToUpdate);
+        if(ingredientID) elementToUpdate.ingredientID = ingredientID;
+        if(quantity) elementToUpdate.quantity = quantity;
+        if(expirationDate) elementToUpdate.expirationDate = expirationDate;
+        if(frozen) elementToUpdate.frozen = frozen;
+
+        return Pantry.updateOne({ _id: _id }, elementToUpdate);
+    }
 }
