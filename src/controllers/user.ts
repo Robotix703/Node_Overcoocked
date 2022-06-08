@@ -3,7 +3,7 @@ require('dotenv').config();
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { userType } from "../models/user";
+import { IUser } from "../models/user";
 
 const User = require("../models/user");
 
@@ -38,10 +38,10 @@ export function createUser(req: Request, res: Response){
 
 export function userLogin(req: Request, res: Response){
 
-  let fetchUser: userType;
+  let fetchUser: IUser;
 
   User.findOne({ email: req.body.email })
-    .then((user: userType) => {
+    .then((user: IUser) => {
       fetchUser = user;
 
       if (!user) {

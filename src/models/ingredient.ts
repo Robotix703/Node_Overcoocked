@@ -1,4 +1,4 @@
-export interface ingredient {
+export interface IIngredient {
   _id: string
   name: string
   imagePath: string
@@ -11,7 +11,7 @@ export interface ingredient {
 
 const mongoose = require('mongoose');
 
-const ingredientSchema = mongoose.Schema({
+export const ingredientSchema = mongoose.Schema({
   name: { type: String, required: true },
   imagePath: { type: String, required:true },
   consumable: { type: Boolean, required: true },
@@ -21,4 +21,5 @@ const ingredientSchema = mongoose.Schema({
   freezable: { type: Boolean, required: true }
 });
 
-module.exports = mongoose.model('Ingredient', ingredientSchema);
+const Ingredient = mongoose.model('Pantry', ingredientSchema);
+export default Ingredient;

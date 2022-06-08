@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { todoItem } from "../models/todoItem";
+import { ITodoItem } from "../models/todoItem";
 import { getItemsInProjectByName } from "../modules/todoist";
 
 const baseIngredient = require("../compute/base/ingredient");
@@ -38,7 +38,7 @@ async function removeItemFromMongo(todoID: string) {
     return TodoItem.deleteOne({ todoID: todoID });
 }
 
-async function getItemOnMongo(): Promise<todoItem> {
+async function getItemOnMongo(): Promise<ITodoItem> {
     return TodoItem.find();
 }
 

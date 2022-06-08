@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { meal } from "../models/meal";
 const Meal = require("../models/meal");
 
 const baseMeal = require("../compute/base/meal");

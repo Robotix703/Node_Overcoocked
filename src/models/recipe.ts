@@ -1,4 +1,4 @@
-export interface recipe{
+export interface IRecipe{
   _id: string
   title: string
   numberOfLunch: number

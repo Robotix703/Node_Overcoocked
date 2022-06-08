@@ -1,4 +1,4 @@
-export interface todoItem {
+export interface ITodoItem {
   _id: string
   todoID: number
   text: string

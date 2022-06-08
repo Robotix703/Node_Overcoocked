@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { ingredient } from "../models/ingredient";
-const Ingredient = require('../models/ingredient');
+import Ingredient, { IIngredient } from "../models/ingredient";
 const baseIngredient = require("../compute/base/ingredient");
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
@@ -32,9 +31,9 @@ export function writeIngredient(req: any, res: Response){
 
 //GET
 export function readIngredients(req: any, res: Response){
-  var fetchedIngredients: ingredient[] = [];
+  var fetchedIngredients: IIngredient[] = [];
   baseIngredient.getFilteredIngredient(req.query.name, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
-    .then((documents: ingredient[]) => {
+    .then((documents: IIngredient[]) => {
       fetchedIngredients = documents;
       return Ingredient.count();
     })
@@ -49,7 +48,7 @@ export function readIngredients(req: any, res: Response){
 }
 export function consumableID(req: Request, res: Response){
   Ingredient.find({ consumable: true })
-    .then((documents: ingredient[]) => {
+    .then((documents: IIngredient[]) => {
       res.status(200).json({ IngredientsID: documents.map(e => e._id), count: documents.length });
     })
     .catch((error: Error) => {
@@ -59,10 +58,10 @@ export function consumableID(req: Request, res: Response){
     });
 }
 export function searchByName(req: Request, res: Response){
-  let fetchedIngredients: ingredient[] = [];
+  let fetchedIngredients: IIngredient[] = [];
 
   Ingredient.find({ 'name': { "$regex": req.query.name, "$options": "i" } })
-    .then((documents: ingredient[]) => {
+    .then((documents: IIngredient[]) => {
       fetchedIngredients = documents;
       return Ingredient.count();
     })
@@ -77,7 +76,7 @@ export function searchByName(req: Request, res: Response){
 }
 export async function getIngredientByID(req: Request, res: Response){
   baseIngredient.getIngredientByID(req.query.ingredientID)
-    .then((ingredient: ingredient) => {
+    .then((ingredient: IIngredient) => {
       res.status(200).json(ingredient);
     })
     .catch((error: Error) => {

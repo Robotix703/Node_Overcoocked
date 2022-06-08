@@ -1,13 +1,13 @@
 import { IDeleteOne } from "../../models/mongoose";
-import { meal } from "../../models/meal";
+import { IMeal } from "../../models/meal";
 
 const Meal = require("../../models/meal");
 
-exports.getMealByID = async function(mealID : string) : Promise<meal> {
+exports.getMealByID = async function(mealID : string) : Promise<IMeal> {
     return Meal.findById(mealID);
 }
 
-exports.getAllMeals = async function() : Promise<meal> {
+exports.getAllMeals = async function() : Promise<IMeal> {
     return Meal.find();
 }
 

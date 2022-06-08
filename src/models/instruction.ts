@@ -1,4 +1,4 @@
-export interface instruction {
+export interface IInstruction {
   _id: string
   text: string
   recipeID: string

@@ -1,39 +1,39 @@
 import { IUpdateOne } from '../../models/mongoose';
-import { ingredient } from "../../models/ingredient";
+import { IIngredient } from "../../models/ingredient";
 
 const Ingredient = require("../../models/ingredient");
 
 export namespace baseIngredient {
     
     export async function getIngredientNameByID(ingredientID : string) : Promise<string> {
-        return Ingredient.findById(ingredientID).then((result : ingredient) => {
+        return Ingredient.findById(ingredientID).then((result : IIngredient) => {
             return result.name;
         });
     }
     
-    export async function getIngredientByID(ingredientID : string) : Promise<ingredient> {
+    export async function getIngredientByID(ingredientID : string) : Promise<IIngredient> {
         return Ingredient.findById(ingredientID);
     }
     
-    export async function getIngredientsByID(ingredientsID : string) : Promise<ingredient[]> {
-        let ingredients : ingredient[] = [];
+    export async function getIngredientsByID(ingredientsID : string) : Promise<IIngredient[]> {
+        let ingredients : IIngredient[] = [];
     
         for (let ingredientID of ingredientsID) {
-            const ingredient : ingredient = await this.getIngredientByID(ingredientID);
+            const ingredient : IIngredient = await this.getIngredientByID(ingredientID);
             ingredients.push(ingredient);
         }
         return ingredients;
     }
     
-    export async function getIngredientByName(ingredientName : string) : Promise<ingredient> {
-        return Ingredient.find({ name: ingredientName }).then((result : ingredient[]) => {
+    export async function getIngredientByName(ingredientName : string) : Promise<IIngredient> {
+        return Ingredient.find({ name: ingredientName }).then((result : IIngredient[]) => {
             return result[0];
         });
     }
     
     export async function getAllIngredientsName() : Promise<string[]> {
-        return Ingredient.find().then((results : ingredient[]) => {
-            return results.map((e : ingredient) => e.name);
+        return Ingredient.find().then((results : IIngredient[]) => {
+            return results.map((e : IIngredient) => e.name);
         })
     }
     
@@ -41,7 +41,7 @@ export namespace baseIngredient {
         let ingredientsID : string[] = [];
     
         for (let ingredientName of ingredientsName) {
-            const ingredient : ingredient = await this.getIngredientByName(ingredientName);
+            const ingredient : IIngredient = await this.getIngredientByName(ingredientName);
             ingredientsID.push(ingredient._id);
         }
         return ingredientsID;
@@ -57,12 +57,12 @@ export namespace baseIngredient {
         return ingredientsName;
     }
     
-    export async function getFilteredIngredient(name : string, pageSize : number, currentPage : number) : Promise<ingredient[]> {
+    export async function getFilteredIngredient(name : string, pageSize : number, currentPage : number) : Promise<IIngredient[]> {
         let filters : any = {};
         if (name) filters.name = { "$regex": name, "$options": "i" };
         
         if (pageSize && currentPage > 0) {
-            const query : Promise<ingredient[]> = Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
+            const query : Promise<IIngredient[]> = Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
             return query;
         }
         return Ingredient.find(filters);
@@ -81,7 +81,7 @@ export namespace baseIngredient {
         return Ingredient.updateOne({ _id: _id }, elementToUpdate);
     }
     
-    export async function getAllIngredients() : Promise<ingredient[]>{
+    export async function getAllIngredients() : Promise<IIngredient[]>{
         return Ingredient.find();
     }
 }

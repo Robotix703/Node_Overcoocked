@@ -1,4 +1,4 @@
-export interface meal {
+export interface IMeal {
     _id: string
     recipeID: string
     numberOfLunchPlanned: number

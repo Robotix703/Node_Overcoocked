@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import moment from 'moment';
-import { recipe } from "../models/recipe";
+import { IRecipe } from "../models/recipe";
 
 const Recipe = require('./../models/recipe');
 const baseRecipe = require("../compute/base/recipe");
@@ -40,7 +40,7 @@ export function readRecipes(req: any, res: Response){
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const recipeQuery = Recipe.find();
-  let fetchedRecipes: recipe[] = [];
+  let fetchedRecipes: IRecipe[] = [];
 
   if (pageSize && currentPage) {
     recipeQuery
@@ -49,7 +49,7 @@ export function readRecipes(req: any, res: Response){
   }
 
   recipeQuery
-    .then((documents: recipe[]) => {
+    .then((documents: IRecipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
@@ -63,7 +63,7 @@ export function readRecipes(req: any, res: Response){
     });
 }
 export async function getRecipeByID(req: Request, res: Response){
-  baseRecipe.getRecipeByID(req.query.recipeID).then((result: recipe) => {
+  baseRecipe.getRecipeByID(req.query.recipeID).then((result: IRecipe) => {
     res.status(200).json(result);
   })
     .catch((error: Error) => {
@@ -73,10 +73,10 @@ export async function getRecipeByID(req: Request, res: Response){
     });
 }
 export async function getFilteredRecipe(req: any, res: Response){
-  let fetchedRecipes: recipe[] = [];
+  let fetchedRecipes: IRecipe[] = [];
 
   baseRecipe.filterRecipe(req.query.category, req.query.name, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
-    .then((documents: recipe[]) => {
+    .then((documents: IRecipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
@@ -90,10 +90,10 @@ export async function getFilteredRecipe(req: any, res: Response){
     });
 }
 export async function getRecipeByName(req: Request, res: Response){
-  let fetchedRecipes: recipe[] = [];
+  let fetchedRecipes: IRecipe[] = [];
   
   baseRecipe.searchByName(req.query.name)
-    .then((documents: recipe[]) => {
+    .then((documents: IRecipe[]) => {
       fetchedRecipes = documents;
       return Recipe.count();
     })
@@ -118,7 +118,7 @@ export async function getPrettyRecipe(req: Request, res: Response){
   }
 
   handleRecipe.getPrettyRecipe(recipeID)
-    .then((result: recipe) => {
+    .then((result: IRecipe) => {
       res.status(200).json(result);
     })
     .catch((error: Error) => {

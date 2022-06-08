@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
-import { ingredient } from "../models/ingredient";
-import { instruction } from "../models/instruction";
+import { IInstruction } from "../models/instruction";
 const Instruction = require('./../models/instruction');
 
 const handleRecipe = require("../compute/handleRecipe");
@@ -67,7 +66,7 @@ export function readInstructions(req: any, res: Response){
   const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
   const instructionQuery = Instruction.find();
-  let fetchedInstructions: instruction[] = [];
+  let fetchedInstructions: IInstruction[] = [];
 
   if (pageSize && currentPage) {
     instructionQuery
@@ -76,7 +75,7 @@ export function readInstructions(req: any, res: Response){
   }
 
   instructionQuery
-    .then((documents: instruction[]) => {
+    .then((documents: IInstruction[]) => {
       fetchedInstructions = documents;
       return Instruction.count();
     })
@@ -91,7 +90,7 @@ export function readInstructions(req: any, res: Response){
 }
 export function getByRecipeID(req: Request, res: Response){
   handleRecipe.getInstructionsByRecipeID(req.query.recipeID)
-    .then((instructions: instruction[]) => {
+    .then((instructions: IInstruction[]) => {
       res.status(200).json(instructions);
     })
     .catch((error: Error) => {
@@ -106,7 +105,7 @@ export async function getInstructionCountForRecipe(req: Request, res: Response){
 }
 export async function getInstructionByID(req: Request, res: Response){
   handleInstructions.getPrettyInstructionByID(req.query.instructionID)
-  .then((instruction: instruction) => {
+  .then((instruction: IInstruction) => {
     res.status(200).json(instruction);
   })
   .catch((error: Error) => {
