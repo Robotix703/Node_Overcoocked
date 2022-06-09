@@ -1,7 +1,5 @@
 import { IDeleteOne } from "../../models/mongoose";
-import { IMeal } from "../../models/meal";
-
-const Meal = require("../../models/meal");
+import Meal, { IMeal } from "../../models/meal";
 
 exports.getMealByID = async function(mealID : string) : Promise<IMeal> {
     return Meal.findById(mealID);

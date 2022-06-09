@@ -3,9 +3,7 @@ require('dotenv').config();
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IUser } from "../models/user";
-
-const User = require("../models/user");
+import User, { IUser } from "../models/user";
 
 export function createUser(req: Request, res: Response){
   if (req.body.invitationCode !== process.env.INVITECODE) {

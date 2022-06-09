@@ -1,7 +1,5 @@
 import { IUpdateOne } from '../../models/mongoose';
-import { IIngredient } from "../../models/ingredient";
-
-const Ingredient = require("../../models/ingredient");
+import Ingredient, { IIngredient } from "../../models/ingredient";
 
 export namespace baseIngredient {
     

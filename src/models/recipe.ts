@@ -11,7 +11,7 @@ export interface IRecipe{
 
 const mongoose = require('mongoose');
 
-const recipeSchema = mongoose.Schema({
+export const recipeSchema = mongoose.Schema({
   title: { type: String, required: true },
   numberOfLunch: { type: Number, required: true },
   imagePath: { type: String, required: true},
@@ -21,4 +21,5 @@ const recipeSchema = mongoose.Schema({
   lastCooked: { type: Date }
 });
 
-module.exports = mongoose.model('Recipe', recipeSchema);
+const Recipe = mongoose.model('Recipe', recipeSchema);
+export default Recipe;

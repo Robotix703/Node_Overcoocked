@@ -1,9 +1,7 @@
-import { IUser } from "../../models/user";
-
-const user = require("../../models/user");
+import User, { IUser } from "../../models/user";
 
 exports.getAllUserPhoneNumber = async function() : Promise<string[]>{
-    return user.find().then((results : IUser[]) => {
+    return User.find().then((results : IUser[]) => {
         return results.map((e : IUser) => e.phoneNumber);
     });
 }

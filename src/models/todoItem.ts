@@ -8,11 +8,12 @@ export interface ITodoItem {
 
 const mongoose = require('mongoose');
 
-const todoItemSchema = mongoose.Schema({
+export const todoItemSchema = mongoose.Schema({
   todoID: { type: Number, required: true },
   text: { type: String, required: true },
   ingredientName: { type: String, required: true },
   consumable: { type: Boolean, required: true }
 });
 
-module.exports = mongoose.model('TodoItem', todoItemSchema);
+const TodoItem = mongoose.model('TodoItem', todoItemSchema);
+export default TodoItem;

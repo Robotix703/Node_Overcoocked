@@ -1,11 +1,9 @@
 require('dotenv').config();
 import { ITodoItem } from "../models/todoItem";
 import { getItemsInProjectByName } from "../modules/todoist";
-
-const baseIngredient = require("../compute/base/ingredient");
-
-const TodoItem = require("../models/todoItem");
-const Pantry = require("../models/pantry");
+import Pantry from "../models/pantry";
+import TodoItem from "../models/todoItem";
+import { baseIngredient } from "../compute/base/ingredient";
 
 function addDays(date: Date, days: number): Date {
     var date = new Date(this.valueOf());

@@ -1,7 +1,5 @@
 import { IUpdateOne } from "../../models/mongoose";
-import { IInstruction } from "../../models/instruction";
-
-const Instruction = require('../../models/instruction');
+import Instruction, { IInstruction } from "../../models/instruction";
 
 export namespace baseInstruction {
 

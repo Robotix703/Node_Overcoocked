@@ -1,7 +1,5 @@
 import { IUpdateOne } from "../../models/mongoose";
-import { IRecipe } from "../../models/recipe";
-
-const Recipe = require("../../models/recipe");
+import Recipe, { IRecipe } from "../../models/recipe";
 
 exports.getRecipeByID = async function (recipeID : string) : Promise<IRecipe> {
     return Recipe.findById(recipeID);

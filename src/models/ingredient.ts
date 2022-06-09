@@ -21,5 +21,5 @@ export const ingredientSchema = mongoose.Schema({
   freezable: { type: Boolean, required: true }
 });
 
-const Ingredient = mongoose.model('Pantry', ingredientSchema);
+const Ingredient = mongoose.model('Ingredient', ingredientSchema);
 export default Ingredient;
