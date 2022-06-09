@@ -1,15 +1,16 @@
-const baseInstructionForInstruction = require("./base/instruction");
-const baseIngredientForInstruction = require("./base/ingredient");
+import { IIngredient } from "../models/ingredient";
+import { IInstruction } from "../models/instruction";
+import { baseIngredient } from "./base/ingredient";
+import { baseInstruction } from "./base/instruction";
 
-exports.getInstructionCountForRecipe = async function(recipeID : string){
-    let instructions = await baseInstructionForRecipe.getInstructionByRecipeID(recipeID);
-
+exports.getInstructionCountForRecipe = async function(recipeID : string) : Promise<Number> {
+    let instructions : IInstruction[] = await baseInstruction.getInstructionByRecipeID(recipeID);
     return instructions.length;
 }
 
-exports.getPrettyInstructionByID = async function(instructionID : string){
-    let instruction = await baseInstructionForRecipe.getInstructionByID(instructionID);
-    let ingredients = await baseIngredientForRecipe.getIngredientsByID(instruction.ingredientsID);
+exports.getPrettyInstructionByID = async function(instructionID : string) : Promise<any> {
+    let instruction : IInstruction = await baseInstruction.getInstructionByID(instructionID);
+    let ingredients : IIngredient[] = await baseIngredient.getIngredientsByID(instruction.ingredientsID);
 
     let prettyInstruction : any = {
         _id: instruction._id,

@@ -13,7 +13,7 @@ export namespace baseIngredient {
         return Ingredient.findById(ingredientID);
     }
     
-    export async function getIngredientsByID(ingredientsID : string) : Promise<IIngredient[]> {
+    export async function getIngredientsByID(ingredientsID : string[]) : Promise<IIngredient[]> {
         let ingredients : IIngredient[] = [];
     
         for (let ingredientID of ingredientsID) {

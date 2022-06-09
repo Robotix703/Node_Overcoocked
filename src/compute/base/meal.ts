@@ -1,14 +1,17 @@
 import { IDeleteOne } from "../../models/mongoose";
 import Meal, { IMeal } from "../../models/meal";
 
-exports.getMealByID = async function(mealID : string) : Promise<IMeal> {
-    return Meal.findById(mealID);
-}
+export namespace baseMeal {
 
-exports.getAllMeals = async function() : Promise<IMeal> {
-    return Meal.find();
-}
+    export async function getMealByID(mealID : string) : Promise<IMeal> {
+        return Meal.findById(mealID);
+    }
 
-exports.deleteMeal = async function(mealID : string) : Promise<IDeleteOne> {
-    return Meal.deleteOne({ _id: mealID });
+    export async function getAllMeals() : Promise<IMeal[]> {
+        return Meal.find();
+    }
+
+    export async function deleteMeal(mealID : string) : Promise<IDeleteOne> {
+        return Meal.deleteOne({ _id: mealID });
+    }
 }

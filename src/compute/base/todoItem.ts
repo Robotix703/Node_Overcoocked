@@ -1,22 +1,25 @@
 import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
 import { ITodoItem } from "../../models/todoItem";
 
-exports.getTodoItemByIngredientName = async function(ingredientName : string) : Promise<ITodoItem[]> {
-    return TodoItem.find({ingredientName: ingredientName});
-}
+export namespace baseTodoItem {
 
-exports.updateTodoItem = async function(todoItem : ITodoItem) : Promise<IUpdateOne>{
-    return TodoItem.updateOne({_id: todoItem._id}, todoItem);
-}
+    export async function getTodoItemByIngredientName(ingredientName : string) : Promise<ITodoItem[]> {
+        return TodoItem.find({ingredientName: ingredientName});
+    }
 
-exports.readTodoItems = async function() : Promise<ITodoItem[]> {
-    return TodoItem.find();
-}
+    export async function updateTodoItem(todoItem : ITodoItem) : Promise<IUpdateOne>{
+        return TodoItem.updateOne({_id: todoItem._id}, todoItem);
+    }
 
-exports.deleteTodoItem = async function(todoItemID : string) : Promise<IDeleteOne> {
-    return TodoItem.deleteOne({ _id: todoItemID });
-}
+    export async function readTodoItems() : Promise<ITodoItem[]> {
+        return TodoItem.find();
+    }
 
-exports.getTodoItemByID = async function(todoItemID : string) : Promise<ITodoItem> {
-    return TodoItem.findById(todoItemID);
+    export async function deleteTodoItem(todoItemID : string) : Promise<IDeleteOne> {
+        return TodoItem.deleteOne({ _id: todoItemID });
+    }
+
+    export async function getTodoItemByID(todoItemID : string) : Promise<ITodoItem> {
+        return TodoItem.findById(todoItemID);
+    }
 }

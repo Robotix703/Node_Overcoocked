@@ -1,8 +1,7 @@
 const pantryInventory = require("./pantryInventory");
 const recipeIngredientsNeeded = require("./handleRecipe");
 
-const baseMeal = require("./base/meal");
-const baseRecipeForMeal = require("./base/recipe");
+import { baseMeal } from "./base/meal";
 
 let g_pantryInventory : any = [];
 

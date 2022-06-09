@@ -1,4 +1,7 @@
+import { baseMeal } from "./base/meal";
 import { basePantry } from "./base/pantry";
+
+const recipeIngredientsNeeded = require("./handleRecipe");
 
 function comparePantriesByQuantity(x : any, y : any){
     if(x.quantity > y.quantity) return 1;

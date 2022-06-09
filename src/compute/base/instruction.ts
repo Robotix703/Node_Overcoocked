@@ -7,7 +7,7 @@ export namespace baseInstruction {
         return Instruction.findById(instructionID);
     }
 
-    export async function getInstructionByRecipeID(recipeID : string) : Promise<IInstruction>{
+    export async function getInstructionByRecipeID(recipeID : string) : Promise<IInstruction[]>{
         return Instruction.find({ 'recipeID': recipeID });
     }
 
