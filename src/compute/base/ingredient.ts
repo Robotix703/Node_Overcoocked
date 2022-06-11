@@ -82,4 +82,8 @@ export namespace baseIngredient {
     export async function getAllIngredients() : Promise<IIngredient[]>{
         return Ingredient.find();
     }
+
+    export async function getConsumableIngredients() : Promise<IIngredient[]> {
+        return Ingredient.find({consumable: true});
+    }
 }

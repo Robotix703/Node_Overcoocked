@@ -9,3 +9,7 @@ export interface IDeleteOne {
     deleteCount: number;
     ok: number;
 }
+
+export interface ISave {
+    err: Error
+}

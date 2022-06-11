@@ -1,9 +1,13 @@
+import { IMeal } from "../models/meal";
+import { IPantry } from "../models/pantry";
+
 import { baseMeal } from "./base/meal";
 import { basePantry } from "./base/pantry";
+import { baseRecipe } from "./base/recipe";
 
-const recipeIngredientsNeeded = require("./handleRecipe");
+import { handleRecipe } from "./handleRecipe";
 
-function comparePantriesByQuantity(x : any, y : any){
+function comparePantriesByQuantity(x : any, y : any) : number {
     if(x.quantity > y.quantity) return 1;
 
     if(x.quantity < y.quantity) return -1;
@@ -11,7 +15,7 @@ function comparePantriesByQuantity(x : any, y : any){
     return 0;
 }
 
-function comparePantriesByExpirationDate(x : any, y : any){
+function comparePantriesByExpirationDate(x : any, y : any) : number {
     if(x.expirationDate == undefined && y.expirationDate == undefined) return comparePantriesByQuantity(x, y);
 
     if(x.expirationDate == undefined) return 1;
@@ -25,9 +29,9 @@ function comparePantriesByExpirationDate(x : any, y : any){
     return comparePantriesByQuantity(x, y);
 }
 
-async function consumeIngredientFromPantry(ingredientID : string, quantity : number){
-    let quantityToConsume = quantity;
-    let allPantry : any = await basePantry.getAllPantryByIngredientID(ingredientID);
+async function consumeIngredientFromPantry(ingredientID : string, quantity : number) : Promise<void> {
+    let quantityToConsume : number = quantity;
+    let allPantry : IPantry[] = await basePantry.getAllPantryByIngredientID(ingredientID);
 
     allPantry = allPantry.sort(comparePantriesByExpirationDate);
 
@@ -50,16 +54,19 @@ async function consumeIngredientFromPantry(ingredientID : string, quantity : num
     }
 }
 
-exports.updatePantryWhenMealsIsDone = async function(mealID : string){
-    const meal = await baseMeal.getMealByID(mealID);
+export namespace updatePantryWhenMealIsDone {
 
-    baseRecipe.updateLastCooked(meal.recipeID);
-
-    const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
-    for(let ingredient of ingredientsNeeded){
-        if(ingredient.consumable)
-        {
-            await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);
+    export async function updatePantryWhenMealsIsDone(mealID : string) : Promise<void> {
+        const meal : IMeal = await baseMeal.getMealByID(mealID);
+    
+        await baseRecipe.updateLastCooked(meal.recipeID);
+    
+        const ingredientsNeeded : any[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+        for(let ingredient of ingredientsNeeded){
+            if(ingredient.consumable)
+            {
+                await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);
+            }
         }
     }
 }

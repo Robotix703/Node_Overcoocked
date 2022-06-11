@@ -3,7 +3,7 @@ import Pantry, { IPantry } from "../../models/pantry";
 
 export namespace basePantry {
 
-    export async function getAllPantryByIngredientID(ingredientID : string) : Promise<IPantry> {
+    export async function getAllPantryByIngredientID(ingredientID : string) : Promise<IPantry[]> {
         return Pantry.find({ingredientID: ingredientID});
     }
 
@@ -36,5 +36,9 @@ export namespace basePantry {
         if(frozen) elementToUpdate.frozen = frozen;
 
         return Pantry.updateOne({ _id: _id }, elementToUpdate);
+    }
+
+    export async function getByID(id: string) : Promise<IPantry> {
+        return Pantry.findById(id);
     }
 }

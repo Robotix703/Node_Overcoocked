@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import TodoItem from "../models/todoItem";
+import { baseTodoItem } from "../compute/base/todoItem";
 
 const registerIngredient = require("../worker/registerIngredientsOnTodo");
 
@@ -36,15 +38,7 @@ exports.writeTodoItem = async (req : Request, res : Response) => {
 }
 
 exports.updateTodoItem = async (req : Request, res : Response) => {
-    let todoItem = new TodoItem({
-        _id: req.params.id,
-        todoID: req.body.todoID,
-        text: req.body.text,
-        ingredientName: req.body.ingredientName,
-        consumable: req.body.consumable
-    });
-
-    baseTodoItem.updateTodoItem(todoItem)
+    baseTodoItem.updateTodoItem(req.params.id, req.body.todoID, req.body.text, req.body.ingredientName, req.body.consumable)
         .then(async (result : any) => {
             if (result.modifiedCount > 0) {
                 await Todoist.updateItemInProjectByName(process.env.TODOPROJECT, req.body.todoID, req.body.text);

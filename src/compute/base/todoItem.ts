@@ -1,5 +1,5 @@
-import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
-import { ITodoItem } from "../../models/todoItem";
+import { IDeleteOne, ISave, IUpdateOne } from "../../models/mongoose";
+import TodoItem, { ITodoItem } from "../../models/todoItem";
 
 export namespace baseTodoItem {
 
@@ -7,7 +7,14 @@ export namespace baseTodoItem {
         return TodoItem.find({ingredientName: ingredientName});
     }
 
-    export async function updateTodoItem(todoItem : ITodoItem) : Promise<IUpdateOne>{
+    export async function updateTodoItem(todoItemID : string, todoID : string, text : string, ingredientName : string, consumable: boolean) : Promise<IUpdateOne>{
+        let todoItem = new TodoItem({
+            _id: todoItemID,
+            todoID: todoID,
+            text: text,
+            ingredientName: ingredientName,
+            consumable: consumable
+        });
         return TodoItem.updateOne({_id: todoItem._id}, todoItem);
     }
 
@@ -21,5 +28,16 @@ export namespace baseTodoItem {
 
     export async function getTodoItemByID(todoItemID : string) : Promise<ITodoItem> {
         return TodoItem.findById(todoItemID);
+    }
+
+    export async function registerTodoItem(itemID : string, itemText : string, name : string, consumable : boolean) : Promise<ISave> {
+        const todoItem = new TodoItem({
+            todoID: itemID,
+            text: itemText,
+            ingredientName: name,
+            consumable: consumable
+        });
+    
+        return await todoItem.save();
     }
 }

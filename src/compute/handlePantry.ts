@@ -1,4 +1,5 @@
-import Pantry from "../models/pantry";
+import { IUpdateOne } from "../models/mongoose";
+import { IPantry } from "../models/pantry";
 import { baseIngredient } from "./base/ingredient";
 import { basePantry } from "./base/pantry";
 
@@ -20,37 +21,40 @@ Date.prototype.addDays = function (days : number) {
     return date;
 }
 
-async function removePantry(PantryID : string) {
+async function removePantry(PantryID : string) : Promise<void> {
     await basePantry.deletePantryByID(PantryID);
 }
 
-exports.freezePantry = async function (pantryID : string) {
-    let pantry = await Pantry.findById(pantryID);
-    pantry.frozen = true;
-    return Pantry.updateOne({ _id: pantryID }, pantry);
-}
+export namespace handlePantry {
 
-exports.checkPantryExpiration = async function () {
-    let allPantry = await basePantry.getAllPantryWithExpirationDate();
+    export async function freezePantry(pantryID : string) : Promise<IUpdateOne> {
+        let pantry : IPantry = await basePantry.getByID(pantryID);
+        pantry.frozen = true;
+        return basePantry.updatePantryWithPantry(pantry);
+    }
 
-    let dateNow = new Date();
-    dateNow = dateNow.addDays(3);
-
-    let almostExpired = [];
-    for (let pantry of allPantry) {
-        if (pantry.expirationDate) {
-            if (pantry.expirationDate.getTime() < Date.now()) {
-                await removePantry(pantry._id);
-            }
-            else if (pantry.expirationDate.getTime() < dateNow.getTime()) {
-                let ingredientName = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
-                almostExpired.push({
-                    ingredientName: ingredientName,
-                    quantity: pantry.quantity,
-                    expirationDate: pantry.expirationDate.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })
-                })
+    export async function checkPantryExpiration() : Promise<any[]> {
+        let allPantry : IPantry[] = await basePantry.getAllPantryWithExpirationDate();
+    
+        let dateNow : Date = new Date();
+        dateNow = dateNow.addDays(3);
+    
+        let almostExpired : any[] = [];
+        for (let pantry of allPantry) {
+            if (pantry.expirationDate) {
+                if (pantry.expirationDate.getTime() < Date.now()) {
+                    await removePantry(pantry._id);
+                }
+                else if (pantry.expirationDate.getTime() < dateNow.getTime()) {
+                    let ingredientName : string = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
+                    almostExpired.push({
+                        ingredientName: ingredientName,
+                        quantity: pantry.quantity,
+                        expirationDate: pantry.expirationDate.toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" })
+                    })
+                }
             }
         }
+        return almostExpired;
     }
-    return almostExpired;
 }

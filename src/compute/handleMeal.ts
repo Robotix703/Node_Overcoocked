@@ -1,25 +1,18 @@
 const pantryInventory = require("./pantryInventory");
 const recipeIngredientsNeeded = require("./handleRecipe");
 
+import { IRecipe } from "../models/recipe";
+import { IMeal } from "../models/meal";
 import { baseMeal } from "./base/meal";
+import { baseRecipe } from "./base/recipe";
 
 let g_pantryInventory : any = [];
 
-exports.initPantryInventory = async function(){
-    g_pantryInventory = await pantryInventory.getInventory();
-}
-
-Date.prototype.addDays = function(days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-}
-
-function checkDisponibility(ingredientID : string, quantity : number){
+function checkDisponibility(ingredientID : string, quantity : number) : number {
     const ingredientFound = g_pantryInventory.find((e : any) => e.ingredientID.toString() == ingredientID.toString());
     if(ingredientFound){
         if(quantity <= ingredientFound.quantityLeft){
-            let dateNow = new Date();
+            let dateNow : Date = new Date();
             dateNow = dateNow.addDays(3);
 
             if(!ingredientFound.expirationDate) return 0;
@@ -35,70 +28,83 @@ function checkDisponibility(ingredientID : string, quantity : number){
     }
 }
 
-exports.checkIfMealIsReady = async function(mealID : string){
-    const meal = await baseMeal.getMealByID(mealID);
-    const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
 
-    let ingredientAvailable = [];
-    let ingredientUnavailable = [];
-    let ingredientAlmostExpire = [];
+export namespace handleMeal {
 
-    for(let ingredient of ingredientsNeeded){
-        if(ingredient.ingredient.consumable)
-        {
-            let state = checkDisponibility(ingredient.ingredient._id, ingredient.quantity);
+    export async function initPantryInventory() : Promise<void> {
+        g_pantryInventory = await pantryInventory.getInventory();
+    }
 
-            if(state == 0) ingredientAvailable.push(ingredient);
-            if(state == -1) ingredientAlmostExpire.push(ingredient);
-            if(state == -2) ingredientUnavailable.push(ingredient);
+    export async function checkIfMealIsReady(mealID : string) : Promise<any> {
+        const meal : IMeal = await baseMeal.getMealByID(mealID);
+        const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+    
+        let ingredientAvailable = [];
+        let ingredientUnavailable = [];
+        let ingredientAlmostExpire = [];
+    
+        for(let ingredient of ingredientsNeeded){
+            if(ingredient.ingredient.consumable)
+            {
+                let state : number = checkDisponibility(ingredient.ingredient._id, ingredient.quantity);
+    
+                if(state == 0) ingredientAvailable.push(ingredient);
+                if(state == -1) ingredientAlmostExpire.push(ingredient);
+                if(state == -2) ingredientUnavailable.push(ingredient);
+            }
         }
+        return {
+            ingredientAvailable: ingredientAvailable,
+            ingredientAlmostExpire: ingredientAlmostExpire,
+            ingredientUnavailable: ingredientUnavailable
+        };
     }
-    return {
-        ingredientAvailable: ingredientAvailable,
-        ingredientAlmostExpire: ingredientAlmostExpire,
-        ingredientUnavailable: ingredientUnavailable
-    };
-}
 
-exports.checkMealList = async function(){
-    const allMeals = await baseMeal.getAllMeals();
-    await this.initPantryInventory();
-
-    let mealState = [];
-    for(let oneMeal of allMeals){
-        const recipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
-        const mealReady = await this.checkIfMealIsReady(oneMeal._id);
-
-        mealState.push({
-            title: recipe.title,
-            state: mealReady
-        });
+    export async function checkMealList() : Promise<any> {
+        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        await this.initPantryInventory();
+    
+        let mealState = [];
+        for(let oneMeal of allMeals){
+            const recipe : IRecipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
+            const mealReady = await this.checkIfMealIsReady(oneMeal._id);
+    
+            mealState.push({
+                title: recipe.title,
+                state: mealReady
+            });
+        }
+        return mealState;
     }
-    return mealState;
-}
-
-exports.displayMealWithRecipeAndState = async function(){
-    const allMeals = await baseMeal.getAllMeals();
-    await this.initPantryInventory();
-
-    let mealData = [];
-
-    for(let meal of allMeals){
-        const recipeData = await baseRecipe.getRecipeByID(meal.recipeID);
-        const mealState = await this.checkIfMealIsReady(meal._id);
-
-        mealData.push({
-            _id: meal._id,
-            title: recipeData.title,
-            numberOfLunch: meal.numberOfLunchPlanned,
-            imagePath: recipeData.imagePath,
-            state: mealState
-        });
+    
+    export async function displayMealWithRecipeAndState() : Promise<any> {
+        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        await this.initPantryInventory();
+    
+        let mealData = [];
+    
+        for(let meal of allMeals){
+            const recipeData : IRecipe = await baseRecipe.getRecipeByID(meal.recipeID);
+            const mealState = await this.checkIfMealIsReady(meal._id);
+    
+            mealData.push({
+                _id: meal._id,
+                title: recipeData.title,
+                numberOfLunch: meal.numberOfLunchPlanned,
+                imagePath: recipeData.imagePath,
+                state: mealState
+            });
+        }
+        return mealData;
     }
-    return mealData;
-}
-
-exports.getMealNumber = async function(){
-    const allMeals = await baseMeal.getAllMeals();
-    return allMeals.length;
+    
+    export async function getMealNumber() : Promise<number> {
+        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        return allMeals.length;
+    }
 }
