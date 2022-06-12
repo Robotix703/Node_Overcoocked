@@ -1,4 +1,4 @@
-import { IUpdateOne } from "../../models/mongoose";
+import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
 import Recipe, { IRecipe } from "../../models/recipe";
 
 export namespace baseRecipe {
@@ -13,7 +13,7 @@ export namespace baseRecipe {
         return Recipe.updateOne({ _id: recipeID }, recipeToUpdate);
     }
 
-    export async function filterRecipe(category : string, name : string, pageSize : number, currentPage : number) : Promise<IRecipe[]> {
+    export async function filterRecipe(category: string | undefined, name: string | undefined, pageSize: number, currentPage: number) : Promise<IRecipe[]> {
         let filters : any = {};
         if (category) filters.category = category;
         if (name) filters.title = { "$regex": name, "$options": "i" };
@@ -29,7 +29,7 @@ export namespace baseRecipe {
         return Recipe.find({ 'title': { "$regex": name, "$options": "i" } });
     }
 
-    export async function updateRecipe(_id : string, title : string, numberOfLunch : number, imagePath : string, category : string, duration : number, score : number, lastCooked : Date) : Promise<IUpdateOne> {
+    export async function updateRecipe(_id : string, title : string, numberOfLunch : number, imagePath : string, category : string, duration : number, score : number, lastCooked : any) : Promise<IUpdateOne> {
         let elementToUpdate : any = { _id: _id };
 
         if(title) elementToUpdate.title = title;
@@ -41,5 +41,40 @@ export namespace baseRecipe {
         if(lastCooked) elementToUpdate.lastCooked = lastCooked;
 
         return Recipe.updateOne({ _id: _id }, elementToUpdate);
+    }
+
+    export async function register(
+        title : string,
+        numberOfLunch : number,
+        imagePath : string,
+        category : string,
+        duration : number,
+        score : number | undefined,
+        lastCooked : any | undefined) : Promise<any> {
+            const recipe = new Recipe({
+                title: title,
+                numberOfLunch: numberOfLunch,
+                imagePath: imagePath,
+                category: category,
+                duration: duration,
+                score: score,
+                lastCooked: lastCooked
+            });
+
+            return recipe.save()
+            .then((result: any) => {
+                return { id: result._id, recipe: recipe };
+            })
+            .catch((error: Error) => {
+                return { error: error };
+            });
+    }
+
+    export async function count() : Promise<number> {
+        return Recipe.count();
+    }
+
+    export async function deleteOne(id : string) : Promise<IDeleteOne> {
+        return Recipe.deleteOne({ _id: id });
     }
 }
