@@ -2,21 +2,21 @@ import express from "express";
 
 const checkAuth = require("../middleware/check-auth");
 
-const MealControllers = require("../controllers/meal");
+import { mealController } from "../controllers/meal";
 
 export const mealRoutes = express.Router();
 
 //GET
-mealRoutes.get("/", MealControllers.readMeals);
-mealRoutes.get("/checkIfReady", MealControllers.checkIfReady);
-mealRoutes.get("/displayable", MealControllers.displayable);
+mealRoutes.get("/", mealController.readMeals);
+mealRoutes.get("/checkIfReady", mealController.checkIfReady);
+mealRoutes.get("/displayable", mealController.displayable);
 
 //POST
-mealRoutes.post("/", checkAuth, MealControllers.writeMeal);
-mealRoutes.post("/consume", checkAuth, MealControllers.consumeMeal);
+mealRoutes.post("/", checkAuth, mealController.writeMeal);
+mealRoutes.post("/consume", checkAuth, mealController.consumeMeal);
 
 //PUT
-mealRoutes.put("/:id", checkAuth, MealControllers.updateMeal);
+mealRoutes.put("/:id", checkAuth, mealController.updateMeal);
 
 //DELETE
-mealRoutes.delete("/:id", checkAuth, MealControllers.deleteMeal);
+mealRoutes.delete("/:id", checkAuth, mealController.deleteMeal);

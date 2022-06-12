@@ -66,7 +66,7 @@ export namespace handleMeal {
     }
 
     export async function checkMealList() : Promise<any> {
-        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
         await this.initPantryInventory();
     
         let mealState = [];
@@ -83,7 +83,7 @@ export namespace handleMeal {
     }
     
     export async function displayMealWithRecipeAndState() : Promise<any> {
-        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
         await this.initPantryInventory();
     
         let mealData = [];
@@ -104,7 +104,7 @@ export namespace handleMeal {
     }
     
     export async function getMealNumber() : Promise<number> {
-        const allMeals : IMeal[] = await baseMeal.getAllMeals();
+        const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
         return allMeals.length;
     }
 }

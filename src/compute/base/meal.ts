@@ -1,4 +1,4 @@
-import { IDeleteOne } from "../../models/mongoose";
+import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
 import Meal, { IMeal } from "../../models/meal";
 
 export namespace baseMeal {
@@ -7,11 +7,44 @@ export namespace baseMeal {
         return Meal.findById(mealID);
     }
 
-    export async function getAllMeals() : Promise<IMeal[]> {
-        return Meal.find();
+    export async function getAllMeals(pageSize: number | null, currentPage: number | null) : Promise<IMeal[]> {
+        return Meal.find().limit(pageSize).skip(pageSize * (currentPage - 1));
     }
 
     export async function deleteMeal(mealID : string) : Promise<IDeleteOne> {
         return Meal.deleteOne({ _id: mealID });
+    }
+
+    export async function register(recipeID: string, numberOfLunchPlanned: number) {
+        const meal = new Meal({
+            recipeID: recipeID,
+            numberOfLunchPlanned: numberOfLunchPlanned
+        });
+
+        return meal.save()
+        .then((result: any) => {
+            return { id: result._id, meal: meal };
+        })
+        .catch((error: Error) => {
+            return { error: error };
+        });
+    }
+
+    export async function count() {
+        return Meal.count();
+    }
+
+    export async function update(_id: string, recipeID: string, numberOfLunchPlanned: number) : Promise<IUpdateOne> {
+        const meal = new Meal({
+            _id: _id,
+            recipeID: recipeID,
+            numberOfLunchPlanned: numberOfLunchPlanned
+        });
+        
+        return Meal.updateOne({ _id: _id }, meal);
+    }
+
+    export async function deleteOne(id: string) : Promise<IDeleteOne> {
+        return Meal.deleteOne({ _id: id });
     }
 }
