@@ -40,4 +40,8 @@ export namespace baseTodoItem {
     
         return todoItem.save();
     }
+
+    export async function count() : Promise<number> {
+        return TodoItem.count();
+    }
 }

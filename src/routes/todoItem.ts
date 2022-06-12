@@ -1,18 +1,19 @@
 import express from "express";
 
-const TodoItemControllers = require("../controllers/todoItem");
 const checkAuth = require("../middleware/check-auth");
+
+import { todoItemController } from "../controllers/todoItem";
 
 export const todoItemRoutes = express.Router();
 
 //GET
-todoItemRoutes.get("/", TodoItemControllers.readTodoItems);
+todoItemRoutes.get("/", todoItemController.readTodoItems);
 
 //POST
-todoItemRoutes.post("/", checkAuth, TodoItemControllers.writeTodoItem);
+todoItemRoutes.post("/", checkAuth, todoItemController.writeTodoItem);
 
 //PUT
-todoItemRoutes.put("/:id", checkAuth, TodoItemControllers.updateTodoItem);
+todoItemRoutes.put("/:id", checkAuth, todoItemController.updateTodoItem);
 
 //DELETE
-todoItemRoutes.delete("/:id", checkAuth, TodoItemControllers.deleteTodoItem);
+todoItemRoutes.delete("/:id", checkAuth, todoItemController.deleteTodoItem);
