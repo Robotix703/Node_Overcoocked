@@ -1,6 +1,6 @@
 import express from "express";
 
-const checkAuth = require("../middleware/check-auth");
+import checkAuth from "../middleware/check-auth";
 
 import { instructionController } from "../controllers/instruction"; 
 

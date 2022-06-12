@@ -1,7 +1,7 @@
 import express from "express";
 
-const checkAuth = require("../middleware/check-auth");
-const extractFile = require("../middleware/file");
+import checkAuth from "../middleware/check-auth";
+import extractFile from "../middleware/file";
 
 import { ingredientController } from "../controllers/ingredient";
 
