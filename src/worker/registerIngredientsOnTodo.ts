@@ -1,3 +1,5 @@
+import { baseTodoItem } from "../compute/base/todoItem";
+
 require('dotenv').config();
 const Todoist = require("../modules/todoist");
 
@@ -22,7 +24,7 @@ async function updateTodoItem(existingIngredient : any, newIngredient : any){
 async function addTodoItem(ingredient : any, consumable : boolean){
   const ingredientText = formatIngredient(ingredient.ingredient.name, ingredient.ingredient.unitOfMeasure, ingredient.quantity);
   const todoItem = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
-  await handleTodoItem.registerTodoItem(todoItem.id, ingredientText, ingredient.ingredient.name, consumable);
+  await baseTodoItem.registerTodoItem(todoItem.id, ingredientText, ingredient.ingredient.name, consumable);
 }
 
 exports.registerIngredients = async function (ingredientList : any) {

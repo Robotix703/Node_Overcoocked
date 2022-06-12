@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import TodoItem from "../models/todoItem";
 import { baseTodoItem } from "../compute/base/todoItem";
+import { Todoist } from "../modules/todoist";
 
 const registerIngredient = require("../worker/registerIngredientsOnTodo");
 
@@ -41,7 +42,7 @@ exports.updateTodoItem = async (req : Request, res : Response) => {
     baseTodoItem.updateTodoItem(req.params.id, req.body.todoID, req.body.text, req.body.ingredientName, req.body.consumable)
         .then(async (result : any) => {
             if (result.modifiedCount > 0) {
-                await Todoist.updateItemInProjectByName(process.env.TODOPROJECT, req.body.todoID, req.body.text);
+                await Todoist.updateItem(req.body.todoID, req.body.text);
                 res.status(200).json({status: "Ok"});
             } else {
                 res.status(401).json({ message: "Pas de modification" });
@@ -60,7 +61,7 @@ exports.deleteTodoItem = async (req : Request, res : Response) => {
     baseTodoItem.deleteTodoItem(req.params.id)
         .then(async (result : any) => {
             if (result.deletedCount > 0) {
-                await Todoist.deleteItemInProjectByName(process.env.TODOPROJECT, todoItem.todoID);
+                await Todoist.deleteItem(todoItem.todoID);
                 res.status(200).json({ status: "Ok" });
             } else {
                 res.status(401).json(result);

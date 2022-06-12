@@ -1,6 +1,6 @@
 require('dotenv').config();
 import { ITodoItem } from "../models/todoItem";
-import { getItemsInProjectByName } from "../modules/todoist";
+import { Todoist } from "../modules/todoist";
 import Pantry from "../models/pantry";
 import TodoItem from "../models/todoItem";
 import { baseIngredient } from "../compute/base/ingredient";
@@ -55,7 +55,7 @@ async function checkDeleteItem(todoItems : any, mongoItems : any) {
 }
 
 exports.checkTodoList = async function () {
-    const todoItems = await getItemsInProjectByName(process.env.TODOPROJECT);
+    const todoItems = await Todoist.getItemsInProjectByName(process.env.TODOPROJECT);
     const mongoItems = await getItemOnMongo();
 
     await checkDeleteItem(todoItems, mongoItems);

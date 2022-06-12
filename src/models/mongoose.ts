@@ -1,12 +1,12 @@
 export interface IUpdateOne {
     n: number;
-    nModified: number;
+    modifiedCount: number;
     ok: number;
 }
 
 export interface IDeleteOne {
     n: number;
-    deleteCount: number;
+    deletedCount: number;
     ok: number;
 }
 

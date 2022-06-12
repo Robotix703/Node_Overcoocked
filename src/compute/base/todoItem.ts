@@ -30,7 +30,7 @@ export namespace baseTodoItem {
         return TodoItem.findById(todoItemID);
     }
 
-    export async function registerTodoItem(itemID : string, itemText : string, name : string, consumable : boolean) : Promise<ISave> {
+    export async function registerTodoItem(itemID : string, itemText : string, name : string, consumable : boolean) : Promise<any> {
         const todoItem = new TodoItem({
             todoID: itemID,
             text: itemText,
@@ -38,6 +38,6 @@ export namespace baseTodoItem {
             consumable: consumable
         });
     
-        return await todoItem.save();
+        return todoItem.save();
     }
 }

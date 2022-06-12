@@ -1,4 +1,4 @@
-import { IUpdateOne } from '../../models/mongoose';
+import { IDeleteOne, IUpdateOne } from '../../models/mongoose';
 import Ingredient, { IIngredient } from "../../models/ingredient";
 
 export namespace baseIngredient {
@@ -55,9 +55,10 @@ export namespace baseIngredient {
         return ingredientsName;
     }
     
-    export async function getFilteredIngredient(name : string, pageSize : number, currentPage : number) : Promise<IIngredient[]> {
+    export async function getFilteredIngredient(name : string, category: string, pageSize : number, currentPage : number) : Promise<IIngredient[]> {
         let filters : any = {};
         if (name) filters.name = { "$regex": name, "$options": "i" };
+        if (category) filters.category = category;
         
         if (pageSize && currentPage > 0) {
             const query : Promise<IIngredient[]> = Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
@@ -85,5 +86,44 @@ export namespace baseIngredient {
 
     export async function getConsumableIngredients() : Promise<IIngredient[]> {
         return Ingredient.find({consumable: true});
+    }
+
+    export async function count() : Promise<number> {
+        return Ingredient.count();
+    }
+
+    export async function register(
+        name: string, 
+        imagePath: string, 
+        consumable: boolean, 
+        category: string, 
+        unitOfMeasure: string, 
+        shelfLife: number | undefined,
+        freezable: boolean) : Promise<any> {
+        const ingredient = new Ingredient({
+            name: name,
+            imagePath: imagePath,
+            consumable: consumable,
+            category: category,
+            unitOfMeasure: unitOfMeasure,
+            shelfLife: shelfLife ? shelfLife : undefined,
+            freezable: freezable
+        });
+
+        return await ingredient.save()
+            .then((result: any) => {
+                return { id: result._id, ingredient: ingredient };
+            })
+            .catch((error: Error) => {
+                return { error: error };
+            });
+    }
+
+    export async function deleteOne(id : string) : Promise<IDeleteOne> {
+        return Ingredient.deleteOne({ _id: id })
+    }
+
+    export async function findByName(name : string) : Promise<IIngredient[]> {
+        return Ingredient.find({ 'name': { "$regex": name, "$options": "i" } });
     }
 }

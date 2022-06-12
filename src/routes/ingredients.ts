@@ -3,24 +3,24 @@ import express from "express";
 const checkAuth = require("../middleware/check-auth");
 const extractFile = require("../middleware/file");
 
-import * as IngredientControllers from "../controllers/ingredient";
+import { ingredientController } from "../controllers/ingredient";
 
 export const ingredientRoutes = express.Router();
 
 //GET
-ingredientRoutes.get("/", IngredientControllers.readIngredients);
-ingredientRoutes.get("/consumableID", IngredientControllers.consumableID);
-ingredientRoutes.get("/name", IngredientControllers.searchByName);
-ingredientRoutes.get("/byID", IngredientControllers.getIngredientByID);
-ingredientRoutes.get("/allNames", IngredientControllers.getAllIngredientsName);
-ingredientRoutes.get("/filter", IngredientControllers.filteredIngredients);
-ingredientRoutes.get("/forAutocomplete", IngredientControllers.getAllIngredientForAutocomplete);
+ingredientRoutes.get("/", ingredientController.readIngredients);
+ingredientRoutes.get("/consumableID", ingredientController.consumableID);
+ingredientRoutes.get("/name", ingredientController.searchByName);
+ingredientRoutes.get("/byID", ingredientController.getIngredientByID);
+ingredientRoutes.get("/allNames", ingredientController.getAllIngredientsName);
+ingredientRoutes.get("/filter", ingredientController.filteredIngredients);
+ingredientRoutes.get("/forAutocomplete", ingredientController.getAllIngredientForAutocomplete);
 
 //POST
-ingredientRoutes.post("/", checkAuth, extractFile, IngredientControllers.writeIngredient);
+ingredientRoutes.post("/", checkAuth, extractFile, ingredientController.writeIngredient);
 
 //PUT
-ingredientRoutes.put("/:id", checkAuth, IngredientControllers.editIngredient);
+ingredientRoutes.put("/:id", checkAuth, ingredientController.editIngredient);
 
 //DELETE
-ingredientRoutes.delete("/:id", checkAuth, IngredientControllers.deleteIngredient);
+ingredientRoutes.delete("/:id", checkAuth, ingredientController.deleteIngredient);
