@@ -56,5 +56,5 @@ exports.dailyCheck = async function(){
     messageToSend += await checkPantry();
     messageToSend += "\nhttps://overcooked.robotix703.fr/meal/list"
 
-    smsSender.sendSMS(messageToSend);
+    smsSenderForDailyCheck.sendSMS(messageToSend);
 }

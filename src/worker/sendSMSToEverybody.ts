@@ -1,4 +1,5 @@
-const baseUser = require("../compute/base/user");
+import { baseUser } from "../compute/base/user";
+
 const smsSender = require("../modules/sms");
 const Frindicator = "0033";
 
