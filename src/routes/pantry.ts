@@ -2,25 +2,25 @@ import express from "express";
 
 const checkAuth = require("../middleware/check-auth");
 
-const PantryControllers = require("../controllers/pantry");
+import { pantryController } from "../controllers/pantry";
 
 export const pantryRoutes = express.Router();
 
 //GET
-pantryRoutes.get("/", PantryControllers.readPantries);
-pantryRoutes.get("/quantityLeft", PantryControllers.quantityLeft);
-pantryRoutes.get("/getNearestExpirationDate", PantryControllers.getNearestExpirationDate);
-pantryRoutes.get("/fullPantryInventory", PantryControllers.getFullPantryInventory);
-pantryRoutes.get("/byID", PantryControllers.getPantryByID);
+pantryRoutes.get("/", pantryController.readPantries);
+pantryRoutes.get("/quantityLeft", pantryController.quantityLeft);
+pantryRoutes.get("/getNearestExpirationDate", pantryController.getNearestExpirationDate);
+pantryRoutes.get("/fullPantryInventory", pantryController.getFullPantryInventory);
+pantryRoutes.get("/byID", pantryController.getPantryByID);
 
 //POST
-pantryRoutes.post("/", checkAuth, PantryControllers.writePantry);
-pantryRoutes.post("/createByIngredientName", checkAuth, PantryControllers.writePantryByIngredientName);
-pantryRoutes.post("/freeze", checkAuth, PantryControllers.freezePantry);
-pantryRoutes.post("/refreshTodoist", checkAuth, PantryControllers.refreshTodoist);
+pantryRoutes.post("/", checkAuth, pantryController.writePantry);
+pantryRoutes.post("/createByIngredientName", checkAuth, pantryController.writePantryByIngredientName);
+pantryRoutes.post("/freeze", checkAuth, pantryController.freezePantry);
+pantryRoutes.post("/refreshTodoist", checkAuth, pantryController.refreshTodoist);
 
 //PUT
-pantryRoutes.put("/:id", checkAuth, PantryControllers.updatePantry);
+pantryRoutes.put("/:id", checkAuth, pantryController.updatePantry);
 
 //DELETE
-pantryRoutes.delete("/:id", checkAuth, PantryControllers.deletePantry);
+pantryRoutes.delete("/:id", checkAuth, pantryController.deletePantry);

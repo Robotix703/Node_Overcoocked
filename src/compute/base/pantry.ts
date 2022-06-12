@@ -15,8 +15,8 @@ export namespace basePantry {
         return Pantry.updateOne({ _id: pantry._id }, pantry);
     }
 
-    export async function getAllPantries() : Promise<IPantry[]> {
-        return Pantry.find();
+    export async function getAllPantries(pageSize: number | undefined, currentPage: number | undefined) : Promise<IPantry[]> {
+        return Pantry.find().limit(pageSize).skip(pageSize * (currentPage - 1));;
     }
 
     export async function getPantryByID(pantryID : string) : Promise<IPantry> {
@@ -27,7 +27,7 @@ export namespace basePantry {
         return Pantry.find({expirationDate: {$exists: true}});
     }
 
-    export async function updatePantry(_id : string, ingredientID : string, quantity : number, expirationDate : string, frozen : boolean) : Promise<IUpdateOne> {
+    export async function updatePantry(_id : string, ingredientID : string, quantity : number, expirationDate : any, frozen : boolean) : Promise<IUpdateOne> {
         let elementToUpdate : any = { _id: _id };
 
         if(ingredientID) elementToUpdate.ingredientID = ingredientID;
@@ -40,5 +40,34 @@ export namespace basePantry {
 
     export async function getByID(id: string) : Promise<IPantry> {
         return Pantry.findById(id);
+    }
+
+    export async function register(ingredientID: string, quantity: number, expirationDate: any | null, frozen: boolean) : Promise<any> {
+        const pantry = new Pantry({
+            ingredientID: ingredientID,
+            quantity: quantity,
+            expirationDate: expirationDate,
+            frozen: frozen
+        });
+
+        return pantry.save()
+        .then((result: any) => {
+            return { id: result._id, pantry: pantry };
+        })
+        .catch((error: Error) => {
+            return { error: error };
+        });
+    }
+
+    export async function count() {
+        return Pantry.count();
+    }
+
+    export async function getByIngredientID(ingredientID : string) : Promise<IPantry[]> {
+        return Pantry.find({ ingredientID: ingredientID });
+    }
+
+    export async function deleteOne(id : string) {
+        return Pantry.deleteOne({ _id: id });
     }
 }
