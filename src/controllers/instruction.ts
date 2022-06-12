@@ -1,83 +1,74 @@
 import { Request, Response } from "express";
 import { IInstruction } from "../models/instruction";
-const Instruction = require('./../models/instruction');
+import { IUpdateOne } from "../models/mongoose";
 
-const handleRecipe = require("../compute/handleRecipe");
-const baseIngredient = require("../compute/base/ingredient");
-const baseInstruction = require("../compute/base/instruction");
-const handleInstructions = require("../compute/handleInstructions");
+import { handleRecipe } from "../compute/handleRecipe";
+import { handleInstruction } from "../compute/handleInstructions";
 
-//POST
-export function writeInstruction(req: Request, res: Response){
-  const instruction = new Instruction({
-    text: req.body.text,
-    recipeID: req.body.recipeID,
-    ingredientsID: req.body.ingredients,
-    quantity: req.body.quantity,
-    order: req.body.order,
-    cookingTime: req.body.cookingTime ?? undefined
-  });
+import { baseIngredient } from "../compute/base/ingredient";
+import { baseInstruction } from "../compute/base/instruction";
 
-  instruction.save()
+export namespace instructionController {
+  //POST
+  export function writeInstruction(req: Request, res: Response){
+    baseInstruction.register(
+      req.body.text,
+      req.body.recipeID,
+      req.body.ingredients,
+      req.body.quantity,
+      req.body.order,
+      req.body.cookingTime ?? undefined
+    )
     .then((result: any) => {
-      res.status(201).json({ id: result._id, instruction: instruction });
+      res.status(201).json(result);
     })
     .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
-}
-export async function writeInstructionByIngredientName(req: Request, res: Response){
-  const ingredientsName = req.body.ingredients.map((e: any) => e.ingredientName);
-  const ingredientsQuantity = req.body.ingredients.map((e: any) => e.quantity);
+  }
+  export async function writeInstructionByIngredientName(req: Request, res: Response){
+    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
-  const ingredientsID: string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
+    const ingredientsID: string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
 
-  if (ingredientsID[0]) {
-    const instruction = new Instruction({
-      text: req.body.text,
-      recipeID: req.body.recipeID,
-      ingredientsID: ingredientsID,
-      quantity: ingredientsQuantity,
-      order: req.body.order,
-      cookingTime: req.body.cookingTime ?? undefined
-    })
-
-    instruction.save()
+    if (ingredientsID[0]) {
+      baseInstruction.register(
+        req.body.text,
+        req.body.recipeID,
+        ingredientsID,
+        ingredientsQuantity,
+        req.body.order,
+        req.body.cookingTime ?? undefined
+      )
       .then((result: any) => {
-        res.status(201).json({ id: result._id, instruction });
+        res.status(201).json(result);
       })
       .catch((error: Error) => {
         res.status(500).json({
           errorMessage: error
         })
       });
-  } else {
-    res.status(500).json({
-      errorMessage: "No valid ingredient"
-    });
-  }
-}
-
-//GET
-export function readInstructions(req: any, res: Response){
-  const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
-  const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
-
-  const instructionQuery = Instruction.find();
-  let fetchedInstructions: IInstruction[] = [];
-
-  if (pageSize && currentPage) {
-    instructionQuery
-      .skip(pageSize * (currentPage - 1))
-      .limit(pageSize);
+    } else {
+      res.status(500).json({
+        errorMessage: "No valid ingredient"
+      });
+    }
   }
 
-  instructionQuery
+  //GET
+  export function readInstructions(req: any, res: Response){
+    const pageSize : number = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
+    const currentPage : number = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
+
+    let fetchedInstructions: IInstruction[] = [];
+
+    baseInstruction.getAllInstructions(pageSize, currentPage)
     .then((documents: IInstruction[]) => {
       fetchedInstructions = documents;
-      return Instruction.count();
+      return baseInstruction.count();
     })
     .then((count: number) => {
       res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
@@ -87,51 +78,51 @@ export function readInstructions(req: any, res: Response){
         errorMessage: error
       })
     });
-}
-export function getByRecipeID(req: Request, res: Response){
-  handleRecipe.getInstructionsByRecipeID(req.query.recipeID)
-    .then((instructions: IInstruction[]) => {
-      res.status(200).json(instructions);
+  }
+  export function getByRecipeID(req: Request, res: Response){
+    handleRecipe.getInstructionsByRecipeID(req.query.recipeID as string)
+      .then((instructions: IInstruction[]) => {
+        res.status(200).json(instructions);
+      })
+      .catch((error: Error) => {
+        res.status(500).json({
+          errorMessage: error
+        })
+      });
+  }
+  export async function getInstructionCountForRecipe(req: Request, res: Response){
+    let count = await handleInstruction.getInstructionCountForRecipe(req.query.recipeID as string);
+    res.status(200).json(count);
+  }
+  export async function getInstructionByID(req: Request, res: Response){
+    handleInstruction.getPrettyInstructionByID(req.query.instructionID as string)
+    .then((instruction: IInstruction) => {
+      res.status(200).json(instruction);
     })
     .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
-}
-export async function getInstructionCountForRecipe(req: Request, res: Response){
-  let count = await handleInstructions.getInstructionCountForRecipe(req.query.recipeID);
-  res.status(200).json(count);
-}
-export async function getInstructionByID(req: Request, res: Response){
-  handleInstructions.getPrettyInstructionByID(req.query.instructionID)
-  .then((instruction: IInstruction) => {
-    res.status(200).json(instruction);
-  })
-  .catch((error: Error) => {
-    res.status(500).json({
-      errorMessage: error
-    })
-  });
-}
+  }
 
-//PUT
-export async function updateInstruction(req: Request, res: Response){
-  const ingredientsName = req.body.ingredients.map((e: any) => e.ingredientName);
-  const ingredientsQuantity = req.body.ingredients.map((e: any) => e.quantity);
+  //PUT
+  export async function updateInstruction(req: Request, res: Response){
+    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
-  const ingredientsID = await baseIngredient.getIngredientsIDByName(ingredientsName);
-  
-  baseInstruction.updateInstruction(
-    req.params.id,
-    req.body.text,
-    undefined,
-    ingredientsID,
-    ingredientsQuantity,
-    req.body.order,
-    req.body.cookingTime
-  )
-    .then((result: any) => {
+    const ingredientsID : string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
+    
+    baseInstruction.updateInstruction(
+      req.params.id,
+      req.body.text,
+      undefined,
+      ingredientsID,
+      ingredientsQuantity,
+      req.body.order,
+      req.body.cookingTime
+    )
+    .then((result: IUpdateOne) => {
       if (result.modifiedCount > 0) {
         res.status(200).json({status: "OK"});
       } else {
@@ -143,11 +134,11 @@ export async function updateInstruction(req: Request, res: Response){
         errorMessage: error
       })
     });
-}
+  }
 
-//DELETE
-export function deleteInstruction(req: Request, res: Response){
-  Instruction.deleteOne({ _id: req.params.id })
+  //DELETE
+  export function deleteInstruction(req: Request, res: Response){
+    baseInstruction.deleteOne(req.params.id)
     .then((result: any) => {
       if (result.deletedCount > 0) {
         res.status(200).json(result);
@@ -160,4 +151,5 @@ export function deleteInstruction(req: Request, res: Response){
         errorMessage: error
       })
     });
+  }
 }

@@ -2,22 +2,22 @@ import express from "express";
 
 const checkAuth = require("../middleware/check-auth");
 
-const InstructionControllers = require("../controllers/instruction");
+import { instructionController } from "../controllers/instruction"; 
 
 export const instructionRoutes = express.Router();
 
 //GET
-instructionRoutes.get("/", InstructionControllers.readInstructions);
-instructionRoutes.get("/byRecipeID", InstructionControllers.getByRecipeID);
-instructionRoutes.get("/countForRecipe", InstructionControllers.getInstructionCountForRecipe);
-instructionRoutes.get("/byID", InstructionControllers.getInstructionByID);
+instructionRoutes.get("/", instructionController.readInstructions);
+instructionRoutes.get("/byRecipeID", instructionController.getByRecipeID);
+instructionRoutes.get("/countForRecipe", instructionController.getInstructionCountForRecipe);
+instructionRoutes.get("/byID", instructionController.getInstructionByID);
 
 //POST
-instructionRoutes.post("/", checkAuth, InstructionControllers.writeInstruction);
-instructionRoutes.post("/byIngredientName", checkAuth, InstructionControllers.writeInstructionByIngredientName);
+instructionRoutes.post("/", checkAuth, instructionController.writeInstruction);
+instructionRoutes.post("/byIngredientName", checkAuth, instructionController.writeInstructionByIngredientName);
 
 //PUT
-instructionRoutes.put("/:id", checkAuth, InstructionControllers.updateInstruction);
+instructionRoutes.put("/:id", checkAuth, instructionController.updateInstruction);
 
 //DELETE
-instructionRoutes.delete("/:id", checkAuth, InstructionControllers.deleteInstruction);
+instructionRoutes.delete("/:id", checkAuth, instructionController.deleteInstruction);

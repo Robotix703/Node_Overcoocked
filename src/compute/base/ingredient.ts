@@ -111,12 +111,12 @@ export namespace baseIngredient {
         });
 
         return await ingredient.save()
-            .then((result: any) => {
-                return { id: result._id, ingredient: ingredient };
-            })
-            .catch((error: Error) => {
-                return { error: error };
-            });
+        .then((result: any) => {
+            return { id: result._id, ingredient: ingredient };
+        })
+        .catch((error: Error) => {
+            return { error: error };
+        });
     }
 
     export async function deleteOne(id : string) : Promise<IDeleteOne> {
