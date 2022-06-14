@@ -2,7 +2,7 @@
   "scripts": {
     "test": "jest",
     "runDev": "NODE_ENV=dev node ./build/server.js",
-    "start": "NODE_ENV=production node server.js",
+    "start": "NODE_ENV=production node ./build/server.js",
     "build": "tsc --project ./"
   },
   "dependencies": {

@@ -9,8 +9,8 @@ COPY package*.json ./
 RUN npm install
 RUN npm install typescript -g
 
+COPY . .
 RUN tsc --project ./
-COPY ./build .
 
 EXPOSE 3000
 
