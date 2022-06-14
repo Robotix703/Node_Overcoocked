@@ -1,11 +1,11 @@
 import { baseUser } from "../compute/base/user";
 
 const smsSender = require("../modules/sms");
-const Frindicator = "0033";
 
+const Frindicator = "0033";
 let g_phoneNumbers : any = [];
 
-function processPhoneNumber(phoneNumbers : any[]){
+function processPhoneNumber(phoneNumbers : any[]) : void {
     phoneNumbers.forEach((phoneNumber) => {
         g_phoneNumbers.push(
             Frindicator + phoneNumber.slice(1)
@@ -13,14 +13,16 @@ function processPhoneNumber(phoneNumbers : any[]){
     });
 }
 
-exports.fetchPhoneNumber = async function(){
-    const phoneNumbers = await baseUser.getAllUserPhoneNumber();
-    processPhoneNumber(phoneNumbers);
-}
-
-exports.sendSMS = function(message : string){
-    if(process.env.NODE_ENV === "production"){
-        smsSender.SendSMS(g_phoneNumbers, message);
+export namespace sendSMSToEverybody {
+    export async function fetchPhoneNumber() : Promise<void> {
+        const phoneNumbers : string[] = await baseUser.getAllUserPhoneNumber();
+        processPhoneNumber(phoneNumbers);
     }
-    console.log("SMS : " + message);
+    
+    export function sendSMS(message : string) : void {
+        if(process.env.NODE_ENV === "production"){
+            smsSender.SendSMS(g_phoneNumbers, message);
+        }
+        console.log("SMS : " + message);
+    }
 }

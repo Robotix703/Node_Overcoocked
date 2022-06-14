@@ -11,7 +11,7 @@ import { baseIngredient } from "../compute/base/ingredient";
 import { basePantry } from "../compute/base/pantry";
 import { handlePantry } from "../compute/handlePantry";
 
-const checkTodoList = require("../worker/checkTodoList");
+import checkTodoList from "../worker/checkTodoList";
 
 export namespace pantryController {
   //POST
@@ -45,7 +45,7 @@ export namespace pantryController {
     res.status(201).json({ result: "OK" });
   }
   export async function refreshTodoist(req: Request, res: Response){
-    await checkTodoList.checkTodoList();
+    await checkTodoList();
     res.status(201).json({ result: "OK" });
   }
 

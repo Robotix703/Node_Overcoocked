@@ -1,12 +1,12 @@
-const handleMeal = require("../compute/handleMeal");
-const handlePantry = require("../compute/handlePantry");
+import { handleMeal } from "../compute/handleMeal";
+import { handlePantry } from "../compute/handlePantry";
 
-const smsSenderForDailyCheck = require("./sendSMSToEverybody");
+import { sendSMSToEverybody } from "./sendSMSToEverybody";
 
-async function checkPlannedMeals(){
+async function checkPlannedMeals() : Promise<string> {
     await handleMeal.initPantryInventory();
-    const mealsState = await handleMeal.checkMealList();
-    const mealTotal = await handleMeal.getMealNumber();
+    const mealsState : any = await handleMeal.checkMealList();
+    const mealTotal : number = await handleMeal.getMealNumber();
 
     let notReadyMeals = [];
     let almostExpiredMeals = [];
@@ -35,8 +35,8 @@ async function checkPlannedMeals(){
     }
 }
 
-async function checkPantry(){
-    let almostExpired = await handlePantry.checkPantryExpiration();
+async function checkPantry() : Promise<string> {
+    let almostExpired : any[] = await handlePantry.checkPantryExpiration();
 
     let message = "";
     if(almostExpired.length > 0)
@@ -50,11 +50,11 @@ async function checkPantry(){
     return message;
 }
 
-exports.dailyCheck = async function(){
-    let messageToSend = "Information du jour\n\n";
+export default async function dailyCheck() : Promise<void> {
+    let messageToSend : string = "Information du jour\n\n";
     messageToSend += await checkPlannedMeals();
     messageToSend += await checkPantry();
     messageToSend += "\nhttps://overcooked.robotix703.fr/meal/list"
 
-    smsSenderForDailyCheck.sendSMS(messageToSend);
+    sendSMSToEverybody.sendSMS(messageToSend);
 }

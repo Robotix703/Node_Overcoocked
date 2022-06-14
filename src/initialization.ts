@@ -1,15 +1,15 @@
 require('dotenv').config();
 
-const checkTodoList = require("./worker/checkTodoList");
-const handleScheduleTask = require("./worker/handleScheduleTask");
-const smsSender = require("./worker/sendSMSToEverybody");
-const dailyCheck = require("./worker/dailyCheck");
+import checkTodoList from "./worker/checkTodoList";
+import dailyCheck from "./worker/dailyCheck";
+import { sendSMSToEverybody } from "./worker/sendSMSToEverybody";
+import { handleScheduleTask } from "./worker/handleScheduleTask";
 
 const todoSurvey = "todoSurvey";
 const dailySurvey = "dailySurvey";
 
 function initSMS(){
-    smsSender.fetchPhoneNumber();
+    sendSMSToEverybody.fetchPhoneNumber();
 }
 
 function createIntervalCronSettings(interval: string){
@@ -24,7 +24,7 @@ function initTodoSurvey(){
     let cronInterval = createIntervalCronSettings(process.env.TODOCHECKINTERVAL);
 
     handleScheduleTask.addperiodicTask(
-        checkTodoList.checkTodoList,
+        checkTodoList,
         cronInterval,
         todoSurvey
     )
@@ -34,7 +34,7 @@ function initDailyCheck(){
     let cronInterval = createDailyCronSettings(process.env.DAILYNOTIFICATIONHOUR);
 
     handleScheduleTask.addperiodicTask(
-        dailyCheck.dailyCheck,
+        dailyCheck,
         cronInterval,
         dailySurvey
     )

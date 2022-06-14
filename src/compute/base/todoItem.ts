@@ -7,7 +7,7 @@ export namespace baseTodoItem {
         return TodoItem.find({ingredientName: ingredientName});
     }
 
-    export async function updateTodoItem(todoItemID : string, todoID : string, text : string, ingredientName : string, consumable: boolean) : Promise<IUpdateOne>{
+    export async function updateTodoItem(todoItemID : string, todoID : number, text : string, ingredientName : string, consumable: boolean) : Promise<IUpdateOne>{
         let todoItem = new TodoItem({
             _id: todoItemID,
             todoID: todoID,
