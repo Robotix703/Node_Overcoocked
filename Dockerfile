@@ -8,8 +8,9 @@ COPY package*.json ./
 
 RUN npm install
 
-CMD ["npm", "run build"]
+RUN tsc --project ./
 COPY ./build .
 
 EXPOSE 3000
 
+CMD ["npm", "start"]
