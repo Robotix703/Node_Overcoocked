@@ -9,7 +9,7 @@ var ovh = require('ovh')({
     consumerKey: process.env.OVHCONSKEY
 });
 
-export function SendSMS(receivers: string[], message: string){
+export default function SendSMS(receivers: string[], message: string){
     ovh.request('GET', '/sms', function (err : Error, serviceName : string) {
         if(err) {
             console.error("SendSMS - " + err, serviceName);
