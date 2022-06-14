@@ -1,10 +1,11 @@
-const pantryInventory = require("./pantryInventory");
-const recipeIngredientsNeeded = require("./handleRecipe");
-
 import { IRecipe } from "../models/recipe";
 import { IMeal } from "../models/meal";
+
 import { baseMeal } from "./base/meal";
 import { baseRecipe } from "./base/recipe";
+
+import { PantryInventory } from "./pantryInventory";
+import { handleRecipe } from "./handleRecipe";
 
 let g_pantryInventory : any = [];
 
@@ -37,12 +38,12 @@ Date.prototype.addDays = function(days) {
 export namespace handleMeal {
 
     export async function initPantryInventory() : Promise<void> {
-        g_pantryInventory = await pantryInventory.getInventory();
+        g_pantryInventory = await PantryInventory.getInventory();
     }
 
     export async function checkIfMealIsReady(mealID : string) : Promise<any> {
         const meal : IMeal = await baseMeal.getMealByID(mealID);
-        const ingredientsNeeded = await recipeIngredientsNeeded.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+        const ingredientsNeeded : any[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
     
         let ingredientAvailable = [];
         let ingredientUnavailable = [];
@@ -67,12 +68,12 @@ export namespace handleMeal {
 
     export async function checkMealList() : Promise<any> {
         const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
-        await this.initPantryInventory();
+        await handleMeal.initPantryInventory();
     
         let mealState = [];
         for(let oneMeal of allMeals){
             const recipe : IRecipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
-            const mealReady = await this.checkIfMealIsReady(oneMeal._id);
+            const mealReady : any = await handleMeal.checkIfMealIsReady(oneMeal._id);
     
             mealState.push({
                 title: recipe.title,
@@ -84,13 +85,13 @@ export namespace handleMeal {
     
     export async function displayMealWithRecipeAndState() : Promise<any> {
         const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
-        await this.initPantryInventory();
-    
+        await handleMeal.initPantryInventory();
+
         let mealData = [];
     
         for(let meal of allMeals){
             const recipeData : IRecipe = await baseRecipe.getRecipeByID(meal.recipeID);
-            const mealState = await this.checkIfMealIsReady(meal._id);
+            const mealState : any = await handleMeal.checkIfMealIsReady(meal._id);
     
             mealData.push({
                 _id: meal._id,
