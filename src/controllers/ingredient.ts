@@ -10,7 +10,7 @@ export namespace ingredientController {
   export async function writeIngredient(req: any, res: Response){
     const url = protocol + '://' + req.get("host");
 
-    let result : any = await baseIngredient.register(
+    baseIngredient.register(
       req.body.name,
       url + "/images/" + req.file.filename,
       req.body.consumable,
@@ -18,14 +18,14 @@ export namespace ingredientController {
       req.body.unitOfMeasure,
       req.body.shelfLife,
       req.body.freezable)
-      .catch((error: Error) => {
-        res.status(500).json({
-          errorMessage: error
-        })
-        return;
-      });
-
-    res.status(201).json(result);
+    .then((result: any) => {
+      res.status(201).json(result);
+    })
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
   }
 
   //GET
