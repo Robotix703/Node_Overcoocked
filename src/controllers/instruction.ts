@@ -29,7 +29,7 @@ export namespace instructionController {
     });
   }
   export async function writeInstructionByIngredientName(req: Request, res: Response){
-    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsName : string[] = req.body.ingredients.map((e: any) => e.ingredientName);
     const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
     const ingredientsID: string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
@@ -108,7 +108,7 @@ export namespace instructionController {
 
   //PUT
   export async function updateInstruction(req: Request, res: Response){
-    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsName : string[] = req.body.ingredients.map((e: any) => e.ingredientName);
     const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
     const ingredientsID : string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
