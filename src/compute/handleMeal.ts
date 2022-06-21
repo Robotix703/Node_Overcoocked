@@ -4,13 +4,38 @@ import { IMeal } from "../models/meal";
 import { baseMeal } from "./base/meal";
 import { baseRecipe } from "./base/recipe";
 
-import { PantryInventory } from "./pantryInventory";
-import { handleRecipe } from "./handleRecipe";
+import { IPantryInventory, PantryInventory } from "./pantryInventory";
+import { handleRecipe, IIngredientWithQuantity } from "./handleRecipe";
 
-let g_pantryInventory : any = [];
+export interface IMealStatus {
+    ingredientAvailable: IIngredientWithQuantity[],
+    ingredientAlmostExpire: IIngredientWithQuantity[],
+    ingredientUnavailable: IIngredientWithQuantity[]
+}
 
-function checkDisponibility(ingredientID : string, quantity : number) : number {
-    const ingredientFound = g_pantryInventory.find((e : any) => e.ingredientID.toString() == ingredientID.toString());
+export interface IMealPrettyStatus {
+    title: string,
+    state: IMealStatus
+}
+
+export interface IDisplayableMealStatus {
+    _id: string,
+    title: string,
+    numberOfLunch: number,
+    imagePath: string,
+    state: IMealStatus
+}
+
+let g_pantryInventory : IPantryInventory[];
+
+Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+}
+
+export function checkDisponibility(ingredientID : string, quantity : number) : number {
+    const ingredientFound : IPantryInventory = g_pantryInventory.find((e : any) => e.ingredientID.toString() == ingredientID.toString());
     if(ingredientFound){
         if(quantity <= ingredientFound.quantityLeft){
             let dateNow : Date = new Date();
@@ -29,21 +54,15 @@ function checkDisponibility(ingredientID : string, quantity : number) : number {
     }
 }
 
-Date.prototype.addDays = function(days) {
-    var date = new Date(this.valueOf());
-    date.setDate(date.getDate() + days);
-    return date;
-}
-
 export namespace handleMeal {
 
     export async function initPantryInventory() : Promise<void> {
         g_pantryInventory = await PantryInventory.getInventory();
     }
 
-    export async function checkIfMealIsReady(mealID : string) : Promise<any> {
+    export async function checkIfMealIsReady(mealID : string) : Promise<IMealStatus> {
         const meal : IMeal = await baseMeal.getMealByID(mealID);
-        const ingredientsNeeded : any[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+        const ingredientsNeeded : IIngredientWithQuantity[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
     
         let ingredientAvailable = [];
         let ingredientUnavailable = [];
@@ -66,14 +85,14 @@ export namespace handleMeal {
         };
     }
 
-    export async function checkMealList() : Promise<any> {
+    export async function checkMealList() : Promise<IMealPrettyStatus[]> {
         const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
         await handleMeal.initPantryInventory();
     
-        let mealState = [];
+        let mealState : IMealPrettyStatus[] = [];
         for(let oneMeal of allMeals){
             const recipe : IRecipe = await baseRecipe.getRecipeByID(oneMeal.recipeID);
-            const mealReady : any = await handleMeal.checkIfMealIsReady(oneMeal._id);
+            const mealReady : IMealStatus = await handleMeal.checkIfMealIsReady(oneMeal._id);
     
             mealState.push({
                 title: recipe.title,
@@ -83,15 +102,15 @@ export namespace handleMeal {
         return mealState;
     }
     
-    export async function displayMealWithRecipeAndState() : Promise<any> {
+    export async function displayMealWithRecipeAndState() : Promise<IDisplayableMealStatus[]> {
         const allMeals : IMeal[] = await baseMeal.getAllMeals(null, null);
         await handleMeal.initPantryInventory();
 
-        let mealData = [];
+        let mealData : IDisplayableMealStatus[] = [];
     
         for(let meal of allMeals){
             const recipeData : IRecipe = await baseRecipe.getRecipeByID(meal.recipeID);
-            const mealState : any = await handleMeal.checkIfMealIsReady(meal._id);
+            const mealState : IMealStatus = await handleMeal.checkIfMealIsReady(meal._id);
     
             mealData.push({
                 _id: meal._id,

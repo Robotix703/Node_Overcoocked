@@ -1,11 +1,11 @@
-import { handleMeal } from "../compute/handleMeal";
+import { handleMeal, IMealPrettyStatus } from "../compute/handleMeal";
 import { handlePantry } from "../compute/handlePantry";
 
 import { sendSMSToEverybody } from "./sendSMSToEverybody";
 
 async function checkPlannedMeals() : Promise<string> {
     await handleMeal.initPantryInventory();
-    const mealsState : any = await handleMeal.checkMealList();
+    const mealsState : IMealPrettyStatus[] = await handleMeal.checkMealList();
     const mealTotal : number = await handleMeal.getMealNumber();
 
     let notReadyMeals = [];

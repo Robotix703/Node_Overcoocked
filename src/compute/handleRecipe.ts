@@ -5,6 +5,11 @@ import { baseInstruction } from "./base/instruction";
 import { baseRecipe } from "./base/recipe";
 import { baseIngredient } from "./base/ingredient";
 
+export interface IIngredientWithQuantity {
+    ingredient: IIngredient,
+    quantity: number
+}
+
 const getIngredientIDFromInstruction = async function (instructionID : string) : Promise<any[]> {
     const instruction : IInstruction = await baseInstruction.getInstructionByID(instructionID);
 
@@ -18,7 +23,7 @@ const getIngredientIDFromInstruction = async function (instructionID : string) :
     return ingredientsNeeded;
 }
 
-const concatList = function (originalList : any, additionList : any) : void {
+const concatList = function (originalList : IIngredientWithQuantity[], additionList : IIngredientWithQuantity[]) : void {
     additionList.forEach((elementToAdd : any) => {
         let existingIngredient = originalList.find((e : any) => e.ingredient._id.toString() == elementToAdd.ingredient._id.toString());
 
@@ -40,14 +45,14 @@ const sortInstructions = function(x : any, y : any) : number {
 }
 
 export namespace handleRecipe {
-    export async function getIngredientList(recipeID : string, numberOfLunch : number) {
+    export async function getIngredientList(recipeID : string, numberOfLunch : number) : Promise<IIngredientWithQuantity[]> {
         const instructions : IInstruction[] = await baseInstruction.getInstructionByRecipeID(recipeID);
         const recipe : IRecipe = await baseRecipe.getRecipeByID(recipeID);
     
-        let ingredientsNeeded : any[] = [];
+        let ingredientsNeeded : IIngredientWithQuantity[] = [];
         for (let instruction of instructions) {
     
-            let newIngredients : any[] = [];
+            let newIngredients : IIngredientWithQuantity[] = [];
             for (let i = 0; i < instruction.ingredientsID.length; i++) {
                 const ingredient : IIngredient = await baseIngredient.getIngredientByID(instruction.ingredientsID[i]);
                 newIngredients.push({

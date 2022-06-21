@@ -4,6 +4,12 @@ import { IIngredient } from "../models/ingredient";
 import { baseIngredient } from "./base/ingredient";
 import { basePantry } from "./base/pantry";
 
+export interface IPantryInventory {
+    ingredientID: string,
+    quantityLeft: number,
+    expirationDate: Date
+}
+
 const getConsumableID = async function() : Promise<string[]> {
     let consumableIngredients : IIngredient[] = await baseIngredient.getConsumableIngredients();
     return consumableIngredients.map(e => e._id);
@@ -25,10 +31,10 @@ const getInventoryForIngredientID = async function(ingredientID : string) : Prom
 
 export namespace PantryInventory{
 
-    export async function getInventory() : Promise<any[]> {
+    export async function getInventory() : Promise<IPantryInventory[]> {
         const consumableIDs : string[] = await getConsumableID();
     
-        let listAllConsumableLeft : any[] = [];
+        let listAllConsumableLeft : IPantryInventory[] = [];
     
         for(let ingredientID of consumableIDs){
             const inventory : any = await getInventoryForIngredientID(ingredientID);
