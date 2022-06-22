@@ -1,5 +1,5 @@
 import { handleMeal, IMealPrettyStatus } from "../compute/handleMeal";
-import { handlePantry } from "../compute/handlePantry";
+import { handlePantry, IPantryStatus } from "../compute/handlePantry";
 
 import { sendSMSToEverybody } from "./sendSMSToEverybody";
 
@@ -36,7 +36,7 @@ async function checkPlannedMeals() : Promise<string> {
 }
 
 async function checkPantry() : Promise<string> {
-    let almostExpired : any[] = await handlePantry.checkPantryExpiration();
+    let almostExpired : IPantryStatus[] = await handlePantry.checkPantryExpiration();
 
     let message = "";
     if(almostExpired.length > 0)

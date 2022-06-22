@@ -3,6 +3,12 @@ import { IPantry } from "../models/pantry";
 import { baseIngredient } from "./base/ingredient";
 import { basePantry } from "./base/pantry";
 
+export interface IPantryStatus {
+    ingredientName: string,
+    quantity: number,
+    expirationDate: string
+}
+
 declare global {
     interface Date {
        addDays(days: number, useThis?: boolean): Date;
@@ -21,10 +27,6 @@ Date.prototype.addDays = function (days : number) {
     return date;
 }
 
-async function removePantry(PantryID : string) : Promise<void> {
-    await basePantry.deletePantryByID(PantryID);
-}
-
 export namespace handlePantry {
 
     export async function freezePantry(pantryID : string) : Promise<IUpdateOne> {
@@ -33,17 +35,17 @@ export namespace handlePantry {
         return basePantry.updatePantryWithPantry(pantry);
     }
 
-    export async function checkPantryExpiration() : Promise<any[]> {
+    export async function checkPantryExpiration() : Promise<IPantryStatus[]> {
         let allPantry : IPantry[] = await basePantry.getAllPantryWithExpirationDate();
     
         let dateNow : Date = new Date();
         dateNow = dateNow.addDays(3);
     
-        let almostExpired : any[] = [];
+        let almostExpired : IPantryStatus[] = [];
         for (let pantry of allPantry) {
             if (pantry.expirationDate) {
                 if (pantry.expirationDate.getTime() < Date.now()) {
-                    await removePantry(pantry._id);
+                    await basePantry.deletePantryByID(pantry._id);
                 }
                 else if (pantry.expirationDate.getTime() < dateNow.getTime()) {
                     let ingredientName : string = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
