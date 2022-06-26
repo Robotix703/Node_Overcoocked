@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IInstruction } from "../models/instruction";
 import { IUpdateOne } from "../models/mongoose";
 
-import { handleRecipe } from "../compute/handleRecipe";
+import { handleRecipe, IPrettyInstruction } from "../compute/handleRecipe";
 import { handleInstruction } from "../compute/handleInstructions";
 
 import { baseIngredient } from "../compute/base/ingredient";
@@ -81,7 +81,7 @@ export namespace instructionController {
   }
   export function getByRecipeID(req: Request, res: Response){
     handleRecipe.getInstructionsByRecipeID(req.query.recipeID as string)
-      .then((instructions: IInstruction[]) => {
+      .then((instructions: IPrettyInstruction[]) => {
         res.status(200).json(instructions);
       })
       .catch((error: Error) => {
