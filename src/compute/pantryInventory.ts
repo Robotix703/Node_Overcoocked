@@ -10,15 +10,28 @@ export interface IPantryInventory {
     expirationDate: Date
 }
 
-const getConsumableID = async function() : Promise<string[]> {
+export interface IPantryStatus {
+    quantityLeft: number,
+    nearestExpirationDate: Date
+}
+
+export interface IPrettyPantry {
+    ingredientID: string,
+    ingredientName: string,
+    ingredientImagePath: string,
+    ingredientFreezable: boolean,
+    pantries: IPantry[]
+}
+
+export async function getConsumableID() : Promise<string[]> {
     let consumableIngredients : IIngredient[] = await baseIngredient.getConsumableIngredients();
     return consumableIngredients.map(e => e._id);
 }
 
-const getInventoryForIngredientID = async function(ingredientID : string) : Promise<any> {  
+export async function getInventoryForIngredientID(ingredientID : string) : Promise<IPantryStatus> {  
     let fetchedPantries : IPantry[] = await basePantry.getAllPantryByIngredientID(ingredientID);
 
-    let sum = 0;
+    let sum : number = 0;
     let nearestExpirationDate : Date = new Date();
     nearestExpirationDate.setFullYear(nearestExpirationDate.getFullYear() + 1);
 
@@ -30,14 +43,13 @@ const getInventoryForIngredientID = async function(ingredientID : string) : Prom
 }
 
 export namespace PantryInventory{
-
     export async function getInventory() : Promise<IPantryInventory[]> {
         const consumableIDs : string[] = await getConsumableID();
     
         let listAllConsumableLeft : IPantryInventory[] = [];
     
         for(let ingredientID of consumableIDs){
-            const inventory : any = await getInventoryForIngredientID(ingredientID);
+            const inventory : IPantryStatus = await getInventoryForIngredientID(ingredientID);
             listAllConsumableLeft.push({
                 ingredientID: ingredientID,
                 quantityLeft: inventory.quantityLeft,
@@ -47,13 +59,13 @@ export namespace PantryInventory{
         return listAllConsumableLeft;
     }
     
-    export async function getFullInventory() : Promise<any[]> {
+    export async function getFullInventory() : Promise<IPrettyPantry[]> {
         const allPantry : IPantry[] = await basePantry.getAllPantries(null, null);
     
-        let prettyPantries : any[] = [];
+        let prettyPantries : IPrettyPantry[] = [];
     
         for(let pantry of allPantry){
-            let ingredient : any = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
+            let ingredient : IPrettyPantry = prettyPantries.find(e => e.ingredientID == pantry.ingredientID);
     
             if(ingredient){
                 //Add pantry

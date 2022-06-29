@@ -6,7 +6,7 @@ import { IIngredient } from "../models/ingredient";
 import { IUpdateOne } from "../models/mongoose";
 import { IDeleteOne } from "../models/mongoose";
 
-import { PantryInventory } from "../compute/pantryInventory";
+import { IPrettyPantry, PantryInventory } from "../compute/pantryInventory";
 import { baseIngredient } from "../compute/base/ingredient";
 import { basePantry } from "../compute/base/pantry";
 import { handlePantry } from "../compute/handlePantry";
@@ -110,7 +110,7 @@ export namespace pantryController {
   }
   export async function getFullPantryInventory(req: Request, res: Response){
     PantryInventory.getFullInventory()
-    .then((fullInventory: any) => {
+    .then((fullInventory: IPrettyPantry[]) => {
       res.status(200).json(fullInventory);
     })
     .catch((error: Error) => {
