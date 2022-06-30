@@ -35,7 +35,7 @@ export namespace baseIngredient {
         })
     }
     
-    export async function getIngredientsIDByName(ingredientsName : string) : Promise<string[]> {
+    export async function getIngredientsIDByName(ingredientsName : string[]) : Promise<string[]> {
         let ingredientsID : string[] = [];
     
         for (let ingredientName of ingredientsName) {
@@ -61,8 +61,7 @@ export namespace baseIngredient {
         if (category) filters.category = category;
         
         if (pageSize && currentPage > 0) {
-            const query : Promise<IIngredient[]> = Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
-            return query;
+            return Ingredient.find(filters).limit(pageSize).skip(pageSize * (currentPage - 1));
         }
         return Ingredient.find(filters);
     }

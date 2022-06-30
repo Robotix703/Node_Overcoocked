@@ -6,7 +6,7 @@ import { IUpdateOne } from "../models/mongoose";
 
 import { baseMeal } from "../compute/base/meal";
 import { handleRecipe } from "../compute/handleRecipe";
-import { handleMeal } from "../compute/handleMeal";
+import { handleMeal, IDisplayableMealStatus, IMealStatus } from "../compute/handleMeal";
 import { updatePantryWhenMealIsDone } from "../compute/updatePantryWhenMealIsDone";
 
 const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
@@ -65,7 +65,7 @@ export namespace mealController{
     await handleMeal.initPantryInventory();
 
     handleMeal.checkIfMealIsReady(req.query.mealID)
-    .then((ready : any) => {
+    .then((ready : IMealStatus) => {
       res.status(200).json(ready);
     })
     .catch((error : Error) => {
@@ -76,7 +76,7 @@ export namespace mealController{
   }
   export async function displayable(req : Request, res : Response) {
     handleMeal.displayMealWithRecipeAndState()
-    .then((mealsData : any) => {
+    .then((mealsData : IDisplayableMealStatus[]) => {
       res.status(200).json(mealsData);
     })
     .catch((error : Error) => {

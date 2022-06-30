@@ -5,17 +5,15 @@ import { baseMeal } from "./base/meal";
 import { basePantry } from "./base/pantry";
 import { baseRecipe } from "./base/recipe";
 
-import { handleRecipe } from "./handleRecipe";
+import { handleRecipe, IIngredientWithQuantity } from "./handleRecipe";
 
-function comparePantriesByQuantity(x : any, y : any) : number {
+export function comparePantriesByQuantity(x : IPantry, y : IPantry) : number {
     if(x.quantity > y.quantity) return 1;
-
     if(x.quantity < y.quantity) return -1;
-
     return 0;
 }
 
-function comparePantriesByExpirationDate(x : any, y : any) : number {
+export function comparePantriesByExpirationDate(x : IPantry, y : IPantry) : number {
     if(x.expirationDate == undefined && y.expirationDate == undefined) return comparePantriesByQuantity(x, y);
 
     if(x.expirationDate == undefined) return 1;
@@ -29,7 +27,7 @@ function comparePantriesByExpirationDate(x : any, y : any) : number {
     return comparePantriesByQuantity(x, y);
 }
 
-async function consumeIngredientFromPantry(ingredientID : string, quantity : number) : Promise<void> {
+export async function consumeIngredientFromPantry(ingredientID : string, quantity : number) : Promise<void> {
     let quantityToConsume : number = quantity;
     let allPantry : IPantry[] = await basePantry.getAllPantryByIngredientID(ingredientID);
 
@@ -55,15 +53,14 @@ async function consumeIngredientFromPantry(ingredientID : string, quantity : num
 }
 
 export namespace updatePantryWhenMealIsDone {
-
     export async function updatePantryWhenMealsIsDone(mealID : string) : Promise<void> {
         const meal : IMeal = await baseMeal.getMealByID(mealID);
     
         await baseRecipe.updateLastCooked(meal.recipeID);
     
-        const ingredientsNeeded : any[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
+        const ingredientsNeeded : IIngredientWithQuantity[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);
         for(let ingredient of ingredientsNeeded){
-            if(ingredient.consumable)
+            if(ingredient.ingredient.consumable)
             {
                 await consumeIngredientFromPantry(ingredient.ingredient._id, ingredient.quantity);
             }

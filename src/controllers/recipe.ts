@@ -7,7 +7,7 @@ import { IUpdateOne } from "../models/mongoose";
 
 import { baseRecipe } from "../compute/base/recipe";
 import { baseMeal } from "../compute/base/meal";
-import { handleRecipe } from "../compute/handleRecipe";
+import { handleRecipe, IPrettyRecipe } from "../compute/handleRecipe";
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
@@ -113,7 +113,7 @@ export namespace recipeController {
     }
 
     handleRecipe.getPrettyRecipe(recipeID)
-    .then((result: IRecipe) => {
+    .then((result: IPrettyRecipe) => {
       res.status(200).json(result);
     })
     .catch((error: Error) => {

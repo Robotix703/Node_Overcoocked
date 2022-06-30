@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { IInstruction } from "../models/instruction";
 import { IUpdateOne } from "../models/mongoose";
 
-import { handleRecipe } from "../compute/handleRecipe";
+import { handleRecipe, IPrettyInstruction } from "../compute/handleRecipe";
 import { handleInstruction } from "../compute/handleInstructions";
 
 import { baseIngredient } from "../compute/base/ingredient";
@@ -29,7 +29,7 @@ export namespace instructionController {
     });
   }
   export async function writeInstructionByIngredientName(req: Request, res: Response){
-    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsName : string[] = req.body.ingredients.map((e: any) => e.ingredientName);
     const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
     const ingredientsID: string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
@@ -81,7 +81,7 @@ export namespace instructionController {
   }
   export function getByRecipeID(req: Request, res: Response){
     handleRecipe.getInstructionsByRecipeID(req.query.recipeID as string)
-      .then((instructions: IInstruction[]) => {
+      .then((instructions: IPrettyInstruction[]) => {
         res.status(200).json(instructions);
       })
       .catch((error: Error) => {
@@ -108,7 +108,7 @@ export namespace instructionController {
 
   //PUT
   export async function updateInstruction(req: Request, res: Response){
-    const ingredientsName : string = req.body.ingredients.map((e: any) => e.ingredientName);
+    const ingredientsName : string[] = req.body.ingredients.map((e: any) => e.ingredientName);
     const ingredientsQuantity : number = req.body.ingredients.map((e: any) => e.quantity);
 
     const ingredientsID : string[] = await baseIngredient.getIngredientsIDByName(ingredientsName);
