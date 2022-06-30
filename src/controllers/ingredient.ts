@@ -29,27 +29,37 @@ export namespace ingredientController {
   }
 
   //GET
-  export function readIngredients(req: any, res: Response){
-    var fetchedIngredients: IIngredient[] = [];
+  export async function readIngredients(req: any, res: Response){
+    var fetchedIngredients: IIngredient[] | void = await baseIngredient.getFilteredIngredient(req.query.name, null, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+      return;
+    });
 
-    baseIngredient.getFilteredIngredient(req.query.name, null, parseInt(req.query.pageSize), parseInt(req.query.currentPage))
-      .then((documents: IIngredient[]) => {
-        fetchedIngredients = documents;
-        return baseIngredient.count();
+    let count : number | void = await baseIngredient.count()
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
       })
-      .then((count: number) => {
-        res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
-      })
-      .catch((error: Error) => {
-        res.status(500).json({
-          errorMessage: error
-        })
-      });
+      return;
+    });
+
+    let data = {
+      ingredients: fetchedIngredients, 
+      ingredientCount: count
+    }
+    res.status(200).json(data);
   }
   export async function consumableID(req: Request, res: Response){
     baseIngredient.getConsumableIngredients()
     .then((consumableIngredients : IIngredient[]) => {
-      res.status(200).json({ IngredientsID: consumableIngredients.map(e => e._id), count: consumableIngredients.length });
+      let data = { 
+        IngredientsID: consumableIngredients.map(e => e._id),
+        count: consumableIngredients.length 
+      }
+      res.status(200).json(data);
     })
     .catch((error: Error) => {
       res.status(500).json({
@@ -57,22 +67,28 @@ export namespace ingredientController {
       });
     });
   }
-  export function searchByName(req: Request, res: Response){
-    let fetchedIngredients: IIngredient[] = [];
+  export async function searchByName(req: Request, res: Response){
+    let fetchedIngredients: IIngredient[] | void = await baseIngredient.findByName(req.query.name as string)
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+      return;
+    });
 
-    baseIngredient.findByName(req.query.name as string)
-      .then((documents: IIngredient[]) => {
-        fetchedIngredients = documents;
-        return baseIngredient.count();
+    let count = await baseIngredient.count()
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
       })
-      .then((count: number) => {
-        res.status(200).json({ ingredients: fetchedIngredients, ingredientCount: count });
-      })
-      .catch((error: Error) => {
-        res.status(500).json({
-          errorMessage: error
-        })
-      });
+      return;
+    });
+
+    let data = {
+      ingredients: fetchedIngredients,
+      ingredientCount: count
+    }
+    res.status(200).json(data);
   }
   export async function getIngredientByID(req: Request, res: Response){
     baseIngredient.getIngredientByID(req.query.ingredientID as string)
@@ -110,7 +126,7 @@ export namespace ingredientController {
   export async function getAllIngredientForAutocomplete(req: Request, res: Response){
     baseIngredient.getAllIngredients()
     .then((result: IIngredient[]) => {
-      let prettyIngredient = [];
+      let prettyIngredient : string[] = [];
       for(let element of result){
         prettyIngredient.push(element.name + " - " + element.unitOfMeasure);
       }
@@ -124,7 +140,7 @@ export namespace ingredientController {
   }
 
   //PUT
-  export function editIngredient(req: Request, res: Response){
+  export async function editIngredient(req: Request, res: Response){
     baseIngredient.updateIngredient(
       req.params.id,
       req.body.name,
