@@ -55,6 +55,7 @@ export namespace mealController{
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
 
     let count = await baseMeal.count()
@@ -62,6 +63,7 @@ export namespace mealController{
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
     
     let data = {
