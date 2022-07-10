@@ -6,6 +6,7 @@ import { handleTodoItem } from "../compute/handleTodoItem";
 import { handleIngredient } from "../compute/handleIngredient";
 
 import { ITodoItem } from "../models/todoItem";
+import { Task } from "@doist/todoist-api-typescript";
 
 function formatIngredient(ingredientName : string, ingredientUnitOfMeasure : string, ingredientQuantity : number) : string {
   return ingredientName + " - " + ingredientQuantity + " " + ingredientUnitOfMeasure;
@@ -24,8 +25,8 @@ async function updateTodoItem(existingIngredient : ITodoItem[], newIngredient : 
 
 async function addTodoItem(ingredient : any, consumable : boolean) : Promise<any> {
   const ingredientText : string = formatIngredient(ingredient.ingredient.name, ingredient.ingredient.unitOfMeasure, ingredient.quantity);
-  const todoItem : any = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
-  await baseTodoItem.registerTodoItem(todoItem.id, ingredientText, ingredient.ingredient.name, consumable);
+  const todoItem : Task = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
+  await baseTodoItem.registerTodoItem(todoItem.id.toString(), ingredientText, ingredient.ingredient.name, consumable);
 }
 
 export namespace registerIngredientsOnTodo {
