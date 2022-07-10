@@ -31,7 +31,7 @@ export namespace Todoist {
         });
     }
     
-    export async function updateItem(itemID: number, content: string): Promise<any>{
+    export async function updateItem(itemID: number, content: string): Promise<boolean>{
         return api.updateTask(itemID, {
             content: content
         });

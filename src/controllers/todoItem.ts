@@ -5,35 +5,41 @@ import { IDeleteOne, IUpdateOne } from "../models/mongoose";
 import { baseTodoItem } from "../compute/base/todoItem";
 import { Todoist } from "../modules/todoist";
 
-const registerIngredient = require("../worker/registerIngredientsOnTodo");
+import { registerIngredientsOnTodo } from "../worker/registerIngredientsOnTodo";
 
 export namespace todoItemController {
     export async function readTodoItems(req : Request, res : Response) {
-        let fetchedTodoItems : any = [];
-    
-        baseTodoItem.readTodoItems()
-        .then((documents : ITodoItem[]) => {
-            fetchedTodoItems = documents;
-            return baseTodoItem.count();
-        })
-        .then((count : number) => {
-            res.status(200).json({ todoItems: fetchedTodoItems, count: count });
-        })
+        let fetchedTodoItems : ITodoItem[] | void = await baseTodoItem.readTodoItems()
         .catch((error : Error) => {
             res.status(500).json({
               errorMessage: error
-            })
+            });
+            return;
         });
+
+        let count : number | void = await baseTodoItem.count()
+        .catch((error : Error) => {
+            res.status(500).json({
+              errorMessage: error
+            });
+            return;
+        });
+
+        let data = {
+            todoItems: fetchedTodoItems,
+            count: count
+        }
+        res.status(200).json(data);
     }
     
     export async function writeTodoItem(req : Request, res : Response) {
-        registerIngredient.registerIngredient(
+        registerIngredientsOnTodo.registerIngredient(
             req.body.ingredientID,
             req.body.name,
             req.body.quantity,
             req.body.unitOfMeasure)
-        .then((result : any) => {
-            res.status(201).json(result);
+        .then(() => {
+            res.status(201).json({message: "Registered !"});
         })
         .catch((error : Error) => {
             res.status(500).json({
@@ -43,38 +49,92 @@ export namespace todoItemController {
     }
     
     export async function updateTodoItem(req : Request, res : Response) {
-        baseTodoItem.updateTodoItem(req.params.id, req.body.todoID, req.body.text, req.body.ingredientName, req.body.consumable)
-        .then(async (result : IUpdateOne) => {
-            if (result.modifiedCount > 0) {
-                await Todoist.updateItem(req.body.todoID, req.body.text);
-                res.status(200).json({status: "Ok"});
+        let updateResult : IUpdateOne | void = await baseTodoItem.updateTodoItem(
+            req.params.id, 
+            req.body.todoID, 
+            req.body.text, 
+            req.body.ingredientName, 
+            req.body.consumable
+        )
+        .catch((error : Error) => {
+            res.status(500).json({
+                errorMessage: error
+            });
+            return;
+        });
+
+        if(updateResult)
+        {
+            if (updateResult.modifiedCount > 0) {
+                let result : boolean | void = await Todoist.updateItem(req.body.todoID, req.body.text)
+                .catch((error : Error) => {
+                    res.status(500).json({
+                        errorMessage: error
+                    });
+                    return;
+                });
+
+                if(result)
+                {
+                    res.status(200).json({status: "Ok"});
+                }
+                else
+                {
+                    res.status(500).json({ message: "Problem with todoist" });
+                }
             } else {
                 res.status(401).json({ message: "Pas de modification" });
             }
-        })
-        .catch((error : Error) => {
+        }
+        else
+        {
             res.status(500).json({
-                errorMessage: error
-            })
-        });
+                errorMessage: "Update failed"
+            });
+        }
     }
     
     export async function deleteTodoItem(req : Request, res : Response) {
-        let todoItem : ITodoItem = await baseTodoItem.getTodoItemByID(req.params.id);
-    
-        baseTodoItem.deleteTodoItem(req.params.id)
-        .then(async (result : IDeleteOne) => {
-            if (result.deletedCount > 0) {
-                await Todoist.deleteItem(todoItem.todoID);
-                res.status(200).json({ status: "Ok" });
-            } else {
-                res.status(401).json(result);
-            }
-        })
+        let todoItem : ITodoItem | void = await baseTodoItem.getTodoItemByID(req.params.id)
         .catch((error : Error) => {
             res.status(500).json({
                 errorMessage: error
-            })
+            });
+            return;
         });
+
+        if(todoItem)
+        {
+            let deleteResult : IDeleteOne | void = await baseTodoItem.deleteTodoItem(req.params.id)
+            .catch((error : Error) => {
+                res.status(500).json({
+                    errorMessage: error
+                });
+                return;
+            });
+
+            if(deleteResult)
+            {
+                if (deleteResult.deletedCount > 0) {
+
+                    let result : boolean | void = await Todoist.deleteItem(todoItem.todoID)
+                    .catch((error : Error) => {
+                        res.status(500).json({
+                            errorMessage: error
+                        });
+                        return;
+                    });
+
+                    if(result)
+                    {
+                        res.status(200).json({ status: "Ok" });
+                    }
+                    else res.status(401).json({ errorMessage: "Error with todoist" });
+
+                } else res.status(401).json({ errorMessage: "Not item deleted" });
+            }
+            else res.status(500).json({ errorMessage: "Error on delete" });
+        }
+        else res.status(500).json({ errorMessage: "TodoItem not found" });
     }
 }
