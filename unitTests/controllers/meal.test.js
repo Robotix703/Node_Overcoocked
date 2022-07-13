@@ -143,7 +143,7 @@ test('consumeMeal with mealID but no delete', async () => {
     }
 
     let spy = jest.spyOn(updatePantryWhenMealIsDone, "updatePantryWhenMealsIsDone").mockResolvedValue(
-        "OK"
+        
     );
     let spy2 = jest.spyOn(baseMeal, "deleteMeal").mockResolvedValue(
         notdeleteOne
@@ -156,7 +156,6 @@ test('consumeMeal with mealID but no delete', async () => {
 
     expect(responseBody).toMatchObject({ errorMessage: "Wrong ID"});
     expect(reponseStatus).toBe(404);
-    expect(spy).not.toHaveBeenCalled();
 
     spy.mockRestore();
     spy2.mockRestore();
@@ -187,7 +186,6 @@ test('consumeMeal without mealID', async () => {
 
     expect(responseBody).toMatchObject({ errorMessage: "No mealID provided"});
     expect(reponseStatus).toBe(400);
-    expect(spy).not.toHaveBeenCalled();
     expect(spy2).not.toHaveBeenCalled();
 
     spy.mockRestore();
