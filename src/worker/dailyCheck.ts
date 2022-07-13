@@ -5,8 +5,11 @@ import { sendSMSToEverybody } from "./sendSMSToEverybody";
 
 export async function checkPlannedMeals() : Promise<string | void> {
     await handleMeal.initPantryInventory();
-    const mealsState : IMealPrettyStatus[] = await handleMeal.checkMealList();
-    const mealTotal : number = await handleMeal.getMealNumber();
+    const mealsState : IMealPrettyStatus[] |void = await handleMeal.checkMealList();
+    if(!mealsState) return;
+
+    const mealTotal : number | void = await handleMeal.getMealNumber();
+    if(!mealTotal) return;
 
     let notReadyMeals : IMealPrettyStatus[] = [];
     let almostExpiredMeals : IMealPrettyStatus[] = [];

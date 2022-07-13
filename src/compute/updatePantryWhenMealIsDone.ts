@@ -53,9 +53,10 @@ export async function consumeIngredientFromPantry(ingredientID : string, quantit
 }
 
 export namespace updatePantryWhenMealIsDone {
-    export async function updatePantryWhenMealsIsDone(mealID : string) : Promise<void> {
-        const meal : IMeal = await baseMeal.getMealByID(mealID);
-    
+    export async function updatePantryWhenMealsIsDone(mealID : string) : Promise<void | Error> {
+        const meal : IMeal | void = await baseMeal.getMealByID(mealID);
+        if(!meal) return new Error("meal not found");
+
         await baseRecipe.updateLastCooked(meal.recipeID);
     
         const ingredientsNeeded : IIngredientWithQuantity[] = await handleRecipe.getIngredientList(meal.recipeID, meal.numberOfLunchPlanned);

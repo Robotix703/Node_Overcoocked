@@ -30,10 +30,16 @@ export namespace mealController{
   }
   export async function consumeMeal(req : Request, res : Response) {
     if (req.body.mealID) {
+      let error = await updatePantryWhenMealIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
+      if(error)
+      {
+        res.status(500).json({ errorMessage: error });
+        return;
+      }
+
       const result : IDeleteOne = await baseMeal.deleteMeal(req.body.mealID);
 
       if (result.deletedCount > 0) {
-        await updatePantryWhenMealIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
         res.status(200).json({ status: "ok" });
       } else {
         res.status(404).json({ errorMessage: "Wrong ID"});
@@ -58,13 +64,11 @@ export namespace mealController{
       return;
     });
 
-    let count = await baseMeal.count()
-    .catch((error : Error) => {
-      res.status(500).json({
-        errorMessage: error
-      })
+    let count = await baseMeal.count();
+    if(!count){
+      res.status(500).json({ errorMessage: "Count not found" });
       return;
-    });
+    }
     
     let data = {
       meals: fetchedMeals,
