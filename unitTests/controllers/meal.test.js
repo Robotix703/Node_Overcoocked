@@ -112,7 +112,7 @@ test('consumeMeal with mealID and delete', async () => {
     }
 
     let spy = jest.spyOn(updatePantryWhenMealIsDone, "updatePantryWhenMealsIsDone").mockResolvedValue(
-        "OK"
+        
     );
     let spy2 = jest.spyOn(baseMeal, "deleteMeal").mockResolvedValue(
         deleteOne
