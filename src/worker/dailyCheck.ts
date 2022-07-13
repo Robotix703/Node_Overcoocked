@@ -3,20 +3,21 @@ import { handlePantry, IPantryStatus } from "../compute/handlePantry";
 
 import { sendSMSToEverybody } from "./sendSMSToEverybody";
 
-async function checkPlannedMeals() : Promise<string> {
+export async function checkPlannedMeals() : Promise<string | void> {
     await handleMeal.initPantryInventory();
     const mealsState : IMealPrettyStatus[] = await handleMeal.checkMealList();
     const mealTotal : number = await handleMeal.getMealNumber();
 
-    let notReadyMeals = [];
-    let almostExpiredMeals = [];
+    let notReadyMeals : IMealPrettyStatus[] = [];
+    let almostExpiredMeals : IMealPrettyStatus[] = [];
     for(let mealState of mealsState){
         if(mealState.state.ingredientUnavailable) notReadyMeals.push(mealState);
         else if(mealState.state.ingredientAlmostExpire) almostExpiredMeals.push(mealState);
     }
 
+    let message : string | void;
     if(notReadyMeals.length > 0){
-        let message = "";
+        message = "";
         for(let mealNotReady of notReadyMeals){
             message += "Le repas " + mealNotReady.title + " n'est pas prêt\n";
         }
@@ -28,17 +29,14 @@ async function checkPlannedMeals() : Promise<string> {
         if(mealTotal == notReadyMeals.length){
             message += "ATTENTION aucun repas n'est prêt\n";
         }
-
-        return message;
-    }else{
-        return "";
     }
+    return message;
 }
 
-async function checkPantry() : Promise<string> {
+export async function checkPantry() : Promise<string | void> {
     let almostExpired : IPantryStatus[] = await handlePantry.checkPantryExpiration();
 
-    let message = "";
+    let message : string | void;
     if(almostExpired.length > 0)
     {
         message = "\nLes ingrédients suivants vont périmer :\n";
@@ -54,7 +52,7 @@ export default async function dailyCheck() : Promise<void> {
     let messageToSend : string = "Information du jour\n\n";
     messageToSend += await checkPlannedMeals();
     messageToSend += await checkPantry();
-    messageToSend += "\nhttps://overcooked.robotix703.fr/meal/list"
+    messageToSend += "\nhttps://overcooked.robotix703.fr/meal/list";
 
     sendSMSToEverybody.sendSMS(messageToSend);
 }

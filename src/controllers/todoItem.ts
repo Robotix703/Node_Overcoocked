@@ -36,8 +36,7 @@ export namespace todoItemController {
         registerIngredientsOnTodo.registerIngredient(
             req.body.ingredientID,
             req.body.name,
-            req.body.quantity,
-            req.body.unitOfMeasure)
+            req.body.quantity)
         .then(() => {
             res.status(201).json({message: "Registered !"});
         })

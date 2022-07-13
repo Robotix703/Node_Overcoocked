@@ -1,10 +1,10 @@
-const Scheduler = require("../modules/scheduler");
+import { createJob, cancelJob } from "../modules/scheduler";
 
 let activeTasks : any = [];
 
 export namespace handleScheduleTask {
     export function addperiodicTask(task : any, cronSettings : string, taskName : string) : void {
-        const job = Scheduler.createJob(task, cronSettings);
+        const job = createJob(task, cronSettings);
     
         activeTasks.push({
             name: taskName,
@@ -17,7 +17,7 @@ export namespace handleScheduleTask {
         const activeTask = activeTasks.find((e : any) => e.name == taskName);
     
         if(activeTask){
-            Scheduler.cancelJob(activeTask.job);
+            cancelJob(activeTask.job);
             activeTasks = activeTasks.filter((e : any) => e.name != taskName);
             return true;
         }
