@@ -16,8 +16,12 @@ import checkTodoList from "../worker/checkTodoList";
 export namespace pantryController {
   //POST
   export function writePantry(req: Request, res: Response){
-
-    basePantry.register(req.body.ingredientID, req.body.quantity, req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null, req.body.frozen ?? false)
+    basePantry.register(
+      req.body.ingredientID, 
+      req.body.quantity, 
+      req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null, 
+      req.body.frozen ?? false
+    )
     .then((result: any) => {
       res.status(201).json(result);
     })
@@ -30,7 +34,12 @@ export namespace pantryController {
   export async function writePantryByIngredientName(req: Request, res: Response){
     const ingredientID : IIngredient = await baseIngredient.getIngredientByName(req.body.ingredientName);
 
-    basePantry.register(ingredientID._id, req.body.quantity, req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null, req.body.frozen ?? false)
+    basePantry.register(
+      ingredientID._id, 
+      req.body.quantity, 
+      req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null, 
+      req.body.frozen ?? false
+    )
     .then((result: any) => {
       res.status(201).json(result);
     })
@@ -41,36 +50,50 @@ export namespace pantryController {
     });
   }
   export async function freezePantry(req: Request, res: Response){
-    await handlePantry.freezePantry(req.body.pantryID);
-    res.status(201).json({ result: "OK" });
+    let result : IUpdateOne = await handlePantry.freezePantry(req.body.pantryID);
+
+    if(result.modifiedCount > 0){
+      res.status(200).json(result);
+    }
+    else {
+      res.status(404).json({ errorMessage: "Pantry not found"});
+    }
   }
   export async function refreshTodoist(req: Request, res: Response){
     await checkTodoList();
+
     res.status(201).json({ result: "OK" });
   }
 
   //GET
-  export function readPantries(req: any, res: Response){
+  export async function readPantries(req: any, res: Response){
     const pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
     const currentPage = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
-    let fetchedPantries: IPantry[] = [];
-
-    basePantry.getAllPantries(pageSize, currentPage)
-    .then((documents: IPantry[]) => {
-      fetchedPantries = documents;
-      return basePantry.count();
-    })
-    .then((count: number) => {
-      res.status(200).json({ pantries: fetchedPantries, pantryCount: count });
-    })
+    let fetchedPantries: IPantry[] | void = await basePantry.getAllPantries(pageSize, currentPage)
     .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
+
+    let count = await basePantry.count()
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+      return;
+    });
+
+    let data = {
+      pantries: fetchedPantries,
+      pantryCount: count
+    }
+
+    res.status(200).json(data);
   }
-  export function quantityLeft(req: Request, res: Response){
+  export async function quantityLeft(req: Request, res: Response){
     basePantry.getByIngredientID(req.query.ingredientID as string)
     .then((documents: IPantry[]) => {
       const fetchedPantries : IPantry[] = [...documents];
@@ -88,7 +111,7 @@ export namespace pantryController {
       })
     });
   }
-  export function getNearestExpirationDate(req: Request, res: Response){
+  export async function getNearestExpirationDate(req: Request, res: Response){
     basePantry.getByIngredientID(req.query.ingredientID as string)
     .then((documents: IPantry[]) => {
       const fetchedPantries : IPantry[] = [...documents];
@@ -120,46 +143,103 @@ export namespace pantryController {
     });
   }
   export async function getPantryByID(req: Request, res: Response){
-    const pantry : IPantry = await basePantry.getPantryByID(req.query.pantryID as string);
-    const ingredientName : string = await baseIngredient.getIngredientNameByID(pantry.ingredientID);
-
-    res.status(200).json({
-      _id: pantry._id,
-      ingredientID: pantry.ingredientID,
-      quantity: pantry.quantity,
-      expirationDate: pantry.expirationDate || null,
-      ingredientName: ingredientName,
-      frozen: pantry.frozen
-    });
-  }
-
-  //PUT
-  export async function updatePantry(req: Request, res: Response){
-    let ingredientID : string = "";
-    if(req.body.ingredientName){
-      let ingredient : IIngredient = await baseIngredient.getIngredientByName(req.body.ingredientName);
-      ingredientID = ingredient._id;
-    }
-
-    basePantry.updatePantry(
-      req.params.id,
-      ingredientID,
-      req.body.quantity,
-      req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
-      req.body.frozen
-    )
-    .then((result: IUpdateOne) => {
-      if (result.modifiedCount > 0) {
-        res.status(200).json({status: "OK"});
-      } else {
-        res.status(401).json({ message: "Pas de modification" });
-      }
-    })
+    const pantry : IPantry | void = await basePantry.getPantryByID(req.query.pantryID as string)
     .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
+
+    if(pantry)
+    {
+      const ingredientName : string | void = await baseIngredient.getIngredientNameByID(pantry.ingredientID)
+      .catch((error: Error) => {
+        res.status(500).json({
+          errorMessage: error
+        });
+        return;
+      });
+
+      if(ingredientName)
+      {
+        res.status(200).json({
+          _id: pantry._id,
+          ingredientID: pantry.ingredientID,
+          quantity: pantry.quantity,
+          expirationDate: pantry.expirationDate || null,
+          ingredientName: ingredientName,
+          frozen: pantry.frozen
+        });
+      }
+      else{
+        res.status(500).json({
+          errorMessage: "ingredient not found"
+        });
+      }
+    }
+    else{
+      res.status(500).json({
+        errorMessage: "Pantry not found"
+      });
+    }
+  }
+
+  //PUT
+  export async function updatePantry(req: Request, res: Response){
+    if(req.body.ingredientName){
+      
+      let ingredient : IIngredient | void = await baseIngredient.getIngredientByName(req.body.ingredientName)
+      .catch((error: Error) => {
+        res.status(500).json({
+          errorMessage: error
+        });
+        return;
+      });
+
+      if(ingredient){
+        let ingredientID : string = ingredient._id;
+
+        let updatePantry = await basePantry.updatePantry(
+          req.params.id,
+          ingredientID,
+          req.body.quantity,
+          req.body.expirationDate ? moment(req.body.expirationDate, "DD/MM/YYYY") : null,
+          req.body.frozen
+        )
+        .catch((error: Error) => {
+          res.status(500).json({
+            errorMessage: error
+          })
+        });
+
+        if(updatePantry){
+          if (updatePantry.modifiedCount > 0) {
+            res.status(200).json({status: "OK"});
+          } else {
+            res.status(401).json({ message: "Pas de modification" });
+          }
+        }
+        else
+        {
+          res.status(500).json({
+            errorMessage: "Update error"
+          });
+        }
+      }
+      else
+      {
+        res.status(400).json({
+          errorMessage: "IngredientName not found"
+        });
+      }
+    }
+    else
+    {
+      res.status(400).json({
+        errorMessage: "IngredientName not provided"
+      });
+    }
   }
 
   //DELETE

@@ -7,7 +7,7 @@ let callback = function(){
 
 let cronSetting = "*/1 * * * * *";
 
-test('Create and stop Job', async () => {
+test.skip('Create and stop Job', async () => {
     let job = scheduler.createJob(callback, cronSetting);
 
     setTimeout(() => {

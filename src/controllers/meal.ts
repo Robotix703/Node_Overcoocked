@@ -5,38 +5,43 @@ import { IMeal } from "../models/meal";
 import { IUpdateOne } from "../models/mongoose";
 
 import { baseMeal } from "../compute/base/meal";
-import { handleRecipe } from "../compute/handleRecipe";
+import { handleRecipe, IIngredientWithQuantity } from "../compute/handleRecipe";
 import { handleMeal, IDisplayableMealStatus, IMealStatus } from "../compute/handleMeal";
 import { updatePantryWhenMealIsDone } from "../compute/updatePantryWhenMealIsDone";
 
-const registerIngredientOnTodo = require("../worker/registerIngredientsOnTodo");
+import { registerIngredientsOnTodo } from "../worker/registerIngredientsOnTodo";
 
 export namespace mealController{
   //POST
   export async function writeMeal(req : Request, res : Response) {
-    baseMeal.register(req.body.recipeID, req.body.numberOfLunchPlanned)
-    .then(async function(result : any) {
-      const ingredientsNeeded = await handleRecipe.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
-      registerIngredientOnTodo.registerIngredients(ingredientsNeeded);
 
-      res.status(201).json(result);
-    })
+    let registerResult = await baseMeal.register(req.body.recipeID, req.body.numberOfLunchPlanned)
     .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
     });
+
+    const ingredientsNeeded : IIngredientWithQuantity[] = await handleRecipe.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
+      
+    await registerIngredientsOnTodo.registerIngredients(ingredientsNeeded);
+
+    res.status(201).json(registerResult);
   }
   export async function consumeMeal(req : Request, res : Response) {
     if (req.body.mealID) {
-      await updatePantryWhenMealIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
       const result : IDeleteOne = await baseMeal.deleteMeal(req.body.mealID);
 
       if (result.deletedCount > 0) {
+        await updatePantryWhenMealIsDone.updatePantryWhenMealsIsDone(req.body.mealID);
         res.status(200).json({ status: "ok" });
       } else {
-        res.status(500).send("Wrong ID");
+        res.status(404).json({ errorMessage: "Wrong ID"});
       }
+    }
+    else
+    {
+      res.status(400).json({ errorMessage: "No mealID provided"});
     }
   }
 
@@ -45,21 +50,28 @@ export namespace mealController{
     const pageSize : number = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
     const currentPage : number = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
-    let fetchedMeals : IMeal[] = [];
-
-    baseMeal.getAllMeals(pageSize, currentPage)
-    .then((documents : IMeal[]) => {
-      fetchedMeals = documents;
-      return baseMeal.count();
-    })
-    .then((count : number) => {
-      res.status(200).json({ meals: fetchedMeals, count: count });
-    })
+    let fetchedMeals : IMeal[] | void = await baseMeal.getAllMeals(pageSize, currentPage)
     .catch((error : Error) => {
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
+
+    let count = await baseMeal.count()
+    .catch((error : Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+      return;
+    });
+    
+    let data = {
+      meals: fetchedMeals,
+      count: count
+    }
+
+    res.status(200).json(data);
   }
   export async function checkIfReady(req : any, res : Response) {
     await handleMeal.initPantryInventory();
@@ -93,7 +105,7 @@ export namespace mealController{
       if (result.modifiedCount > 0) {
         res.status(200).json(result);
       } else {
-        res.status(401).json({ message: "Pas de modification" });
+        res.status(401).json({ errorMessage: "Pas de modification" });
       }
     })
     .catch((error : Error) => {
@@ -110,7 +122,7 @@ export namespace mealController{
       if (result.deletedCount > 0) {
         res.status(200).json(result);
       } else {
-        res.status(401).json(result);
+        res.status(401).json({ errorMessage: "Pas de modification" });
       }
     })
     .catch((error : Error) => {

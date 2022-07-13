@@ -2,10 +2,10 @@ import { baseUser } from "../compute/base/user";
 
 import SendSMS from "../modules/sms";
 
-const Frindicator = "0033";
-let g_phoneNumbers : any = [];
+const Frindicator : string = "0033";
+let g_phoneNumbers : string[] = [];
 
-function processPhoneNumber(phoneNumbers : any[]) : void {
+export function processPhoneNumber(phoneNumbers : string[]) : void {
     phoneNumbers.forEach((phoneNumber) => {
         g_phoneNumbers.push(
             Frindicator + phoneNumber.slice(1)

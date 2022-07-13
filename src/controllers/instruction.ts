@@ -10,7 +10,7 @@ import { baseInstruction } from "../compute/base/instruction";
 
 export namespace instructionController {
   //POST
-  export function writeInstruction(req: Request, res: Response){
+  export async function writeInstruction(req: Request, res: Response){
     baseInstruction.register(
       req.body.text,
       req.body.recipeID,
@@ -59,27 +59,33 @@ export namespace instructionController {
   }
 
   //GET
-  export function readInstructions(req: any, res: Response){
+  export async function readInstructions(req: any, res: Response){
     const pageSize : number = req.query.pageSize ? parseInt(req.query.pageSize) : 20;
     const currentPage : number = req.query.currentPage ? parseInt(req.query.currentPage) + 1 : 1;
 
-    let fetchedInstructions: IInstruction[] = [];
-
-    baseInstruction.getAllInstructions(pageSize, currentPage)
-    .then((documents: IInstruction[]) => {
-      fetchedInstructions = documents;
-      return baseInstruction.count();
-    })
-    .then((count: number) => {
-      res.status(200).json({ instructions: fetchedInstructions, instructionCount: count });
-    })
+    let fetchedInstructions: IInstruction[] | void = await baseInstruction.getAllInstructions(pageSize, currentPage)
     .catch((error: Error) => {
       res.status(500).json({
         errorMessage: error
       })
+      return;
     });
+
+    let count = await baseInstruction.count()
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+      return;
+    });
+    
+    let data = {
+      instructions: fetchedInstructions,
+      instructionCount: count
+    }
+    res.status(200).json(data);    
   }
-  export function getByRecipeID(req: Request, res: Response){
+  export async function getByRecipeID(req: Request, res: Response){
     handleRecipe.getInstructionsByRecipeID(req.query.recipeID as string)
       .then((instructions: IPrettyInstruction[]) => {
         res.status(200).json(instructions);
@@ -91,7 +97,13 @@ export namespace instructionController {
       });
   }
   export async function getInstructionCountForRecipe(req: Request, res: Response){
-    let count = await handleInstruction.getInstructionCountForRecipe(req.query.recipeID as string);
+    let count = await handleInstruction.getInstructionCountForRecipe(req.query.recipeID as string)
+    .catch((error: Error) => {
+      res.status(500).json({
+        errorMessage: error
+      })
+    });
+
     res.status(200).json(count);
   }
   export async function getInstructionByID(req: Request, res: Response){
@@ -137,7 +149,7 @@ export namespace instructionController {
   }
 
   //DELETE
-  export function deleteInstruction(req: Request, res: Response){
+  export async function deleteInstruction(req: Request, res: Response){
     baseInstruction.deleteOne(req.params.id)
     .then((result: any) => {
       if (result.deletedCount > 0) {
