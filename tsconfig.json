@@ -26,7 +26,8 @@
         "src/middleware/*",
         "src/compute/*",
         "src/compute/base/*",
-        "src/modules/*"
+        "src/modules/*",
+        "src/error/*"
     ],
     "exclude": [
         "build/*"
