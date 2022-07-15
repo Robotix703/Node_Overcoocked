@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ITodoItem } from "../models/todoItem";
 import { IDeleteOne, IUpdateOne } from "../models/mongoose";
+import { BackendError, errorTypes, IBackendError } from "../error/backendError";
 
 import { baseTodoItem } from "../compute/base/todoItem";
 import { Todoist } from "../modules/todoist";
@@ -95,20 +96,18 @@ export namespace todoItemController {
     
     export async function deleteTodoItem(req : Request, res : Response) {
         let todoItem : ITodoItem | void = await baseTodoItem.getTodoItemByID(req.params.id)
-        .catch((error : Error) => {
-            res.status(500).json({
-                errorMessage: error
-            });
+        .catch((error : Error | IBackendError) => {
+            if("backendError" in error) res.status(500).json(error.display());
+            else res.status(500).json(new BackendError(errorTypes.TodoItem, error.message).display());
             return;
         });
 
         if(todoItem)
         {
             let deleteResult : IDeleteOne | void = await baseTodoItem.deleteTodoItem(req.params.id)
-            .catch((error : Error) => {
-                res.status(500).json({
-                    errorMessage: error
-                });
+            .catch((error : Error | IBackendError) => {
+                if("backendError" in error) res.status(500).json(error.display());
+                else res.status(500).json(new BackendError(errorTypes.TodoItem, error.message).display());
                 return;
             });
 
@@ -117,10 +116,9 @@ export namespace todoItemController {
                 if (deleteResult.deletedCount > 0) {
 
                     let result : boolean | void = await Todoist.deleteItem(todoItem.todoID)
-                    .catch((error : Error) => {
-                        res.status(500).json({
-                            errorMessage: error
-                        });
+                    .catch((error : Error | IBackendError) => {
+                        if("backendError" in error) res.status(500).json(error.display());
+                        else res.status(500).json(new BackendError(errorTypes.Todoist, error.message).display());
                         return;
                     });
 

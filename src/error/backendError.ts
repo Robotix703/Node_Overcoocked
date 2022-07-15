@@ -1,6 +1,8 @@
 export interface IBackendError {
+    backendError: string;
     type: string;
     message: string
+    display(): Function
 }
 
 export interface IJWTError {
@@ -10,7 +12,10 @@ export interface IJWTError {
 }
 
 export const errorTypes = {
-    Auth: "Auth"
+    Auth: "Auth",
+    Controller: "Controller",
+    TodoItem: "TodoItem",
+    Todoist: "Todoist"
 }
 
 export class BackendError{

@@ -23,7 +23,7 @@ export namespace baseTodoItem {
     }
 
     export async function deleteTodoItem(todoItemID : string) : Promise<IDeleteOne> {
-        return TodoItem.deleteOne({ todoID: todoItemID });
+        return TodoItem.deleteOne({ _id: todoItemID });
     }
 
     export async function getTodoItemByID(todoItemID : string) : Promise<ITodoItem> {

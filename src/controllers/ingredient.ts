@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { IIngredient } from "../models/ingredient";
 import { baseIngredient } from "../compute/base/ingredient";
 import { IDeleteOne, IUpdateOne } from "../models/mongoose";
+import { BackendError, errorTypes, IBackendError } from "../error/backendError";
 
 const protocol = (process.env.NODE_ENV === "production") ? "https" : "http";
 
@@ -21,10 +22,9 @@ export namespace ingredientController {
     .then((result: any) => {
       res.status(201).json(result);
     })
-    .catch((error: Error) => {
-      res.status(500).json({
-        errorMessage: error
-      })
+    .catch((error: Error | IBackendError) => {
+      if("backendError" in error) res.status(500).json(error.display());
+      else res.status(500).json(new BackendError(errorTypes.Controller, error.message).display());
     });
   }
 
