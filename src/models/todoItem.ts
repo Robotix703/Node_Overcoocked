@@ -5,6 +5,24 @@ export interface ITodoItem {
   ingredientName: string
   consumable: boolean
 }
+export interface ITodoistText {
+  ingredientName: string,
+  quantity: string,
+  unitOfMeasure: string
+}
+
+export function stringifyItem(ingredientName: string, quantity: string, unitOfMeasure: string) : string{
+  return ingredientName + " - " + quantity + " " + unitOfMeasure;
+}
+
+export function parseItem(todoText: string) : ITodoistText {
+  let parsedString = todoText.split(' ');
+  return {
+    ingredientName: parsedString[0],
+    quantity: parsedString[2],
+    unitOfMeasure: parsedString[3]
+  }
+}
 
 const mongoose = require('mongoose');
 

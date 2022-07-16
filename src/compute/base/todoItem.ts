@@ -1,4 +1,4 @@
-import { IDeleteOne, ISave, IUpdateOne } from "../../models/mongoose";
+import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
 import TodoItem, { ITodoItem } from "../../models/todoItem";
 
 export namespace baseTodoItem {

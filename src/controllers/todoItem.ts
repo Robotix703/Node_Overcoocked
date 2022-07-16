@@ -7,6 +7,7 @@ import { baseTodoItem } from "../compute/base/todoItem";
 import { Todoist } from "../modules/todoist";
 
 import { registerIngredientsOnTodo } from "../worker/registerIngredientsOnTodo";
+import { handleTodoItem } from "../compute/handleTodoItem";
 
 export namespace todoItemController {
     export async function readTodoItems(req : Request, res : Response) {
@@ -46,6 +47,20 @@ export namespace todoItemController {
                 errorMessage: error
             })
         });
+    }
+    export async function updateQuantity(req : Request, res : Response) {
+        if(req.params.id){
+            if(req.body.quantity){
+                let result : IUpdateOne = await handleTodoItem.updateQuantity(req.params.id, req.body.quantity);
+
+                if(result.modifiedCount > 0){
+                    res.status(200).json("OK");
+                }
+                else res.status(500).json(new BackendError(errorTypes.TodoItem, "Update didn't work").display())
+            }
+            else res.status(400).json(new BackendError(errorTypes.TodoItem, "Quantity not provided").display());
+        }
+        else res.status(400).json(new BackendError(errorTypes.TodoItem, "ID not provided").display());
     }
     
     export async function updateTodoItem(req : Request, res : Response) {

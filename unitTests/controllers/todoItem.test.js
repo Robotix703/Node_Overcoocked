@@ -1,4 +1,5 @@
 const baseTodoItem = require("../../build/compute/base/todoItem").baseTodoItem;
+const handleTodoItem = require("../../build/compute/handleTodoItem").handleTodoItem;
 
 const Todoist = require("../../build/modules/todoist").Todoist;
 const registerIngredient = require("../../build/worker/registerIngredientsOnTodo").registerIngredientsOnTodo;
@@ -7,7 +8,7 @@ const todoItemController = require("../../build/controllers/todoItem").todoItemC
 let todoItem = {
     _id: "string",
     todoID: 10,
-    text: "text",
+    text: "pommes - 10 pc",
     ingredientName: "ingredientName",
     consumable: true
 }
@@ -399,4 +400,109 @@ test('deleteTodoItem with error on todoist', async () => {
     spy.mockRestore();
     spy2.mockRestore();
     spy3.mockRestore();
+});
+
+test('updateQuantity', async () => {
+    let mockStatusCode = jest.fn();
+    let mockResponse = {
+        status : mockStatusCode.mockReturnValue({json: jest.fn()})
+    }
+
+    let mockRequest = {
+        params: {
+            id: todoItem._id
+        },
+        body: {
+            quantity: "15"
+        }
+    }
+
+    let spy = jest.spyOn(handleTodoItem, "updateQuantity").mockResolvedValue(
+        update
+    );
+    
+    await todoItemController.updateQuantity(mockRequest, mockResponse);
+
+    let responseBody = mockResponse.status().json.mock.calls[0][0];
+    let reponseStatus = mockStatusCode.mock.calls[0][0];
+
+    expect(responseBody).toBe("OK");
+    expect(reponseStatus).toBe(200);
+
+    spy.mockRestore();
+});
+test('updateQuantity without update', async () => {
+    let mockStatusCode = jest.fn();
+    let mockResponse = {
+        status : mockStatusCode.mockReturnValue({json: jest.fn()})
+    }
+
+    let mockRequest = {
+        params: {
+            id: todoItem._id
+        },
+        body: {
+            quantity: "15"
+        }
+    }
+
+    let spy = jest.spyOn(handleTodoItem, "updateQuantity").mockResolvedValue(
+        notUpdate
+    );
+    
+    await todoItemController.updateQuantity(mockRequest, mockResponse);
+
+    let responseBody = mockResponse.status().json.mock.calls[0][0];
+    let reponseStatus = mockStatusCode.mock.calls[0][0];
+
+    expect(responseBody).toBe("TodoItem - Update didn't work");
+    expect(reponseStatus).toBe(500);
+
+    spy.mockRestore();
+});
+test('updateQuantity without quantity', async () => {
+    let mockStatusCode = jest.fn();
+    let mockResponse = {
+        status : mockStatusCode.mockReturnValue({json: jest.fn()})
+    }
+
+    let mockRequest = {
+        params: {
+            id: todoItem._id
+        },
+        body: {
+
+        }
+    }
+    
+    await todoItemController.updateQuantity(mockRequest, mockResponse);
+
+    let responseBody = mockResponse.status().json.mock.calls[0][0];
+    let reponseStatus = mockStatusCode.mock.calls[0][0];
+
+    expect(responseBody).toBe("TodoItem - Quantity not provided");
+    expect(reponseStatus).toBe(400);
+});
+test('updateQuantity without id', async () => {
+    let mockStatusCode = jest.fn();
+    let mockResponse = {
+        status : mockStatusCode.mockReturnValue({json: jest.fn()})
+    }
+
+    let mockRequest = {
+        params: {
+
+        },
+        body: {
+
+        }
+    }
+    
+    await todoItemController.updateQuantity(mockRequest, mockResponse);
+
+    let responseBody = mockResponse.status().json.mock.calls[0][0];
+    let reponseStatus = mockStatusCode.mock.calls[0][0];
+
+    expect(responseBody).toBe("TodoItem - ID not provided");
+    expect(reponseStatus).toBe(400);
 });
