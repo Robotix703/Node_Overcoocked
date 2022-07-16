@@ -1,5 +1,5 @@
 require('dotenv').config();
-import { GetTasksArgs, Project, Task, TodoistApi } from '@doist/todoist-api-typescript'
+import { AddTaskArgs, GetTasksArgs, Project, Task, TodoistApi, UpdateTaskArgs } from '@doist/todoist-api-typescript'
 
 const api = new TodoistApi(process.env.TODOIST_API_KEY)
 
@@ -21,20 +21,29 @@ export namespace Todoist {
         return api.getTasks(args);
     }
     
-    export async function addItemsInProjectByName(name: string, itemText: string): Promise<Task>{
-        let projectID : number = await getProjectID(name);
-    
-        return api.addTask({
+    export async function addItemsInProjectByName(projectName: string, itemText: string, description?: string, priority?: number): Promise<Task>{
+        let projectID : number = await getProjectID(projectName);
+
+        let args : AddTaskArgs = {
             projectId: projectID,
             content: itemText,
             dueLang: 'fr'
-        });
+        };
+
+        if(description) args.description = description;
+        if(priority) args.priority = priority;
+    
+        return api.addTask(args);
     }
     
-    export async function updateItem(itemID: number, content: string): Promise<boolean>{
-        return api.updateTask(itemID, {
-            content: content
-        });
+    export async function updateItem(itemID: number, content?: string, description?: string, priority?: number): Promise<boolean>{
+        let updateArgs : UpdateTaskArgs = { };
+
+        if(content) updateArgs.content = content;
+        if(description) updateArgs.description = description;
+        if(priority) updateArgs.priority = priority;
+
+        return api.updateTask(itemID, updateArgs);
     }
     
     export async function deleteItem(itemID: number): Promise<boolean>{
