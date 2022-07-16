@@ -10,7 +10,9 @@ let todoItem = {
     todoID: 10,
     text: "pommes - 10 pc",
     ingredientName: "ingredientName",
-    consumable: true
+    consumable: true,
+    underline: "underline",
+    priority: 3
 }
 
 let update = {
@@ -105,13 +107,15 @@ test('updateTodoItem', async () => {
 
     let mockRequest = {
         params: {
-            id: "id"
+            id: todoItem._id
         },
         body: {
-            todoID: "todoID",
-            text: "text",
-            ingredientName: "ingredientName",
-            consumable: "consumable"
+            todoID: todoItem.todoID,
+            text: todoItem.text,
+            ingredientName: todoItem.ingredientName,
+            consumable: todoItem.consumable,
+            underline: todoItem.underline,
+            priority: todoItem.priority
         }
     }
 
@@ -129,6 +133,15 @@ test('updateTodoItem', async () => {
 
     expect(responseBody).toMatchObject({status: "Ok"});
     expect(reponseStatus).toBe(200);
+    expect(spy).toHaveBeenCalledWith(
+        todoItem._id,
+        todoItem.todoID,
+        todoItem.text,
+        todoItem.ingredientName,
+        todoItem.consumable,
+        todoItem.underline,
+        todoItem.priority
+    )
 
     spy.mockRestore();
     spy2.mockRestore();

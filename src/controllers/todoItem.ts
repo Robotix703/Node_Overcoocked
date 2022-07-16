@@ -69,7 +69,9 @@ export namespace todoItemController {
             req.body.todoID, 
             req.body.text, 
             req.body.ingredientName, 
-            req.body.consumable
+            req.body.consumable,
+            req.body.underline,
+            req.body.priority
         )
         .catch((error : Error) => {
             res.status(500).json({

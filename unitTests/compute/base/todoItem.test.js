@@ -8,7 +8,9 @@ let todoItem = {
     todoID: 10,
     text: "text",
     ingredientName: "ingredientName",
-    consumable: true
+    consumable: true,
+    underline: "underline",
+    priority: 2
 }
 
 test('getTodoItemByIngredientName', async () => {
@@ -27,7 +29,9 @@ test('updateTodoItem', async () => {
         todoItem.todoID,
         todoItem.text,
         todoItem.ingredientName,
-        todoItem.consumable
+        todoItem.consumable,
+        todoItem.underline,
+        todoItem.priority
     );
 
     expect(JSON.parse(JSON.stringify(result))).toBe("OK");
@@ -64,7 +68,9 @@ test('registerTodoItem', async () => {
         todoItem.todoID,
         todoItem.text,
         todoItem.ingredientName,
-        todoItem.consumable
+        todoItem.consumable,
+        todoItem.underline,
+        todoItem.priority
     );
 
     expect(JSON.parse(JSON.stringify(result))).toMatchObject(todoItem);

@@ -14,7 +14,7 @@ test.skip('Get tasks', async () => {
 });
 
 test.skip('Add tasks', async () => {
-    let task = await todoist.Todoist.addItemsInProjectByName("CoursesDev", taskText);
+    let task = await todoist.Todoist.addItemsInProjectByName("CoursesDev", taskText, "description", 3);
     taskID = task.id;
     console.log(taskID)
     expect(task.created.length).not.toBe(0);

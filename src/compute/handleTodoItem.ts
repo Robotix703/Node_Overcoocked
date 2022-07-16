@@ -24,7 +24,9 @@ export namespace handleTodoItem {
                 todoItem.todoID,
                 updatedText,
                 todoItem.ingredientName,
-                todoItem.consumable
+                todoItem.consumable,
+                todoItem.underline,
+                todoItem.priority
             );
         }else{
             return {

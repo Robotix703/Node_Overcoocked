@@ -30,7 +30,11 @@ export async function updateTodoItem(existingIngredient : ITodoItem[], newIngred
 export async function addTodoItem(ingredient : IIngredientWithQuantity, consumable : boolean) : Promise<any> {
   const ingredientText : string = formatIngredient(ingredient.ingredient.name, ingredient.ingredient.unitOfMeasure, ingredient.quantity);
   const todoItem : Task = await Todoist.addItemsInProjectByName(process.env.TODOPROJECT, ingredientText);
-  await baseTodoItem.registerTodoItem(todoItem.id.toString(), ingredientText, ingredient.ingredient.name, consumable);
+  await baseTodoItem.registerTodoItem(
+    todoItem.id.toString(), 
+    ingredientText, 
+    ingredient.ingredient.name, 
+    consumable);
 }
 
 export namespace registerIngredientsOnTodo {

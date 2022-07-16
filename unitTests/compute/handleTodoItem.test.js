@@ -8,7 +8,9 @@ let todoItem = {
     todoID: 10,
     text: "pomme - 2 pc",
     ingredientName: "ingredientName",
-    consumable: true
+    consumable: true,
+    underline: "underline",
+    priority: 3
 }
 
 let updated = {
@@ -53,7 +55,9 @@ test('updateQuantity', async () => {
         todoItem.todoID,
         "pomme - 10 pc",
         todoItem.ingredientName,
-        todoItem.consumable
+        todoItem.consumable,
+        todoItem.underline,
+        todoItem.priority
     );
     expect(JSON.parse(JSON.stringify(result))).toMatchObject(updated);
 });
