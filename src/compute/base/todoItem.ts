@@ -1,4 +1,4 @@
-import { IDeleteOne, ISave, IUpdateOne } from "../../models/mongoose";
+import { IDeleteOne, IUpdateOne } from "../../models/mongoose";
 import TodoItem, { ITodoItem } from "../../models/todoItem";
 
 export namespace baseTodoItem {
@@ -7,7 +7,16 @@ export namespace baseTodoItem {
         return TodoItem.find({ingredientName: ingredientName});
     }
 
-    export async function updateTodoItem(todoItemID : string, todoID : number, text : string, ingredientName : string, consumable: boolean) : Promise<IUpdateOne>{
+    export async function updateTodoItem(
+        todoItemID : string, 
+        todoID : number, 
+        text : string, 
+        ingredientName : string, 
+        consumable: boolean,
+        underline?: string,
+        priority?: number
+        ) : Promise<IUpdateOne>
+        {
         let todoItem = new TodoItem({
             _id: todoItemID,
             todoID: todoID,
@@ -15,6 +24,9 @@ export namespace baseTodoItem {
             ingredientName: ingredientName,
             consumable: consumable
         });
+        if(underline) todoItem.underline = underline;
+        if(priority) todoItem.priority = priority;
+
         return TodoItem.updateOne({_id: todoItem._id}, todoItem);
     }
 
@@ -23,20 +35,28 @@ export namespace baseTodoItem {
     }
 
     export async function deleteTodoItem(todoItemID : string) : Promise<IDeleteOne> {
-        return TodoItem.deleteOne({ todoID: todoItemID });
+        return TodoItem.deleteOne({ _id: todoItemID });
     }
 
     export async function getTodoItemByID(todoItemID : string) : Promise<ITodoItem> {
         return TodoItem.findById(todoItemID);
     }
 
-    export async function registerTodoItem(itemID : string, itemText : string, name : string, consumable : boolean) : Promise<any> {
+    export async function registerTodoItem(
+        itemID : string, 
+        itemText : string, 
+        name : string, 
+        consumable : boolean,
+        underline?: string,
+        priority?: number) : Promise<any> {
         const todoItem = new TodoItem({
             todoID: itemID,
             text: itemText,
             ingredientName: name,
             consumable: consumable
         });
+        if(underline) todoItem.underline = underline;
+        if(priority) todoItem.priority = priority;
     
         return todoItem.save();
     }

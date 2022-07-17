@@ -108,7 +108,7 @@ export namespace instructionController {
   }
   export async function getInstructionByID(req: Request, res: Response){
     handleInstruction.getPrettyInstructionByID(req.query.instructionID as string)
-    .then((instruction: IInstruction) => {
+    .then((instruction: IPrettyInstruction) => {
       res.status(200).json(instruction);
     })
     .catch((error: Error) => {

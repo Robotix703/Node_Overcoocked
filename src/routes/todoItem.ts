@@ -11,6 +11,7 @@ todoItemRoutes.get("/", todoItemController.readTodoItems);
 
 //POST
 todoItemRoutes.post("/", checkAuth, todoItemController.writeTodoItem);
+todoItemRoutes.post("/updateQuantity/:id", checkAuth, todoItemController.updateQuantity);
 
 //PUT
 todoItemRoutes.put("/:id", checkAuth, todoItemController.updateTodoItem);

@@ -2,6 +2,7 @@ import { IIngredient } from "../models/ingredient";
 import { IInstruction } from "../models/instruction";
 import { baseIngredient } from "./base/ingredient";
 import { baseInstruction } from "./base/instruction";
+import { IPrettyInstruction } from "./handleRecipe";
 
 export namespace handleInstruction {
     export async function getInstructionCountForRecipe(recipeID : string) : Promise<Number> {
@@ -9,14 +10,15 @@ export namespace handleInstruction {
         return instructions.length;
     }
 
-    export async function getPrettyInstructionByID(instructionID : string) : Promise<any> {
+    export async function getPrettyInstructionByID(instructionID : string) : Promise<IPrettyInstruction> {
         let instruction : IInstruction = await baseInstruction.getInstructionByID(instructionID);
         let ingredients : IIngredient[] = await baseIngredient.getIngredientsByID(instruction.ingredientsID);
 
-        let prettyInstruction : any = {
+        let prettyInstruction : IPrettyInstruction = {
             _id: instruction._id,
             text: instruction.text,
             composition: [],
+            recipeID: instruction.recipeID,
             order: instruction.order,
             cookingTime: instruction.cookingTime
         }
