@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 
 import { IDeleteOne } from "../models/mongoose";
 import { IMeal } from "../models/meal";
+import { IRecipe } from "../models/recipe";
 import { IUpdateOne } from "../models/mongoose";
 
 import { baseMeal } from "../compute/base/meal";
+import { baseRecipe } from "../compute/base/recipe";
 import { handleRecipe, IIngredientWithQuantity } from "../compute/handleRecipe";
 import { handleMeal, IDisplayableMealStatus, IMealStatus } from "../compute/handleMeal";
 import { updatePantryWhenMealIsDone } from "../compute/updatePantryWhenMealIsDone";
@@ -22,9 +24,11 @@ export namespace mealController{
       })
     });
 
+    const recipe : IRecipe = await baseRecipe.getRecipeByID(req.body.recipeID);
+
     const ingredientsNeeded : IIngredientWithQuantity[] = await handleRecipe.getIngredientList(req.body.recipeID, req.body.numberOfLunchPlanned);
-      
-    await registerIngredientsOnTodo.registerIngredients(ingredientsNeeded);
+    
+    await registerIngredientsOnTodo.registerIngredients(ingredientsNeeded, recipe.title);
 
     res.status(201).json(registerResult);
   }

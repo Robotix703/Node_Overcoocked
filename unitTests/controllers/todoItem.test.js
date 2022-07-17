@@ -95,6 +95,12 @@ test('writeTodoItem', async () => {
 
     expect(responseBody).toMatchObject({message: "Registered !"});
     expect(reponseStatus).toBe(201);
+    expect(spy).toHaveBeenCalledWith(
+        mockRequest.body.ingredientID,
+        mockRequest.body.name,
+        mockRequest.body.quantity,
+        "Extra"
+    )
 
     spy.mockRestore();
 });

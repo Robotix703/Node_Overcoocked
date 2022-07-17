@@ -1,4 +1,5 @@
 const baseMeal = require("../../build/compute/base/meal").baseMeal;
+const baseRecipe = require("../../build/compute/base/recipe").baseRecipe;
 const handleRecipe = require("../../build/compute/handleRecipe").handleRecipe;
 const handleMeal = require("../../build/compute/handleMeal").handleMeal;
 
@@ -52,6 +53,17 @@ let displayableMeal = {
     state: mealStatus
 }
 
+let recipe = {
+    _id: "string",
+    title: "title",
+    numberOfLunch: 2,
+    imagePath: "imagePath",
+    category: "category",
+    duration: 10,
+    score: 2,
+    lastCooked: null
+}
+
 let updateOne = {
     n: 1,
     modifiedCount: 1,
@@ -85,6 +97,9 @@ test('writeMeal', async () => {
     let spy3 = jest.spyOn(registerIngredientsOnTodoFile, "registerIngredients").mockResolvedValue(
         "OK"
     );
+    let spy4 = jest.spyOn(baseRecipe, "getRecipeByID").mockResolvedValue(
+        recipe
+    );
     
     await mealController.writeMeal(mockRequest, mockResponse);
 
@@ -93,10 +108,13 @@ test('writeMeal', async () => {
 
     expect(responseBody).toBe("OK");
     expect(reponseStatus).toBe(201);
+    expect(spy4).toHaveBeenCalledWith(mockRequest.body.recipeID);
+    expect(spy3).toHaveBeenCalledWith([ingredientWithQuantityConsumable], recipe.title);
 
     spy.mockRestore();
     spy2.mockRestore();
     spy3.mockRestore();
+    spy4.mockRestore();
 });
 
 test('consumeMeal with mealID and delete', async () => {
